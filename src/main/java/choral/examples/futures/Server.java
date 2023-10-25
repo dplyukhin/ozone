@@ -6,12 +6,13 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import choral.channels.SymChannel_B;
-import choral.runtime.MyWrapperImpl_B;
+import choral.runtime.AsyncChannel_B;
 import choral.runtime.Media.ServerSocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
+import choral.runtime.IntToken;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -23,7 +24,7 @@ public class Server {
 		ServerSocketByteChannel listener =
 				ServerSocketByteChannel.at( Server.HOST, Server.PORT );
 
-        MyWrapperImpl_B<Object> ch = new MyWrapperImpl_B<Object>( 
+        AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
             new SerializerChannel_B(
                 JSONSerializer.getInstance(),
                 new WrapperByteChannel_B( listener.getNext() )
@@ -32,7 +33,7 @@ public class Server {
         System.out.println("Client connected.");
 
         HelloRoles_Server prot = new HelloRoles_Server();
-        prot.sayHello(ch);
+        prot.sayHello(ch, new IntToken(0));
 
         listener.close();
         System.out.println("Done.");

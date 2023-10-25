@@ -8,24 +8,24 @@ import choral.channels.SymSelectChannel_A;
 import choral.channels.SymSelectChannel_B;
 import choral.lang.Unit;
 
-public class MyWrapperImpl< T > implements SymSelectChannel_A, SymSelectChannel_B {
+public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B {
     protected SymChannelImpl<T> channel;
 
- 	public < M extends T > M com( Unit u1, Unit u2, int x ) {
- 		return this.com(x);
+ 	public < M extends T > M com( Unit u, Unit line_a, Unit tok_a, int line_b, Token tok_b ) {
+ 		return this.com(line_b, tok_b);
  	}
  
- 	public < S extends T > S com( int x ) {
+ 	public < S extends T > S com( int line_b, Token tok_b ) {
         System.out.println("Receiving!");
  		return channel.com();
  	}
  
- 	public < M extends T > Unit com( M m, int x, Unit u ) {
+ 	public < M extends T > Unit com( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
         System.out.println("Sending!");
  		return channel.com( m );
  	}
     
- 	public < M extends T > Unit com( CompletableFuture<M> f, int x, Unit u ) {
+ 	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Unit tok_a, Unit line_b, Unit tok_b ) {
         System.out.println("Sending future!");
         f.thenApply(m -> channel.com(m));
  		return Unit.id;

@@ -3,9 +3,9 @@ package choral.runtime;
 import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
 
-public class MyWrapperImpl_A<T> extends MyWrapperImpl<T> {
+public class AsyncChannel_A<T> extends AsyncChannel<T> {
 
-    public MyWrapperImpl_A( SymChannelImpl<T> channel ) {
+    public AsyncChannel_A( SymChannelImpl<T> channel ) {
         this.channel = channel;
     }
     

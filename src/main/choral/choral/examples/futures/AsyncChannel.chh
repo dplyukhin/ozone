@@ -1,0 +1,11 @@
+package choral.runtime;
+
+public interface AsyncChannel@( A, B )< T@X > {
+	< S@Y extends T@Y > S@B com( S@A m, int@A line_a, Token@A tok_a, int@B line_b, Token@B tok_b );
+	< S@Y extends T@Y > S@A com( S@B m, int@B line_b, Token@B tok_b, int@A line_a, Token@A tok_a );
+
+	@SelectionMethod
+	< T@X extends Enum@X< T > > T@B select( T@A m );
+	@SelectionMethod
+	< T@X extends Enum@X< T > > T@A select( T@B m );
+}
