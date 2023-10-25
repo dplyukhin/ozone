@@ -1,5 +1,7 @@
 package choral.examples.futures;
 
+import java.util.concurrent.CompletableFuture;
+
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
 
@@ -10,7 +12,7 @@ class HelloRoles@( Client, Server )< T@X, R@Y > {
       Token@Client tok_c,
       Token@Server tok_s
    ) { 
-      String@Server foo = null@Server;
+      CompletableFuture@Server<String> foo = null@Server;
       if (msg == "Hiya!"@Client) {
          ch.< HelloChoice >select( HelloChoice@Client.YES );
          foo = ch.<String>com( msg, 1@Client, tok_c, 1@Server, tok_s ); 

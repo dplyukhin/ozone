@@ -2,8 +2,10 @@ package choral.examples.futures;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.Executors;
 
 import choral.runtime.AsyncChannel_A;
+import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Media.SocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_A;
 import choral.runtime.Serializers.KryoSerializer;
@@ -17,11 +19,10 @@ public class Client {
         System.out.println("Connecting to server...");
 
         AsyncChannel_A<Object> ch = new AsyncChannel_A<Object>(
+            Executors.newSingleThreadExecutor(),
             new SerializerChannel_A( 
                 JSONSerializer.getInstance(),
-                new WrapperByteChannel_A( 
-                    SocketByteChannel.connect( Server.HOST, Server.PORT ) 
-                )
+                AsyncSocketByteChannel.connect( Server.HOST, Server.PORT ) 
             )
         );
 
