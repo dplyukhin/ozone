@@ -25,7 +25,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  		return channel.com( m );
  	}
     
- 	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Unit tok_a, Unit line_b, Unit tok_b ) {
+ 	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
         System.out.println("Sending future!");
         f.thenApply(m -> channel.com(m));
  		return Unit.id;
