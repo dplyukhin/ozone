@@ -1,13 +1,10 @@
 package choral.examples.futures;
 
-import choral.channels.DiChannel;
-import choral.runtime.MyWrapperImpl;
-//import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+import choral.runtime.AsyncChannel;
 
 class HelloRoles@( Client, Server )< T@X, R@Y > {
 	public void sayHello( 
-      MyWrapperImpl@( Client, Server )< String > ch, 
+      AsyncChannel@( Client, Server )< String > ch, 
       String@Client msg 
    ) { 
       String@Server foo = null@Server;

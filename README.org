@@ -1,7 +1,5 @@
 * About
 
-Modeling the IRC protocol using Choral.
-
 * Building
 
 It should always be possible to build the project with the most recent version
@@ -9,10 +7,6 @@ of Choral. To build the project:
 
 1. Make sure you have the Choral libraries installed (=org.choral-lang:choral=
    and =org.choral-lang:runtime=).
-
-   Choral does not yet publish its libraries to any Maven repository, so for now
-   they have to be built from source. Choral IRC tracks Choral's master branch
-   so it should always compile with the latest Choral version.
 
    Clone the [[https://github.com/choral-lang/choral][Choral repository]] and build and install the libraries:
 
@@ -36,10 +30,6 @@ of Choral. To build the project:
      mvn compile
    #+END_EXAMPLE
 
-   *NOTE*: Choral IRC expects that the Java compiler version listed in its
-   =pom.xml= matches the one you have installed, since only then is the
-   =--enable-preview= option valid. Additionally, we require at least Java 17.
-
    We try and track the latest Java compiler version available. In case yours is
    older, either update your Java compiler or modify =pom.xml= to match the one
    you have installed.
@@ -49,81 +39,10 @@ of Choral. To build the project:
 Run the server and the client programs separately:
 
 #+BEGIN_EXAMPLE
-  ./server
-  ./client
+  ./server.sh
+  ./client.sh
 #+END_EXAMPLE
 
 Note that executing the Java code also requires the =--enable-preview=
 option, which we provide to Maven through =.mvn/jvm.config=. If you want to
 run the code in a different way, don't forget to pass the option.
-
-Use the client's textual interface to connect to the server and run some
-commands:
-
-#+BEGIN_EXAMPLE
-  /connect localhost 8667
-  /nick choralbot
-  /user choralbot
-  /join #choral
-  /privmsg #choral Hello!
-  /part #choral Bye!
-  /quit
-#+END_EXAMPLE
-
-* Interoperability
-
-The implementation is fully *binary-compatible* with IRC, i.e. it respects IRC's
-wire format and doesn't perform any custom communications. Therefore, it's
-possible to use the client or the server with third-party implementations.
-
-E.g. you can connect to the IRC server using a third-party client such as
-Weechat, HexChat, Konversation, etc., or you can use the IRC client to connect
-to a third-party server, such as W3C:
-
-#+BEGIN_EXAMPLE
-  /connect irc.w3.org 6667
-#+END_EXAMPLE
-
-* IRC Conformance Tests
-
-Choral IRC passes all of the basic IRC tests given by [[https://github.com/progval/irctest/][=progval/irctest=]], being
-able to connect, choose or change a nickname, join or leave a channel, message
-other members and channels, and gracefully handle disconnects and messages that
-are too long.
-
-*NOTE*: Since lots of the tests just reuse =foo= as the nickname, if they
-execute too quickly it might happen that the registration is refused by our IRC
-server because the nickname hasn't yet been released and is still treated as in
-use.
-
-*NOTE*: The =pingpong.py= tests hardcode =My.Little.Server= as the hostname.
-
-To test, run the server:
-
-#+BEGIN_SRC sh
-  ./server My.Little.Server
-#+END_SRC
-
-Then, execute the following from the =progval/irctest= project's directory:
-
-#+BEGIN_SRC sh
-  IRCTEST_SERVER_HOSTNAME=127.0.0.1 IRCTEST_SERVER_PORT=8667 pytest --controller irctest.controllers.external_server -k "$(cat <<EOF
-      not IRCv3 and \
-      not labeled-response and \
-      not account-tag and \
-      not message-tags and \
-       ((testNick or \
-         testStarNick or \
-         testEmptyNick or \
-         testFailedNickChange or \
-         testEarlyNickCollision or \
-         testEmptyRealname) or \
-        testPing or \
-        testJoin or \
-        (testPart or testBasicPart) or \
-        testPrivmsg or \
-        testLineAtLimit or \
-        (testQuit and not Ergo))
-  EOF
-  )"
-#+END_SRC

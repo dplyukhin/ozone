@@ -8,7 +8,7 @@ import choral.channels.SymSelectChannel_A;
 import choral.channels.SymSelectChannel_B;
 import choral.lang.Unit;
 
-public class MyWrapperImpl< T > implements SymSelectChannel_A, SymSelectChannel_B {
+public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B {
     protected SymChannelImpl<T> channel;
 
  	public < M extends T > M com( Unit u1, Unit u2, int x ) {

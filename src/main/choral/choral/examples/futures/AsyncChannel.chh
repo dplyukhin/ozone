@@ -1,6 +1,6 @@
 package choral.runtime;
 
-public interface MyWrapperImpl@( A, B )< T@X > {
+public interface AsyncChannel@( A, B )< T@X > {
 	< S@Y extends T@Y > S@B com( S@A m, int@A x, int@B y );
 	< S@Y extends T@Y > S@A com( S@B m, int@B x, int@A y );
 

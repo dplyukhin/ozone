@@ -6,7 +6,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import choral.channels.SymChannel_B;
-import choral.runtime.MyWrapperImpl_B;
+import choral.runtime.AsyncChannel_B;
 import choral.runtime.Media.ServerSocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
@@ -23,7 +23,7 @@ public class Server {
 		ServerSocketByteChannel listener =
 				ServerSocketByteChannel.at( Server.HOST, Server.PORT );
 
-        MyWrapperImpl_B<Object> ch = new MyWrapperImpl_B<Object>( 
+        AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
             new SerializerChannel_B(
                 JSONSerializer.getInstance(),
                 new WrapperByteChannel_B( listener.getNext() )
