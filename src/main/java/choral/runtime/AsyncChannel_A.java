@@ -1,6 +1,8 @@
 package choral.runtime;
 
 import java.util.concurrent.ExecutorService;
+import java.util.Queue;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 
 import choral.channels.SymChannelImpl;
@@ -13,6 +15,8 @@ public class AsyncChannel_A<T> extends AsyncChannel<T> {
         this.channel = channel;
         this.futures = new HashMap<>();
         this.messages = new HashMap<>();
+        this.selectionHandler = null;
+        this.selections = new ArrayDeque<>();
         listen();
     }
     
