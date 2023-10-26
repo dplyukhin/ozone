@@ -24,14 +24,14 @@ public class Server {
         System.out.println("Running server...");
         // Run server and create a channel from the first open connection
 		AsyncServerSocketByteChannel listener =
-				AsyncServerSocketByteChannel.at( Server.HOST, Server.PORT );
+            AsyncServerSocketByteChannel.at( 
+                JSONSerializer.getInstance(), 
+                Server.HOST, Server.PORT 
+            );
 
         AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
             Executors.newSingleThreadExecutor(),
-            new SerializerChannel_B(
-                JSONSerializer.getInstance(),
-                listener.getNext()
-            )
+            listener.getNext()
         );
         System.out.println("Client connected.");
 

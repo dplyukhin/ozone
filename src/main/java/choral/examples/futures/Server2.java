@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import choral.channels.SymChannel_B;
+import choral.lang.Unit;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
 import choral.runtime.AsyncSocketByteChannel;
@@ -26,27 +27,18 @@ public class Server2 {
         System.out.println("Running server...");
         // Run server and create a channel from the first open connection
 		AsyncServerSocketByteChannel listener =
-				AsyncServerSocketByteChannel.at( Server.HOST, Server.PORT );
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
-        SerializerChannel_B ch = 
-            new SerializerChannel_B(
-                JSONSerializer.getInstance(),
-                listener.getNext()
+            AsyncServerSocketByteChannel.at( 
+                KryoSerializer.getInstance(),
+                Server.HOST, Server.PORT 
             );
+
+        AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
+            Executors.newSingleThreadExecutor(),
+            listener.getNext()
+        );
         System.out.println("Client connected.");
 
-
-        executor.submit(() -> {
-            System.out.println("Listening...");
-            while (true) {
-                String foo = ch.com();
-                System.out.println("Got: " + foo);
-            }
-        });
-
-        ch.com("Hello from server");
+        ch.com("Hello from server", 2, new IntToken(0), Unit.id, Unit.id);
         System.out.println("Sent hello");
     }
 }

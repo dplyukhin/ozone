@@ -20,9 +20,9 @@ public class Client {
 
         AsyncChannel_A<Object> ch = new AsyncChannel_A<Object>(
             Executors.newSingleThreadExecutor(),
-            new SerializerChannel_A( 
+            AsyncSocketByteChannel.connect( 
                 JSONSerializer.getInstance(),
-                AsyncSocketByteChannel.connect( Server.HOST, Server.PORT ) 
+                Server.HOST, Server.PORT
             )
         );
 

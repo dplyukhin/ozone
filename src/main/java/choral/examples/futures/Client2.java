@@ -6,6 +6,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import choral.lang.Unit;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Media.SocketByteChannel;
@@ -22,20 +23,15 @@ public class Client2 {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        SerializerChannel_A ch = new SerializerChannel_A( 
-            JSONSerializer.getInstance(),
-            AsyncSocketByteChannel.connect( Server.HOST, Server.PORT ) 
+        AsyncChannel_A<Object> ch = new AsyncChannel_A<Object>(
+            Executors.newSingleThreadExecutor(),
+            AsyncSocketByteChannel.connect( 
+                KryoSerializer.getInstance(),
+                Server.HOST, Server.PORT
+            )
         );
 
-        executor.submit(() -> {
-            System.out.println("Listening...");
-            while (true) {
-                String foo = ch.com();
-                System.out.println("Got: " + foo);
-            }
-        });
-
-        ch.com("Hello from client");
+        ch.com("Hello from client", 1, new IntToken(0), Unit.id, Unit.id);
         System.out.println("Sent hello");
     }
 }
