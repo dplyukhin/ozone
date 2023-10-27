@@ -12,12 +12,14 @@ import choral.lang.Unit;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
 import choral.runtime.AsyncSocketByteChannel;
+import choral.runtime.DataMsg;
 import choral.runtime.Media.ServerSocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
-import choral.runtime.IntToken;
+import choral.runtime.Token;
+import choral.runtime.IntegrityKey;
 
 public class Server2 {
     public static final String HOST = "localhost";
@@ -25,6 +27,10 @@ public class Server2 {
 
     public static void main(String[] args) throws java.io.IOException {
         System.out.println("Running server...");
+        KryoSerializer serializer = KryoSerializer.getInstance();
+
+        // System.out.println("" + serializer.toObject(serializer.fromObject(new AsyncMessage.DataMsg(new IntegrityKey(0, new Token(0)), "Hello from server"))));
+
         // Run server and create a channel from the first open connection
 		AsyncServerSocketByteChannel listener =
             AsyncServerSocketByteChannel.at( 
@@ -32,13 +38,14 @@ public class Server2 {
                 Server.HOST, Server.PORT 
             );
 
-        AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
-            Executors.newSingleThreadExecutor(),
-            listener.getNext()
-        );
+        AsyncSocketByteChannel ch = //new AsyncChannel_B<Object>( 
+            //Executors.newSingleThreadExecutor(),
+            listener.getNext();
+        //);
         System.out.println("Client connected.");
 
-        ch.com("Hello from server", 2, new IntToken(0), Unit.id, Unit.id);
+        ch.com(new IntegrityKey(0, new Token(0)));
         System.out.println("Sent hello");
+        System.out.println("Got:" + ch.com());
     }
 }

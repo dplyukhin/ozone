@@ -14,7 +14,7 @@ import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
-import choral.runtime.IntToken;
+import choral.runtime.Token;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -25,7 +25,7 @@ public class Server {
         // Run server and create a channel from the first open connection
 		AsyncServerSocketByteChannel listener =
             AsyncServerSocketByteChannel.at( 
-                JSONSerializer.getInstance(), 
+                KryoSerializer.getInstance(), 
                 Server.HOST, Server.PORT 
             );
 
@@ -36,7 +36,7 @@ public class Server {
         System.out.println("Client connected.");
 
         HelloRoles_Server prot = new HelloRoles_Server();
-        prot.sayHello(ch, new IntToken(0));
+        prot.sayHello(ch, new Token(0));
 
         listener.close();
         System.out.println("Done.");

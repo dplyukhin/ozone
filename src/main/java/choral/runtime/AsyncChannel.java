@@ -50,11 +50,11 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 				Object msg = channel.com();
 				System.out.println("Got " + msg);
 
-				if (msg instanceof AsyncMessage.DataMsg) {
-					AsyncMessage.DataMsg dataMsg = (AsyncMessage.DataMsg) msg;
+				if (msg instanceof DataMsg) {
+					DataMsg dataMsg = (DataMsg) msg;
 					// Case 1: The message is a regular com() message.
-					IntegrityKey key = dataMsg.key();
-					T payload = (T) dataMsg.payload();
+					IntegrityKey key = dataMsg.key;
+					T payload = (T) dataMsg.payload;
 					System.out.println("Got message with key" + key);
 
 					// We use synchronization to maintain the `futures` invariant. 
@@ -73,9 +73,9 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 						handler.complete(payload);
 					}
 				}
-				else if (msg instanceof AsyncMessage.SelectMsg) {
-					AsyncMessage.SelectMsg selectMsg = (AsyncMessage.SelectMsg) msg;
-					Enum<?> selection = selectMsg.selection();
+				else if (msg instanceof SelectMsg) {
+					SelectMsg selectMsg = (SelectMsg) msg;
+					Enum<?> selection = selectMsg.selection;
 
 					// Case 2: The message is an enum from a select().
 					System.out.println("Got selection " + selection);
@@ -140,7 +140,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
 		IntegrityKey key = new IntegrityKey(line_a, tok_a);
         System.out.println("Sending message " + key);
- 		return channel.com( new AsyncMessage.DataMsg( key, m ) );
+ 		return channel.com( new DataMsg( key, m ) );
  	}
     
  	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
@@ -151,7 +151,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  	@Override
  	public < M extends Enum< M > > Unit select ( M m ) {
 		System.out.println("Selecting " + m);
- 		return channel.com( new AsyncMessage.SelectMsg(m) );
+ 		return channel.com( new SelectMsg(m) );
  	}
  
  	@Override

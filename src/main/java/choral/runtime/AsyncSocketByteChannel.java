@@ -1,12 +1,18 @@
 package choral.runtime;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import choral.channels.SymChannelImpl;
 import choral.channels.SymDataChannelImpl;
@@ -53,12 +59,10 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
             // No need for synchronization, because only a single thread will read here.
             int transmissionLength = this.recvTransmissionLength();
             ByteBuffer recv = ByteBuffer.allocate( transmissionLength );
-            System.out.println("Awaiting transmission...");
+            System.out.println("Awaiting transmission of length " + transmissionLength);
             channel.read( recv );
             System.out.println("Got it!");
-            String str = new String( recv.array(), StandardCharsets.UTF_8 );
-            System.out.println(str);
-            Object obj = this.serializer.toObject(recv);
+            Object obj = deserializeObject(recv); //this.serializer.toObject(recv);
             System.out.println("Deserialized it!");
             return (T) obj;
         } catch( IOException e ) {
@@ -72,7 +76,10 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
             synchronized (this) {
                 System.out.println("Locking 5...");
                 // Use synchronization to prevent concurrent writes from being interleaved.
-                ByteBuffer buf = this.serializer.fromObject(m);
+                System.out.println("Sending " + m);
+                ByteBuffer buf = serializeObject((Serializable) m); //this.serializer.fromObject(m);
+                //System.out.println("Encoded and decoded as:" + serializer.toObject(buf));
+                //System.out.println("Encoded as " + Arrays.toString(buf.array()) + " of length " + buf.limit());
                 this.sendTransmissionLength( buf.limit() );
                 channel.write( buf );
                 System.out.println("Unlocking 5...");
@@ -82,6 +89,46 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
             throw new RuntimeException( e.getMessage() );
 		}
 	}
+
+    public static ByteBuffer serializeObject(Serializable obj) {
+		try {
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream);
+
+			// Serialize the object
+			objectOutputStream.writeObject(obj);
+			objectOutputStream.flush();
+			ByteBuffer buffer = ByteBuffer.wrap(byteStream.toByteArray());
+
+			// Close the streams
+			objectOutputStream.close();
+			byteStream.close();
+
+			return buffer;
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+    }
+
+	public static Object deserializeObject(ByteBuffer buffer) {
+		try {
+			ByteArrayInputStream byteStream = new ByteArrayInputStream(buffer.array());
+			ObjectInputStream objectInputStream = new ObjectInputStream(byteStream);
+
+			// Use the ObjectInputStream to deserialize the object
+			Object deserializedObject = objectInputStream.readObject();
+
+			// Close the streams
+			objectInputStream.close();
+			byteStream.close();
+
+			return deserializedObject;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+    }
 
 	@Override
 	public < T extends Enum< T > > Unit select( T m ) {
