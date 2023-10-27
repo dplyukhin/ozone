@@ -27,4 +27,9 @@ public class Token implements Serializable {
     public int hashCode() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "Token(" + value + ")";
+    }
 }

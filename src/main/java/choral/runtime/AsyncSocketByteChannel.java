@@ -74,7 +74,6 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
 	public < T extends Object > Unit com( T m ) {
         try {
             synchronized (this) {
-                System.out.println("Locking 5...");
                 // Use synchronization to prevent concurrent writes from being interleaved.
                 System.out.println("Sending " + m);
                 ByteBuffer buf = serializeObject((Serializable) m); //this.serializer.fromObject(m);
@@ -82,7 +81,6 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
                 //System.out.println("Encoded as " + Arrays.toString(buf.array()) + " of length " + buf.limit());
                 this.sendTransmissionLength( buf.limit() );
                 channel.write( buf );
-                System.out.println("Unlocking 5...");
             }
             return Unit.id;
 		} catch( IOException e ) {

@@ -12,4 +12,9 @@ public class SelectMsg<T extends Enum<T>> implements Serializable {
     public SelectMsg(T selection) {
         this.selection = selection;
     }
+
+    @Override
+    public String toString() {
+        return "SelectMsg(" + selection + ")";
+    }
 }

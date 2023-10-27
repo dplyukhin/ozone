@@ -14,4 +14,9 @@ public class DataMsg implements Serializable {
         this.key = key;
         this.payload = payload;
     }
+
+    @Override
+    public String toString() {
+        return "DataMsg(" + key + ", " + payload + ")";
+    }
 }

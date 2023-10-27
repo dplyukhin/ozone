@@ -55,17 +55,14 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 					// Case 1: The message is a regular com() message.
 					IntegrityKey key = dataMsg.key;
 					T payload = (T) dataMsg.payload;
-					System.out.println("Got message with key" + key);
 
 					// We use synchronization to maintain the `futures` invariant. 
 					CompletableFuture<T> handler = null;
 					synchronized(this) {
-						System.out.println("Locking 1...");
 						handler = futures.remove(key);
 						if (handler == null) {
 							messages.put(key, payload);
 						}
-						System.out.println("Unlocking 1...");
 					}
 					// We invoke `future.complete` outside the synchronization block,
 					// because the future's completion may take a long time to run.
@@ -83,7 +80,6 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 					// We use synchronization to maintain the `selectionHandler` invariant.
 					CompletableFuture< Enum<?> > handler = null;
 					synchronized(this) {
-						System.out.println("Locking 2...");
 						if (selectionHandler != null) {
 							handler = selectionHandler;
 							selectionHandler = null;
@@ -91,7 +87,6 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 						else {
 							selections.add(selection);
 						}
-						System.out.println("Unlocking 2...");
 					}
 					// Complete the handler if it was non-null.
 					if (handler != null) {
@@ -118,12 +113,10 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 		// or `futures`.
 		T payload = null;
 		synchronized(this) {
-			System.out.println("Locking 3...");
 			payload = messages.remove(key);
 			if (payload == null) {
 				futures.put(key, future);
 			}
-			System.out.println("Unlocking 3...");
 		}
 		// If we already got the message, go ahead and complete the future.
 		if (payload != null) {
@@ -139,7 +132,6 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  
  	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
 		IntegrityKey key = new IntegrityKey(line_a, tok_a);
-        System.out.println("Sending message " + key);
  		return channel.com( new DataMsg( key, m ) );
  	}
     
@@ -166,12 +158,10 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 		// We use synchronization to maintain the `selectionHandler` invariant.
 		Enum<?> payload = null;
 		synchronized(this) {
-						System.out.println("Locking...");
 			payload = this.selections.poll();
 			if (payload == null) {
 				this.selectionHandler = future;
 			}
-			System.out.println("Unlocking...");
 		}
 		// If we already got the selection, complete it right away.
 		if (payload != null) {

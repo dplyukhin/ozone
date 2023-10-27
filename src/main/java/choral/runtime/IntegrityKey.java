@@ -34,4 +34,9 @@ public class IntegrityKey implements Serializable {
     public int hashCode() {
         return Objects.hash(line, token);
     }
+
+    @Override
+    public String toString() {
+        return "IntegrityKey(" + line + ", " + token + ")";
+    }
 }
