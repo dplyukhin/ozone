@@ -1,6 +1,7 @@
 package choral.examples.futures;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
@@ -22,6 +23,7 @@ class HelloRoles@( Client, Server )< T@X, R@Y > {
          foo = ch.<String>com( "bogus"@Client, 2@Client, tok_c, 2@Server, tok_s ); 
       }
 
-      System@Server.out.println("Server got: "@Server + foo);
+      Consumer@Server<String> onFoo = new OnFoo@Server();
+      foo.thenAccept(onFoo);
    }
 }

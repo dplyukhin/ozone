@@ -1,5 +1,10 @@
 package java.util.concurrent;
 
+import java.lang.Void;
+import java.util.function.Consumer;
+
 public interface CompletableFuture@A< T@X > {
 
+    public CompletableFuture@A<Void> thenAccept(Consumer@A< T > action);
+    
 }
