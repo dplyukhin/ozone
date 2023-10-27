@@ -1,33 +1,33 @@
-package choral.examples.futures;
+package choral.examples.futures.hello;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import choral.lang.Unit;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncSocketByteChannel;
-import choral.runtime.DataMsg;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
-import choral.runtime.IntegrityKey;
 
-public class Client2 {
+import choral.examples.futures.hello.HelloRoles_Client;
+
+public class Client {
 
     public static void main(String[] args) {
         System.out.println("Connecting to server...");
 
-        AsyncSocketByteChannel ch = 
-            //new AsyncChannel_A<Object>(
-            //Executors.newSingleThreadExecutor(),
+        AsyncChannel_A<Object> ch = new AsyncChannel_A<Object>(
+            Executors.newSingleThreadExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.PORT
-            );
-        //);
+            )
+        );
 
-        ch.com(new IntegrityKey(0, new Token(0)));
-        System.out.println("Sent hello");
-        System.out.println("Got: " + ch.com());
+        System.out.println("Connection succeeded.");
+
+        HelloRoles_Client prot = new HelloRoles_Client();
+        prot.sayHello(ch, "Hiya!", new Token(0));
+
+        System.out.println("Done.");
     }
 }

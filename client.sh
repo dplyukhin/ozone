@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn exec:java -Dexec.mainClass="choral.examples.futures.Client" -Dexec.args="'$*'"
+mvn exec:java -Dexec.mainClass="choral.examples.futures.hello.Client" -Dexec.args="'$*'"
