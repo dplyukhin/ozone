@@ -27,7 +27,7 @@ public class Worker2 {
         System.out.println("Connection succeeded.");
 
         ConcurrentSend_Worker2 prot = new ConcurrentSend_Worker2();
-        WorkerState state = new WorkerState("Worker2");
+        WorkerState state = new WorkerState("Worker2", 0);
         prot.go(ch, state, new Token(0));
     }
 }
