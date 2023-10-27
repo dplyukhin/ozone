@@ -1,4 +1,4 @@
-package choral.examples.futures.hello;
+package choral.examples.futures.concurrentsend;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -34,6 +34,6 @@ public class ConcurrentSend@( Worker1, Worker2, Server, Client ) {
       Consumer@Client<String> onData1 = new OnData@Client("Worker 1"@Client);
       f3.thenAccept(onData1);
       Consumer@Client<String> onData2 = new OnData@Client("Worker 2"@Client);
-      f3.thenAccept(onData2);
+      f4.thenAccept(onData2);
    }
 }

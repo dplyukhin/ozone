@@ -1,4 +1,4 @@
-package choral.examples.futures.hello;
+package choral.examples.futures.concurrentsend;
 
 import java.util.function.Consumer;
 
@@ -11,6 +11,6 @@ public class OnData@A implements Consumer@A<String> {
 
     @Override
     public void accept(String@A x) {
-        System@A.out.println("Server got: "@A + x);
+        System@A.out.println("Client got "@A + x + " from "@A + workerName);
     }
 }

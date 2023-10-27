@@ -1,4 +1,4 @@
-package choral.examples.futures.hello;
+package choral.examples.futures.concurrentsend;
 
 public class WorkerState@A {
     String@A workerName;

@@ -52,7 +52,24 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>choral-epp-futures</id>
+                        <id>choral-epp-concurrent-send</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>choral</executable>
+                            <arguments>
+                                <argument>epp</argument>
+                                <argument>--sources=${project.basedir}/src/main/choral</argument>
+                                <argument>--headers=${project.basedir}/src/main/choral</argument>
+                                <argument>--target=${project.build.directory}/generated-sources/choral</argument>
+                                <argument>ConcurrentSend</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-hello-roles</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>exec</goal>
