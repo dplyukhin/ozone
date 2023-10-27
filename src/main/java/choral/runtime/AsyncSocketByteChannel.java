@@ -55,15 +55,11 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
 	@Override
 	public < T extends Object > T com() {
         try {
-            System.out.println("Getting transmission length...");
             // No need for synchronization, because only a single thread will read here.
             int transmissionLength = this.recvTransmissionLength();
             ByteBuffer recv = ByteBuffer.allocate( transmissionLength );
-            System.out.println("Awaiting transmission of length " + transmissionLength);
             channel.read( recv );
-            System.out.println("Got it!");
             Object obj = deserializeObject(recv); //this.serializer.toObject(recv);
-            System.out.println("Deserialized it!");
             return (T) obj;
         } catch( IOException e ) {
             throw new RuntimeException( e.getMessage() );
