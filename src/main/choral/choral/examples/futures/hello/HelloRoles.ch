@@ -1,4 +1,4 @@
-package choral.examples.futures;
+package choral.examples.futures.hello;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
 
-class HelloRoles@( Client, Server )< T@X, R@Y > {
+public class HelloRoles@( Client, Server )< T@X, R@Y > {
 	public void sayHello( 
       AsyncChannel@( Client, Server )< String > ch, 
       String@Client msg,

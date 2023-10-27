@@ -8,6 +8,8 @@ import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
 
+import choral.examples.futures.hello.HelloRoles_Client;
+
 public class Client {
 
     public static void main(String[] args) {

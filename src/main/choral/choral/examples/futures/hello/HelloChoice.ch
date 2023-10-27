@@ -1,4 +1,4 @@
-package choral.examples.futures;
+package choral.examples.futures.hello;
 
 import choral.runtime.Serializers.KryoSerializable;
 

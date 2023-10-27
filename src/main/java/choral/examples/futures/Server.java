@@ -16,6 +16,8 @@ import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
 
+import choral.examples.futures.hello.HelloRoles_Server;
+
 public class Server {
     public static final String HOST = "localhost";
     public static final int PORT = 8667;
