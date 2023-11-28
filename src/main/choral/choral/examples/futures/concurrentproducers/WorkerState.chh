@@ -1,0 +1,7 @@
+package choral.examples.futures.concurrentproducers;
+
+public class WorkerState@A {
+    public String@A compute() {}
+    public String@A produce() {}
+    public void store(String@A x) {}
+}
