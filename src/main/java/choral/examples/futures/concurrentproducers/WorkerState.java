@@ -1,4 +1,4 @@
-package choral.examples.futures.concurrentsend;
+package choral.examples.futures.concurrentproducers;
 
 import java.lang.Thread;
 

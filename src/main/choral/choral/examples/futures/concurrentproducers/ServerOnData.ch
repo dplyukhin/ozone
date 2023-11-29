@@ -11,6 +11,6 @@ public class ServerOnData@A implements Function@A<String,String> {
 
     @Override
     public String@A apply(String@A x) {
-        state.compute(x);
+        return state.compute(x);
     }
 }

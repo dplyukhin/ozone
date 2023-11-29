@@ -32,8 +32,8 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
       CompletableFuture@Server<String> f_y2 = f_x2.thenApply<String@Server>( s_onData );
 
       // Server sends back results.
-      CompletableFuture@Client<String> f_y1_w1 = ch3.<String>com( f_y1, 3@Server, tok_s, 3@Client, tok_c );
-      CompletableFuture@Client<String> f_y2_w2 = ch3.<String>com( f_y2, 4@Server, tok_s, 4@Client, tok_c );
+      CompletableFuture@Worker1<String> f_y1_w1 = ch1.<String>com( f_y1, 3@Server, tok_s, 3@Worker1, tok1 );
+      CompletableFuture@Worker2<String> f_y2_w2 = ch2.<String>com( f_y2, 4@Server, tok_s, 4@Worker2, tok2 );
 
       // Producers store the data.
       Consumer@Worker1<String> w1_onData = new WorkerOnData@Worker1(state1);
