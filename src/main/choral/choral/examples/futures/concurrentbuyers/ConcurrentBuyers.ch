@@ -19,5 +19,10 @@ public class ConcurrentBuyers@( Client1, Client2, Server ) {
       Token@Client2 tok_c2,
       Token@Server tok_s
    ) { 
+      BuyIt@(Client1, Server) chor1 = new BuyIt@(Client1, Server)();
+      chor1.buyItem( ch1, state_c1, state_s, "Sound and Fury"@Client1, tok_c1.nextToken( 0@Client1 ), tok_s.nextToken( 0@Server ));
+
+      BuyIt@(Client2, Server) chor2 = new BuyIt@(Client2, Server)();
+      chor2.buyItem( ch2, state_c2, state_s, "My Year of Rest and Relaxation"@Client2, tok_c2.nextToken( 1@Client2 ), tok_s.nextToken( 1@Server ));
    }
 }
