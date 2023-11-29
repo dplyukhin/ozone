@@ -26,19 +26,18 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
       CompletableFuture@Server<String> f_x2 = ch2.<String>com( x2, 2@Worker2, tok2, 2@Server, tok_s );
 
       // Server computes results.
-      CompletableFuture@Server<String> f_y1 = f_x1.then( x1 -> state_s.compute(x1) );
-      CompletableFuture@Server<String> f_y2 = f_x2.then( x2 -> state_s.compute(x2) );
+      Function@Server<String,String> s_onData = new ServerOnData@Server(state_s);
+      CompletableFuture@Server<String> f_y1 = f_x1.thenApply( s_onData );
+      CompletableFuture@Server<String> f_y2 = f_x2.thenApply( s_onData );
 
       // Server sends back results.
       CompletableFuture@Client<String> f_y1_w1 = ch3.<String>com( f_y1, 3@Server, tok_s, 3@Client, tok_c );
       CompletableFuture@Client<String> f_y2_w2 = ch3.<String>com( f_y2, 4@Server, tok_s, 4@Client, tok_c );
 
       // Producers store the data.
-      f_y1_w1.thenAccept( y1 -> state1.store(y1) );
-      f_y2_w2.thenAccept( y2 -> state2.store(y2) );
-
-      // TODO
-      // Implement Worker callbacks
-      // Implement Server callbacks
+      Consumer@Worker1<String> w1_onData = new WorkerOnData@Worker1(state1);
+      f_y1_w1.thenAccept(w1_onData);
+      Consumer@Worker2<String> w2_onData = new WorkerOnData@Worker2(state2);
+      f_y2_w2.thenAccept(w2_onData);
    }
 }
