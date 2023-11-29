@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import choral.channels.SymChannelImpl;
 import choral.channels.SymSelectChannel_A;
@@ -101,10 +103,28 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 	}
 
  	public < M extends T > CompletableFuture<M> com( Unit u, Unit line_a, Unit tok_a, int line_b, Token tok_b ) {
- 		return this.com(line_b, tok_b);
+ 		return this.comWithTimeout(line_b, tok_b, 0);
+ 	}
+	
+ 	public < M extends T > Unit com( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
+        return this.com(m, line_a, tok_a);
  	}
  
- 	public < M extends T > CompletableFuture<M> com( int line_b, Token tok_b ) {
+ 	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
+		IntegrityKey key = new IntegrityKey(line_a, tok_a);
+ 		return channel.com( new DataMsg( key, m ) );
+ 	}
+    
+ 	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
+        f.thenApply(m -> this.com(m, line_a, tok_a));
+ 		return Unit.id;
+ 	}
+
+ 	public < M extends T > CompletableFuture<M> comWithTimeout( Unit u, Unit line_a, Unit tok_a, int line_b, Token tok_b, long delay ) {
+ 		return this.comWithTimeout(line_b, tok_b, delay);
+ 	}
+ 
+ 	public < M extends T > CompletableFuture<M> comWithTimeout( int line_b, Token tok_b, long delay ) {
 		CompletableFuture<T> future = new CompletableFuture<T>();
 		IntegrityKey key = new IntegrityKey(line_b, tok_b);
 		System.out.println("Setting up listener for key " + key);
@@ -122,22 +142,18 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 		if (payload != null) {
 			future.complete(payload);
 		}
+		// Otherwise the message hasn't arrived yet; schedule the timeout if there is one.
+		else if (delay > 0) {
+			executor.schedule(() -> {
+				future.completeExceptionally(new TimeoutException("Communication with key " + key + " timed out"));
+			}, delay, TimeUnit.MILLISECONDS);
+		}
+
  		return (CompletableFuture<M>) future;
  	}
 	
- 	public < M extends T > Unit com( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
+ 	public < M extends T > Unit comWithTimeout( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b, Unit delay ) {
         return this.com(m, line_a, tok_a);
- 	}
-    
- 
- 	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
-		IntegrityKey key = new IntegrityKey(line_a, tok_a);
- 		return channel.com( new DataMsg( key, m ) );
- 	}
-    
- 	public < M extends T > Unit com( CompletableFuture<M> f, int line_a, Token tok_a, Unit line_b, Unit tok_b ) {
-        f.thenApply(m -> this.com(m, line_a, tok_a));
- 		return Unit.id;
  	}
  
  	@Override
