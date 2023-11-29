@@ -1,5 +1,5 @@
 package choral.runtime;
 
 public interface Token@X {
-
+  Token@X nextToken(int@X line);
 }

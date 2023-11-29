@@ -5,12 +5,23 @@ import choral.runtime.Serializers.KryoSerializable;
 
 @KryoSerializable
 public class Token implements Serializable {
-    public int value;
+    public int head;
+    public Token tail;
 
     public Token() {}
 
-    public Token(int value) {
-        this.value = value;
+    public Token(int head) {
+        this.head = head;
+        this.tail = null;
+    }
+
+    public Token(int head, Token tail) {
+        this.head = head;
+        this.tail = tail;
+    }
+
+    public Token nextToken(int line) {
+        return new Token(line, this);
     }
 
     @Override
@@ -20,16 +31,16 @@ public class Token implements Serializable {
         if (!(o instanceof Token))
             return false;
         Token that = (Token) o;
-        return this.value == that.value;
+        return this.head == that.head && this.tail == that.tail;
     }
 
     @Override
     public int hashCode() {
-        return value;
+        return Objects.hash(head, tail);
     }
 
     @Override
     public String toString() {
-        return "Token(" + value + ")";
+        return "Token(" + head + "," + tail + ")";
     }
 }
