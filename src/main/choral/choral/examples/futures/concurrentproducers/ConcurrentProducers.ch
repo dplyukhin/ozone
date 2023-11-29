@@ -1,6 +1,7 @@
 package choral.examples.futures.concurrentproducers;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.Consumer;
 
 import choral.runtime.AsyncChannel;
@@ -15,7 +16,7 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
       ServerState@Server state_s,
       Token@Worker1 tok1,
       Token@Worker2 tok2,
-      Token@Server tok_s,
+      Token@Server tok_s
    ) { 
       // Workers produce data.
       String@Worker1 x1 = state1.produce();
@@ -27,8 +28,8 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
 
       // Server computes results.
       Function@Server<String,String> s_onData = new ServerOnData@Server(state_s);
-      CompletableFuture@Server<String> f_y1 = f_x1.thenApply( s_onData );
-      CompletableFuture@Server<String> f_y2 = f_x2.thenApply( s_onData );
+      CompletableFuture@Server<String> f_y1 = f_x1.thenApply<String@Server>( s_onData );
+      CompletableFuture@Server<String> f_y2 = f_x2.thenApply<String@Server>( s_onData );
 
       // Server sends back results.
       CompletableFuture@Client<String> f_y1_w1 = ch3.<String>com( f_y1, 3@Server, tok_s, 3@Client, tok_c );
