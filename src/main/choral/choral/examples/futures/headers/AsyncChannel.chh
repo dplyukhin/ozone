@@ -9,6 +9,9 @@ public interface AsyncChannel@( A, B )< T@X > {
 	< S@Y extends T@Y > CompletableFuture@B<S> com( CompletableFuture@A<S> m, int@A line_a, Token@A tok_a, int@B line_b, Token@B tok_b );
 	< S@Y extends T@Y > CompletableFuture@A<S> com( CompletableFuture@B<S> m, int@B line_b, Token@B tok_b, int@A line_a, Token@A tok_a );
 
+	< S@Y extends T@Y > CompletableFuture@B<S> comWithTimeout( S@A m, int@A line_a, Token@A tok_a, int@B line_b, Token@B tok_b, long@B delay );
+	< S@Y extends T@Y > CompletableFuture@A<S> comWithTimeout( S@B m, int@B line_b, Token@B tok_b, int@A line_a, Token@A tok_a, long@B delay );
+	
 	@SelectionMethod
 	< T@X extends Enum@X< T > > T@B select( T@A m );
 	@SelectionMethod
