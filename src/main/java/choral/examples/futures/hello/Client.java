@@ -16,7 +16,7 @@ public class Client {
         System.out.println("Connecting to server...");
 
         AsyncChannel_A<Object> ch = new AsyncChannel_A<Object>(
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.PORT

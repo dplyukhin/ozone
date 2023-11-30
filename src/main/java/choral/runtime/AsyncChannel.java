@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -17,7 +18,7 @@ import choral.lang.Unit;
 // TODO: If the message can be "null", the futures/messages logic is broken.
 
 public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B {
-	protected ExecutorService executor;
+	protected ScheduledExecutorService executor;
     protected SymChannelImpl<Object> channel;
 
 	/** 

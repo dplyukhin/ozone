@@ -17,7 +17,7 @@ public class Worker2 {
         System.out.println("Connecting to server...");
 
         AsyncChannel_A<String> ch = new AsyncChannel_A<String>(
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.WORKER2_PORT

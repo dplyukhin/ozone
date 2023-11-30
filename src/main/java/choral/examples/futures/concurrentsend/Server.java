@@ -45,19 +45,19 @@ public class Server {
             );
 
         AsyncChannel_A<String> ch_c = new AsyncChannel_A<String>( 
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             client_listener.getNext()
         );
         System.out.println("Client connected.");
 
         AsyncChannel_B<String> ch_w1 = new AsyncChannel_B<String>( 
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             worker1_listener.getNext()
         );
         System.out.println("Worker1 connected.");
 
         AsyncChannel_B<String> ch_w2 = new AsyncChannel_B<String>( 
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             worker2_listener.getNext()
         );
         System.out.println("Worker2 connected.");

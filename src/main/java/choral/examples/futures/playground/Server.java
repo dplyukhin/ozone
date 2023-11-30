@@ -39,7 +39,7 @@ public class Server {
             );
 
         AsyncSocketByteChannel ch = //new AsyncChannel_B<Object>( 
-            //Executors.newSingleThreadExecutor(),
+            //Executors.newSingleThreadScheduledExecutor(),
             listener.getNext();
         //);
         System.out.println("Client connected.");

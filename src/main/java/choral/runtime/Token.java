@@ -1,6 +1,8 @@
 package choral.runtime;
 
 import java.io.Serializable;
+import java.util.Objects;
+
 import choral.runtime.Serializers.KryoSerializable;
 
 @KryoSerializable

@@ -18,9 +18,9 @@ public class SimpleTimeout@( Client, Server )< T@X, R@Y > {
       OnTimeout@Server noMsg2 = new OnTimeout@Server("msg2"@Server);
 
       CompletableFuture@Server<String> msg1 = ch.<String>com( "msg1"@Client, 0@Client, tok_c, 0@Server, tok_s );
-      msg1.thenAccept(onMsg1).exceptionally(noMsg1);
+      //msg1.thenAccept(onMsg1).exceptionally(noMsg1);
 
       CompletableFuture@Server<String> msg2 = ch.<String>com( "msg2"@Client, 1@Client, tok_c, 1@Server, tok_s );
-      msg2.thenAccept(onMsg2).exceptionally(noMsg2);
+      //msg2.thenAccept(onMsg2).exceptionally(noMsg2);
    }
 }

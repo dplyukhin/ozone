@@ -19,7 +19,7 @@ public class Client {
 
         AsyncSocketByteChannel ch = 
             //new AsyncChannel_A<Object>(
-            //Executors.newSingleThreadExecutor(),
+            //Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.PORT

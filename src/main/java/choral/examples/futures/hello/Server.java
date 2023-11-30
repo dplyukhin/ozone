@@ -32,7 +32,7 @@ public class Server {
             );
 
         AsyncChannel_B<Object> ch = new AsyncChannel_B<Object>( 
-            Executors.newSingleThreadExecutor(),
+            Executors.newSingleThreadScheduledExecutor(),
             listener.getNext()
         );
         System.out.println("Client connected.");
