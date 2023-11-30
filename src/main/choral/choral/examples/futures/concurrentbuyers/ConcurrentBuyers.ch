@@ -7,6 +7,13 @@ import java.util.function.Consumer;
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
 
+/** 
+ * A choreography in which two clients concurrently attempt to buy items
+ * from a server, which represents an online shop. The choreography is
+ * similar to [[choral.examples.futures.concurrentproducers]], but uses
+ * a choreographic procedure [[BuyIt]]. This shows how processes need to
+ * create fresh tokens whenever a procedure is called.
+ */
 public class ConcurrentBuyers@( Client1, Client2, Server ) {
 
 	public void go( 

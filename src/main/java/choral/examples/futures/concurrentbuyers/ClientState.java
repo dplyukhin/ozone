@@ -1,4 +1,4 @@
-package choral.examples.futures.concurrentproducers;
+package choral.examples.futures.concurrentbuyers;
 
 import java.lang.Thread;
 import java.util.ArrayList;
