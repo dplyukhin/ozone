@@ -8,7 +8,7 @@ import java.util.function.Function;
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
 
-public class SimpleTimeout@( Client, Server )< T@X, R@Y > {
+public class SimpleTimeout@( Client, Server ) {
 	public void go( 
       AsyncChannel@( Client, Server )< String > ch, 
       Token@Client tok_c,
