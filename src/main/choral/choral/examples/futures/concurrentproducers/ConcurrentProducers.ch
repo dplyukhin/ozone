@@ -28,8 +28,8 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
 
       // Server computes results.
       Function@Server<String,String> s_onData = new ServerOnData@Server(state_s);
-      CompletableFuture@Server<String> f_y1 = f_x1.thenApply<String@Server>( s_onData );
-      CompletableFuture@Server<String> f_y2 = f_x2.thenApply<String@Server>( s_onData );
+      CompletableFuture@Server<String> f_y1 = f_x1.<String>thenApply( s_onData );
+      CompletableFuture@Server<String> f_y2 = f_x2.<String>thenApply( s_onData );
 
       // Server sends back results.
       CompletableFuture@Worker1<String> f_y1_w1 = ch1.<String>com( f_y1, 3@Server, tok_s, 3@Worker1, tok1 );

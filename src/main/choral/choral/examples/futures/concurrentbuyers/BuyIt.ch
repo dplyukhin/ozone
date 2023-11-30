@@ -24,7 +24,7 @@ public class BuyIt@( Client, Server ) {
 
       // Server sells the item.
       Function@Server<String,String> onItemID = new OnItemID@Server(state_s);
-      CompletableFuture@Server<String> futureItem_s = futureItemID.thenApply( onItemID );
+      CompletableFuture@Server<String> futureItem_s = futureItemID.<String>thenApply( onItemID );
 
       // Server sends back the item.
       CompletableFuture@Client<String> futureItem_c = ch.<String>com( futureItem_s, 2@Server, tok_s, 2@Client, tok_c );
