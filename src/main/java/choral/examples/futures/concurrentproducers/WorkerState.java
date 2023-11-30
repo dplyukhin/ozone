@@ -21,5 +21,7 @@ public class WorkerState {
         return "(data from " + workerName + ")";
     }
 
-    public void store(String x) {}
+    public void store(String x) {
+        System.out.println(workerName + " got responses: " + x);
+    }
 }

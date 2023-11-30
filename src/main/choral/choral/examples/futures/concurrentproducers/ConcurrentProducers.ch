@@ -7,6 +7,11 @@ import java.util.function.Consumer;
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
 
+/**
+ * A choreography where two workers produce values in parallel and send them to 
+ * a server, which computes responses and sends them back to their respective
+ * processes. The server uses futures to respond to the workers concurrently.
+ */
 public class ConcurrentProducers@( Worker1, Worker2, Server ) {
 	public void go( 
       AsyncChannel@( Worker1, Server )< String > ch1, 
