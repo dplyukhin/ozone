@@ -5,12 +5,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import choral.runtime.AsyncChannel;
+import choral.runtime.UnreliableAsyncChannel;
 import choral.runtime.Token;
 
 public class SimpleTimeout@( Client, Server ) {
 	public void go( 
-      AsyncChannel@( Client, Server )< String > ch, 
+      UnreliableAsyncChannel@( Client, Server )< String > ch, 
       Token@Client tok_c,
       Token@Server tok_s
    ) { 

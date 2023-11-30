@@ -14,6 +14,6 @@ public class OnTimeout@Server<R@X> implements Function@Server<R, String> {
     @Override
     public String@Server apply(R@Server exn) {
         System@Server.out.println("Server timed out while waiting for "@Server + tag);
-        return null@Server;
+        return ""@Server;
     }
 }

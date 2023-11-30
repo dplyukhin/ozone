@@ -15,7 +15,7 @@ import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
-
+import choral.runtime.UnreliableAsyncChannel_B;
 import choral.examples.futures.hello.HelloRoles_Server;
 
 public class Server {
@@ -31,8 +31,8 @@ public class Server {
                 Server.HOST, Server.PORT 
             );
 
-        AsyncChannel_B<String> ch = new AsyncChannel_B<String>( 
-            Executors.newSingleThreadScheduledExecutor(),
+        UnreliableAsyncChannel_B<String> ch = new UnreliableAsyncChannel_B<String>( 
+            Executors.newScheduledThreadPool(2),
             listener.getNext()
         );
         System.out.println("Client connected.");
