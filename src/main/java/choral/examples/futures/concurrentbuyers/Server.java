@@ -48,7 +48,7 @@ public class Server {
         );
         System.out.println("Client2 connected.");
 
-        ServerState state = new ServerState(1000);
+        ServerState state = new ServerState(0);
         ConcurrentBuyers_Server prot = new ConcurrentBuyers_Server();
         prot.go(ch_w1, ch_w2, state, new Token(0));
 

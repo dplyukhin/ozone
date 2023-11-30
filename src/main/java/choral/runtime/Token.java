@@ -33,7 +33,8 @@ public class Token implements Serializable {
         if (!(o instanceof Token))
             return false;
         Token that = (Token) o;
-        return this.head == that.head && this.tail == that.tail;
+        return this.head == that.head && 
+            ((this.tail == null && that.tail == null) || this.tail.equals(that.tail));
     }
 
     @Override
