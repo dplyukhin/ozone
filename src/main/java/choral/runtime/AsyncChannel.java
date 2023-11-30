@@ -121,8 +121,8 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  		return Unit.id;
  	}
 
- 	public < M extends T > CompletableFuture<M> comWithTimeout( Unit u, Unit line_a, Unit tok_a, int line_b, Token tok_b, long delay ) {
- 		return this.comWithTimeout(line_b, tok_b, delay);
+ 	public < M extends T > CompletableFuture<M> com( Unit u, Unit line_a, Unit tok_a, int line_b, Token tok_b, long timeout ) {
+ 		return this.comWithTimeout(line_b, tok_b, timeout);
  	}
  
  	public < M extends T > CompletableFuture<M> comWithTimeout( int line_b, Token tok_b, long delay ) {
@@ -153,7 +153,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  		return (CompletableFuture<M>) future;
  	}
 	
- 	public < M extends T > Unit comWithTimeout( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b, Unit delay ) {
+ 	public < M extends T > Unit com( M m, int line_a, Token tok_a, Unit line_b, Unit tok_b, Unit timeout ) {
         return this.com(m, line_a, tok_a);
  	}
  
