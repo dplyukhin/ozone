@@ -1,12 +1,15 @@
 package java.util.concurrent;
 
 import java.lang.Void;
+import java.lang.Throwable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface CompletableFuture@A< T@X > {
 
     public <U@X> CompletableFuture@A<String> thenApply(Function@A< T, U > function);
+
+    public CompletableFuture@A<T> exceptionally(Function@A< Throwable, T > function);
 
     public CompletableFuture@A<Void> thenAccept(Consumer@A< T > action);
     

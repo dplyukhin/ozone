@@ -1,8 +1,9 @@
 package choral.examples.futures.simpletimeout;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.lang.Throwable;
 
-public class OnTimeout@Server implements Consumer@Server<Object> {
+public class OnTimeout@Server<R@X> implements Function@Server<R, String> {
 
     String@Server tag;
 
@@ -11,7 +12,8 @@ public class OnTimeout@Server implements Consumer@Server<Object> {
     }
 
     @Override
-    public void accept(Object@Server msg) {
+    public String@Server apply(R@Server exn) {
         System@Server.out.println("Server timed out while waiting for "@Server + tag);
+        return null@Server;
     }
 }

@@ -1,7 +1,9 @@
 package choral.examples.futures.simpletimeout;
 
+import java.lang.Throwable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import choral.runtime.AsyncChannel;
 import choral.runtime.Token;
@@ -12,15 +14,15 @@ public class SimpleTimeout@( Client, Server )< T@X, R@Y > {
       Token@Client tok_c,
       Token@Server tok_s
    ) { 
-      OnSuccess@Server onMsg1 = new OnSuccess@Server("msg1"@Server);
-      OnSuccess@Server onMsg2 = new OnSuccess@Server("msg2"@Server);
-      OnTimeout@Server noMsg1 = new OnTimeout@Server("msg1"@Server);
-      OnTimeout@Server noMsg2 = new OnTimeout@Server("msg2"@Server);
+      Consumer@Server<String> onMsg1 = new OnSuccess@Server("msg1"@Server);
+      Consumer@Server<String> onMsg2 = new OnSuccess@Server("msg2"@Server);
+      Function@Server<Throwable, String> noMsg1 = new OnTimeout@Server<Throwable>("msg1"@Server);
+      Function@Server<Throwable, String> noMsg2 = new OnTimeout@Server<Throwable>("msg2"@Server);
 
       CompletableFuture@Server<String> msg1 = ch.<String>com( "msg1"@Client, 0@Client, tok_c, 0@Server, tok_s );
-      //msg1.thenAccept(onMsg1).exceptionally(noMsg1);
+      msg1.exceptionally(noMsg1).thenAccept(onMsg1);
 
       CompletableFuture@Server<String> msg2 = ch.<String>com( "msg2"@Client, 1@Client, tok_c, 1@Server, tok_s );
-      //msg2.thenAccept(onMsg2).exceptionally(noMsg2);
+      msg2.exceptionally(noMsg2).thenAccept(onMsg2);
    }
 }
