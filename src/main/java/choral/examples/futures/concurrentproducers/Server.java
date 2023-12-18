@@ -21,6 +21,7 @@ public class Server {
     public static final String HOST = "localhost";
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
+    public static final int NUM_ITERATIONS = 500;
 
     public static void main(String[] args) throws java.io.IOException {
         System.out.println("Running server...");
@@ -50,7 +51,9 @@ public class Server {
 
         ServerState state = new ServerState(1000);
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
-        prot.go(ch_w1, ch_w2, state, new Token(0));
+        for (int i = 0; i < NUM_ITERATIONS; i++) {
+            prot.go(ch_w1, ch_w2, state, new Token(i));
+        }
 
         worker1_listener.close();
         worker2_listener.close();

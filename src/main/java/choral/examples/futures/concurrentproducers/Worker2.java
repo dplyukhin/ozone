@@ -24,8 +24,13 @@ public class Worker2 {
 
         System.out.println("Connection succeeded.");
 
-        ConcurrentProducers_Worker2 prot = new ConcurrentProducers_Worker2();
         WorkerState state = new WorkerState("Worker2", 0);
-        prot.go(ch, state, new Token(0));
+        ConcurrentProducers_Worker2 prot = new ConcurrentProducers_Worker2();
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
+            prot.go(ch, state, new Token(i));
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
     }
 }
