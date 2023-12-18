@@ -19,13 +19,15 @@ public class ConcurrentProducers@( Worker1, Worker2, Server ) {
       WorkerState@Worker1 state1,
       WorkerState@Worker2 state2,
       ServerState@Server state_s,
+      String@Worker1 input1,
+      String@Worker2 input2,
       Token@Worker1 tok1,
       Token@Worker2 tok2,
       Token@Server tok_s
    ) { 
       // Workers produce data.
-      String@Worker1 x1 = state1.produce();
-      String@Worker2 x2 = state2.produce();
+      String@Worker1 x1 = state1.produce(input1);
+      String@Worker2 x2 = state2.produce(input2);
 
       // Workers send data to the server.
       CompletableFuture@Server<String> f_x1 = ch1.<String>com( x1, 1@Worker1, tok1, 1@Server, tok_s );

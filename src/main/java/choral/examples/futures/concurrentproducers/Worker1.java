@@ -24,13 +24,19 @@ public class Worker1 {
 
         System.out.println("Connection succeeded.");
 
-        WorkerState state = new WorkerState("Worker1", 0);
+        WorkerState state = new WorkerState("Worker1", 0, Server.NUM_ITERATIONS);
         ConcurrentProducers_Worker1 prot = new ConcurrentProducers_Worker1();
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
-            prot.go(ch, state, new Token(i));
+            prot.go(ch, state, String.valueOf(i), new Token(i));
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);
+        try {
+            state.iterationsLeft.await();
+            long endTime = System.currentTimeMillis();
+            System.out.println(endTime - startTime);
+        }
+        catch (InterruptedException exn) {
+            System.out.println("Interrupted while waiting for iterations to complete.");
+        }
     }
 }

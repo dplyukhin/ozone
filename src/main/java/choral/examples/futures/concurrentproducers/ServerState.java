@@ -18,6 +18,6 @@ public class ServerState {
         catch (InterruptedException e) {
             System.out.println("Server wait interrupted!");
         }
-        return "(data processed by server; input: " + input + ")";
+        return input;
     }
 }

@@ -49,7 +49,7 @@ public class Server {
         );
         System.out.println("Worker2 connected.");
 
-        ServerState state = new ServerState(1000);
+        ServerState state = new ServerState(5);
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
         for (int i = 0; i < NUM_ITERATIONS; i++) {
             prot.go(ch_w1, ch_w2, state, new Token(i));
