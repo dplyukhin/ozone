@@ -2,6 +2,7 @@ package choral.examples.futures.concurrentsend;
 
 import java.util.concurrent.Executors;
 
+import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Serializers.JSONSerializer;
@@ -16,7 +17,7 @@ public class Client {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_B<String> ch = new AsyncChannel_B<String>(
+        AsyncChannel_B<String> ch = new AsyncChannelImpl<String>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),

@@ -7,6 +7,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executors;
 
 import choral.channels.SymChannel_B;
+import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
@@ -37,13 +38,13 @@ public class Server {
                 Server.HOST, Server.CLIENT2_PORT 
             );
 
-        AsyncChannel_B<String> ch_w1 = new AsyncChannel_B<String>( 
+        AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
             Executors.newSingleThreadScheduledExecutor(),
             client1_listener.getNext()
         );
         Log.debug("Client1 connected.");
 
-        AsyncChannel_B<String> ch_w2 = new AsyncChannel_B<String>( 
+        AsyncChannel_B<String> ch_w2 = new AsyncChannelImpl<String>( 
             Executors.newSingleThreadScheduledExecutor(),
             client2_listener.getNext()
         );

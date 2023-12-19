@@ -7,6 +7,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executors;
 
 import choral.channels.SymChannel_B;
+import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
 import choral.runtime.Media.ServerSocketByteChannel;
@@ -15,7 +16,7 @@ import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
-import choral.runtime.UnreliableAsyncChannel_B;
+import choral.runtime.UnreliableAsyncChannel;
 import choral.examples.futures.hello.HelloRoles_Server;
 import choral.Log;
 
@@ -32,7 +33,7 @@ public class Server {
                 Server.HOST, Server.PORT 
             );
 
-        UnreliableAsyncChannel_B<String> ch = new UnreliableAsyncChannel_B<String>( 
+        AsyncChannel_B<String> ch = new UnreliableAsyncChannel<String>( 
             Executors.newScheduledThreadPool(2),
             listener.getNext()
         );

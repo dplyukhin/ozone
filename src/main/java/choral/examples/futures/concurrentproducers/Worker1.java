@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
 
+import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncSocketByteChannel;
@@ -20,7 +21,7 @@ public class Worker1 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_A<String> ch = new AsyncChannel_A<String>(
+        AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
@@ -42,7 +43,7 @@ public class Worker1 {
             System.out.println(endTime - startTime);
 
             Iterable<Long> latencies = state.getLatencies();
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("worker1-latencies.txt"))) {
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("worker1-latencies.csv"))) {
                 for (long value : latencies) {
                     writer.write(Long.toString(value));
                     writer.newLine();

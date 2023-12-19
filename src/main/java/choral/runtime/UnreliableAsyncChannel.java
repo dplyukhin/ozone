@@ -17,9 +17,13 @@ import choral.channels.SymSelectChannel_B;
 import choral.lang.Unit;
 
 /** An unreliable channel for testing purposes. */
-public class UnreliableAsyncChannel< T > extends AsyncChannel< T > {
+public class UnreliableAsyncChannel< T > extends AsyncChannelImpl< T > {
 	/** Counts how many messages this channel has been asked to send. */
 	private int messageCount;
+
+    public UnreliableAsyncChannel( ScheduledExecutorService executor, SymChannelImpl<Object> channel ) {
+		super(executor, channel);
+    }
  
 	@Override
  	public < M extends T > Unit com( M m, int line_a, Token tok_a) {

@@ -23,6 +23,12 @@ public class DelayableChannel< T > implements SymChannel_A< T >, SymChannel_B< T
 	protected SymChannelImpl<T> channel;
 	protected long maxDelayMillis;
 	protected Random random;
+
+    public DelayableChannel( SymChannelImpl<T> channel, long maxDelayMillis ) {
+        this.channel = channel;
+        this.maxDelayMillis = maxDelayMillis;
+        this.random = new Random();
+    }
  
 	@Override
  	public < M extends T > Unit com( M m ) {

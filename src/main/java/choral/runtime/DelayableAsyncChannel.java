@@ -17,10 +17,16 @@ import choral.channels.SymSelectChannel_B;
 import choral.lang.Unit;
 
 /** An channel with simulated delays for benchmarking purposes. */
-public class DelayableAsyncChannel< T > extends AsyncChannel< T > {
+public class DelayableAsyncChannel< T > extends AsyncChannelImpl< T > {
 	/** The longest possible delay, in milliseconds. */
 	protected long maxDelayMillis;
 	protected Random random;
+
+	public DelayableAsyncChannel( ScheduledExecutorService executor, SymChannelImpl<Object> channel, long maxDelayMillis ) {
+		super(executor, channel);
+        this.maxDelayMillis = maxDelayMillis;
+        this.random = new Random();
+    }
  
 	@Override
  	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
