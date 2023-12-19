@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import choral.Log;
 import choral.channels.SymChannelImpl;
 import choral.channels.SymSelectChannel_A;
 import choral.channels.SymSelectChannel_B;
@@ -26,7 +27,7 @@ public class UnreliableAsyncChannel< T > extends AsyncChannel< T > {
 		messageCount++;
 		// Skip sending every other message.
 		if (messageCount % 2 == 1) {
-			System.out.println("Dropping message " + m + " with key " + key);
+			Log.debug("Dropping message " + m + " with key " + key);
 			return Unit.id;
 		}
 		else {

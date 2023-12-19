@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import choral.Log;
 import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
@@ -40,7 +41,7 @@ public class DelayableChannel< T > implements SymChannel_A< T >, SymChannel_B< T
 			Thread.sleep(random.nextLong(maxDelayMillis));
 		}
 		catch (InterruptedException exn) {
-			System.out.println("Interrupted while waiting for delayed message.");
+			Log.debug("Interrupted while waiting for delayed message.");
 		}
 		return channel.com();
 	}

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import choral.Log;
 
 public class WorkerState {
     String workerName;
@@ -28,13 +29,13 @@ public class WorkerState {
             Thread.sleep(waitTime);
         }
         catch (InterruptedException e) {
-            System.out.println("Worker wait interrupted!");
+            Log.debug("Worker wait interrupted!");
         }
         return input;
     }
 
     public void store(String x) {
-        //System.out.println(workerName + " got responses: " + x);
+        //Log.debug(workerName + " got responses: " + x);
         endTimes.put(x, System.currentTimeMillis());
         iterationsLeft.countDown();
     }

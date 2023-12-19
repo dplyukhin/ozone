@@ -8,11 +8,12 @@ import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
+import choral.Log;
 
 public class Worker1 {
 
     public static void main(String[] args) {
-        System.out.println("Connecting to server...");
+        Log.debug("Connecting to server...");
 
         AsyncChannel_A<String> ch = new AsyncChannel_A<String>(
             Executors.newSingleThreadScheduledExecutor(),
@@ -22,7 +23,7 @@ public class Worker1 {
             )
         );
 
-        System.out.println("Connection succeeded.");
+        Log.debug("Connection succeeded.");
 
         WorkerState state = new WorkerState("Worker1", 0, Server.NUM_ITERATIONS);
         ConcurrentProducers_Worker1 prot = new ConcurrentProducers_Worker1();
@@ -36,7 +37,7 @@ public class Worker1 {
             System.out.println(endTime - startTime);
         }
         catch (InterruptedException exn) {
-            System.out.println("Interrupted while waiting for iterations to complete.");
+            Log.debug("Interrupted while waiting for iterations to complete.");
         }
     }
 }

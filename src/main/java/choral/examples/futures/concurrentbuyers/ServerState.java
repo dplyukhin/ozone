@@ -1,6 +1,7 @@
 package choral.examples.futures.concurrentbuyers;
 
 import java.lang.Thread;
+import choral.Log;
 
 public class ServerState {
     int waitTime;
@@ -14,7 +15,7 @@ public class ServerState {
             Thread.sleep(waitTime);
         }
         catch (InterruptedException e) {
-            System.out.println("Server wait interrupted!");
+            Log.debug("Server wait interrupted!");
         }
         return "(item with ID " + itemID + ")";
     }

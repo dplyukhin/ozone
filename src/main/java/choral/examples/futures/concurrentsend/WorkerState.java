@@ -1,6 +1,7 @@
 package choral.examples.futures.concurrentsend;
 
 import java.lang.Thread;
+import choral.Log;
 
 public class WorkerState {
     String workerName;
@@ -16,7 +17,7 @@ public class WorkerState {
             Thread.sleep(waitTime);
         }
         catch (InterruptedException e) {
-            System.out.println("Worker wait interrupted!");
+            Log.debug("Worker wait interrupted!");
         }
         return "(data from " + workerName + ")";
     }

@@ -16,6 +16,7 @@ import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
+import choral.Log;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -23,7 +24,7 @@ public class Server {
     public static final int CLIENT2_PORT = 8669;
 
     public static void main(String[] args) throws java.io.IOException {
-        System.out.println("Running server...");
+        Log.debug("Running server...");
 
 		AsyncServerSocketByteChannel client1_listener =
             AsyncServerSocketByteChannel.at( 
@@ -40,13 +41,13 @@ public class Server {
             Executors.newSingleThreadScheduledExecutor(),
             client1_listener.getNext()
         );
-        System.out.println("Client1 connected.");
+        Log.debug("Client1 connected.");
 
         AsyncChannel_B<String> ch_w2 = new AsyncChannel_B<String>( 
             Executors.newSingleThreadScheduledExecutor(),
             client2_listener.getNext()
         );
-        System.out.println("Client2 connected.");
+        Log.debug("Client2 connected.");
 
         ServerState state = new ServerState(0);
         ConcurrentBuyers_Server prot = new ConcurrentBuyers_Server();
@@ -54,6 +55,6 @@ public class Server {
 
         client1_listener.close();
         client2_listener.close();
-        System.out.println("Done.");
+        Log.debug("Done.");
     }
 }

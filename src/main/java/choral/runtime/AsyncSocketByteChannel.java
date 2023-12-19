@@ -14,6 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import choral.Log;
 import choral.channels.SymChannelImpl;
 import choral.channels.SymDataChannelImpl;
 import choral.lang.Unit;
@@ -71,10 +72,10 @@ public class AsyncSocketByteChannel implements SymChannelImpl< Object > {
         try {
             synchronized (this) {
                 // Use synchronization to prevent concurrent writes from being interleaved.
-                System.out.println("Sending " + m);
+                Log.debug("Sending " + m);
                 ByteBuffer buf = serializeObject((Serializable) m); //this.serializer.fromObject(m);
-                //System.out.println("Encoded and decoded as:" + serializer.toObject(buf));
-                //System.out.println("Encoded as " + Arrays.toString(buf.array()) + " of length " + buf.limit());
+                //Log.debug("Encoded and decoded as:" + serializer.toObject(buf));
+                //Log.debug("Encoded as " + Arrays.toString(buf.array()) + " of length " + buf.limit());
                 this.sendTransmissionLength( buf.limit() );
                 channel.write( buf );
             }

@@ -11,11 +11,12 @@ import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
 import choral.runtime.IntegrityKey;
+import choral.Log;
 
 public class Client {
 
     public static void main(String[] args) {
-        System.out.println("Connecting to server...");
+        Log.debug("Connecting to server...");
 
         AsyncSocketByteChannel ch = 
             //new AsyncChannel_A<Object>(
@@ -27,7 +28,7 @@ public class Client {
         //);
 
         ch.com(new IntegrityKey(0, new Token(0)));
-        System.out.println("Sent hello");
-        System.out.println("Got: " + ch.com());
+        Log.debug("Sent hello");
+        Log.debug("Got: " + ch.com());
     }
 }

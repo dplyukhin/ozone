@@ -17,13 +17,14 @@ import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
 import choral.runtime.UnreliableAsyncChannel_B;
 import choral.examples.futures.hello.HelloRoles_Server;
+import choral.Log;
 
 public class Server {
     public static final String HOST = "localhost";
     public static final int PORT = 8667;
 
     public static void main(String[] args) throws java.io.IOException {
-        System.out.println("Running server...");
+        Log.debug("Running server...");
         // Run server and create a channel from the first open connection
 		AsyncServerSocketByteChannel listener =
             AsyncServerSocketByteChannel.at( 
@@ -35,12 +36,12 @@ public class Server {
             Executors.newScheduledThreadPool(2),
             listener.getNext()
         );
-        System.out.println("Client connected.");
+        Log.debug("Client connected.");
 
         SimpleTimeout_Server prot = new SimpleTimeout_Server();
         prot.go(ch, new Token(0));
 
         listener.close();
-        System.out.println("Done.");
+        Log.debug("Done.");
     }
 }

@@ -7,13 +7,14 @@ import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
+import choral.Log;
 
 import choral.examples.futures.concurrentsend.*;
 
 public class Client {
 
     public static void main(String[] args) {
-        System.out.println("Connecting to server...");
+        Log.debug("Connecting to server...");
 
         AsyncChannel_B<String> ch = new AsyncChannel_B<String>(
             Executors.newSingleThreadScheduledExecutor(),
@@ -23,7 +24,7 @@ public class Client {
             )
         );
 
-        System.out.println("Connection succeeded.");
+        Log.debug("Connection succeeded.");
 
         ConcurrentSend_Client prot = new ConcurrentSend_Client();
         prot.go(ch, new Token(0));

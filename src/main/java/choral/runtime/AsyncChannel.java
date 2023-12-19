@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import choral.Log;
 import choral.channels.SymChannelImpl;
 import choral.channels.SymSelectChannel_A;
 import choral.channels.SymSelectChannel_B;
@@ -48,10 +49,10 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 	 */
 	protected void listen() {
 		executor.submit(() -> {
-			System.out.println("Starting listener...");
+			Log.debug("Starting listener...");
 			while (true) {
 				Object msg = channel.com();
-				System.out.println("Got " + msg);
+				Log.debug("Got " + msg);
 
 				if (msg instanceof DataMsg) {
 					DataMsg dataMsg = (DataMsg) msg;
@@ -78,7 +79,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 					Enum<?> selection = selectMsg.selection;
 
 					// Case 2: The message is an enum from a select().
-					System.out.println("Got selection " + selection);
+					Log.debug("Got selection " + selection);
 					
 					// We use synchronization to maintain the `selectionHandler` invariant.
 					CompletableFuture< Enum<?> > handler = null;
@@ -97,7 +98,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
 					}
 				}
 				else {
-					System.out.println("Unexpected message " + msg + " of type " + msg.getClass());
+					Log.debug("Unexpected message " + msg + " of type " + msg.getClass());
 				}
 			}
 		});
@@ -128,7 +129,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  	public < M extends T > CompletableFuture<M> comWithTimeout( int line_b, Token tok_b, long delay ) {
 		CompletableFuture<T> future = new CompletableFuture<T>();
 		IntegrityKey key = new IntegrityKey(line_b, tok_b);
-		System.out.println("Setting up listener for key " + key);
+		Log.debug("Setting up listener for key " + key);
 
 		// Similar to the block in listen(). We need to atomically update `messages`
 		// or `futures`.
@@ -159,7 +160,7 @@ public class AsyncChannel< T > implements SymSelectChannel_A, SymSelectChannel_B
  
  	@Override
  	public < M extends Enum< M > > Unit select ( M m ) {
-		System.out.println("Selecting " + m);
+		Log.debug("Selecting " + m);
  		return channel.com( new SelectMsg(m) );
  	}
  

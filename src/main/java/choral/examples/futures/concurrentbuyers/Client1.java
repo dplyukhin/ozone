@@ -8,11 +8,12 @@ import choral.runtime.AsyncSocketByteChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
+import choral.Log;
 
 public class Client1 {
 
     public static void main(String[] args) {
-        System.out.println("Connecting to server...");
+        Log.debug("Connecting to server...");
 
         AsyncChannel_A<String> ch = new AsyncChannel_A<String>(
             Executors.newSingleThreadScheduledExecutor(),
@@ -22,7 +23,7 @@ public class Client1 {
             )
         );
 
-        System.out.println("Connection succeeded.");
+        Log.debug("Connection succeeded.");
 
         ConcurrentBuyers_Client1 prot = new ConcurrentBuyers_Client1();
         ClientState state = new ClientState();

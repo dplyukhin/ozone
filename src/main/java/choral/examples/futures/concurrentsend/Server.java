@@ -16,6 +16,7 @@ import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
+import choral.Log;
 
 import choral.examples.futures.concurrentsend.*;
 
@@ -26,7 +27,7 @@ public class Server {
     public static final int WORKER2_PORT = 8669;
 
     public static void main(String[] args) throws java.io.IOException {
-        System.out.println("Running server...");
+        Log.debug("Running server...");
 
 		AsyncServerSocketByteChannel client_listener =
             AsyncServerSocketByteChannel.at( 
@@ -48,24 +49,24 @@ public class Server {
             Executors.newSingleThreadScheduledExecutor(),
             client_listener.getNext()
         );
-        System.out.println("Client connected.");
+        Log.debug("Client connected.");
 
         AsyncChannel_B<String> ch_w1 = new AsyncChannel_B<String>( 
             Executors.newSingleThreadScheduledExecutor(),
             worker1_listener.getNext()
         );
-        System.out.println("Worker1 connected.");
+        Log.debug("Worker1 connected.");
 
         AsyncChannel_B<String> ch_w2 = new AsyncChannel_B<String>( 
             Executors.newSingleThreadScheduledExecutor(),
             worker2_listener.getNext()
         );
-        System.out.println("Worker2 connected.");
+        Log.debug("Worker2 connected.");
 
         ConcurrentSend_Server prot = new ConcurrentSend_Server();
         prot.go(ch_w1, ch_w2, ch_c, new Token(0));
 
         client_listener.close();
-        System.out.println("Done.");
+        Log.debug("Done.");
     }
 }
