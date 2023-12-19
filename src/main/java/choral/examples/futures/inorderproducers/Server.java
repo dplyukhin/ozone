@@ -1,31 +1,15 @@
 package choral.examples.futures.inorderproducers;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.concurrent.Executors;
-
-import choral.channels.SymChannel_B;
-import choral.runtime.AsyncChannelImpl;
-import choral.runtime.AsyncChannel_A;
-import choral.runtime.AsyncChannel_B;
-import choral.runtime.AsyncServerSocketByteChannel;
-import choral.runtime.DelayableAsyncChannel;
-import choral.runtime.DelayableChannel;
-import choral.runtime.Media.ServerSocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannel_B;
-import choral.runtime.Serializers.KryoSerializer;
-import choral.runtime.Serializers.JSONSerializer;
-import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
-import choral.runtime.Token;
 import choral.Log;
-
-import choral.examples.futures.concurrentproducers.WorkerState;
-import choral.examples.futures.concurrentproducers.ServerState;
-import choral.examples.futures.concurrentproducers.InOrderProducers_Worker1;
-import choral.examples.futures.concurrentproducers.InOrderProducers_Worker2;
+import choral.channels.SymChannel_B;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Server;
+import choral.examples.futures.concurrentproducers.ServerState;
+import choral.runtime.DelayableChannel;
+import choral.runtime.JavaSerializer;
+import choral.runtime.Token;
+import choral.runtime.Media.ServerSocketByteChannel;
+import choral.runtime.SerializerChannel.SerializerChannelImpl;
+import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -39,25 +23,35 @@ public class Server {
 
 		ServerSocketByteChannel worker1_listener =
             ServerSocketByteChannel.at( 
-                KryoSerializer.getInstance(), 
                 Server.HOST, Server.WORKER1_PORT 
             );
 		ServerSocketByteChannel worker2_listener =
             ServerSocketByteChannel.at( 
-                KryoSerializer.getInstance(), 
                 Server.HOST, Server.WORKER2_PORT 
             );
 
-        SymChannel_B<String> ch_w1 = new DelayableChannel<String>( 
-            worker1_listener.getNext(),
-            MAX_DELAY_MILLIS
-        );
+        SymChannel_B<String> ch_w1 = 
+            new DelayableChannel<String>( 
+                new SerializerChannelImpl(
+                    new JavaSerializer(),
+                    new WrapperByteChannelImpl(
+                        worker1_listener.getNext()
+                    )
+                ),
+                MAX_DELAY_MILLIS
+            );
         Log.debug("Worker1 connected.");
 
-        SymChannel_B<String> ch_w2 = new DelayableChannel<String>( 
-            worker2_listener.getNext(),
-            MAX_DELAY_MILLIS
-        );
+        SymChannel_B<String> ch_w2 = 
+            new DelayableChannel<String>( 
+                new SerializerChannelImpl(
+                    new JavaSerializer(),
+                    new WrapperByteChannelImpl(
+                        worker2_listener.getNext()
+                    )
+                ),
+                MAX_DELAY_MILLIS
+            );
         Log.debug("Worker2 connected.");
 
         ServerState state = new ServerState(5);
