@@ -10,16 +10,16 @@ import java.nio.ByteBuffer;
 
 import choral.runtime.Serializers.ChoralSerializer;
 
-public class JavaSerializer implements ChoralSerializer< Serializable, ByteBuffer > {
+public class JavaSerializer implements ChoralSerializer< Object, ByteBuffer > {
     
     @Override
-	public < M extends Serializable > ByteBuffer fromObject( M obj ) {
+	public < M extends Object > ByteBuffer fromObject( M obj ) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream);
 
 			// Serialize the object
-			objectOutputStream.writeObject(obj);
+			objectOutputStream.writeObject((Serializable) obj);
 			objectOutputStream.flush();
 			ByteBuffer buffer = ByteBuffer.wrap(byteStream.toByteArray());
 
@@ -35,7 +35,7 @@ public class JavaSerializer implements ChoralSerializer< Serializable, ByteBuffe
     }
 
     @Override
-	public < M extends Serializable > M toObject( ByteBuffer buffer ) {
+	public < M extends Object > M toObject( ByteBuffer buffer ) {
 		try {
 			ByteArrayInputStream byteStream = new ByteArrayInputStream(buffer.array());
 			ObjectInputStream objectInputStream = new ObjectInputStream(byteStream);
@@ -47,7 +47,7 @@ public class JavaSerializer implements ChoralSerializer< Serializable, ByteBuffe
 			objectInputStream.close();
 			byteStream.close();
 
-			return deserializedObject;
+			return (M) deserializedObject;
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
