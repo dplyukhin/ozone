@@ -11,6 +11,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
+import choral.runtime.DelayableAsyncChannel;
 import choral.runtime.Media.ServerSocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
@@ -24,6 +25,7 @@ public class Server {
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int NUM_ITERATIONS = 500;
+    public static final int MAX_DELAY_MILLIS = 5;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -39,15 +41,17 @@ public class Server {
                 Server.HOST, Server.WORKER2_PORT 
             );
 
-        AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
-            Executors.newSingleThreadScheduledExecutor(),
-            worker1_listener.getNext()
+        AsyncChannel_B<String> ch_w1 = new DelayableAsyncChannel<String>( 
+            Executors.newScheduledThreadPool(4),
+            worker1_listener.getNext(),
+            MAX_DELAY_MILLIS
         );
         Log.debug("Worker1 connected.");
 
-        AsyncChannel_B<String> ch_w2 = new AsyncChannelImpl<String>( 
-            Executors.newSingleThreadScheduledExecutor(),
-            worker2_listener.getNext()
+        AsyncChannel_B<String> ch_w2 = new DelayableAsyncChannel<String>( 
+            Executors.newScheduledThreadPool(4),
+            worker2_listener.getNext(),
+            MAX_DELAY_MILLIS
         );
         Log.debug("Worker2 connected.");
 

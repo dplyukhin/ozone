@@ -11,6 +11,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncSocketByteChannel;
+import choral.runtime.DelayableAsyncChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
@@ -21,12 +22,13 @@ public class Worker1 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
-            Executors.newSingleThreadScheduledExecutor(),
+        AsyncChannel_A<String> ch = new DelayableAsyncChannel<String>(
+            Executors.newScheduledThreadPool(4),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.WORKER1_PORT
-            )
+            ),
+            Server.MAX_DELAY_MILLIS
         );
 
         Log.debug("Connection succeeded.");
