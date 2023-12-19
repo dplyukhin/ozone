@@ -1,6 +1,7 @@
 package choral.examples.futures.inorderproducers;
 
 import choral.Log;
+import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_B;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Server;
 import choral.examples.futures.concurrentproducers.ServerState;
@@ -30,8 +31,8 @@ public class Server {
                 Server.HOST, Server.WORKER2_PORT 
             );
 
-        SymChannel_B<String> ch_w1 = 
-            new DelayableChannel<String>( 
+        SymChannel_B<Object> ch_w1 = 
+            new DelayableChannel<Object>( 
                 new SerializerChannelImpl(
                     new JavaSerializer(),
                     new WrapperByteChannelImpl(
@@ -42,8 +43,8 @@ public class Server {
             );
         Log.debug("Worker1 connected.");
 
-        SymChannel_B<String> ch_w2 = 
-            new DelayableChannel<String>( 
+        SymChannel_B<Object> ch_w2 = 
+            new DelayableChannel<Object>( 
                 new SerializerChannelImpl(
                     new JavaSerializer(),
                     new WrapperByteChannelImpl(
@@ -57,7 +58,7 @@ public class Server {
         ServerState state = new ServerState(5);
         InOrderProducers_Server prot = new InOrderProducers_Server();
         for (int i = 0; i < NUM_ITERATIONS; i++) {
-            prot.go(ch_w1, ch_w2, state, new Token(i));
+            prot.go(ch_w1, ch_w2, state);
         }
 
         worker1_listener.close();

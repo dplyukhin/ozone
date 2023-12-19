@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import choral.Log;
+import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Worker2;
 import choral.examples.futures.concurrentproducers.WorkerState;
@@ -21,8 +22,8 @@ public class Worker2 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        SymChannel_A<String> ch = 
-            new DelayableChannel<String>( 
+        SymChannel_A<Object> ch = 
+            new DelayableChannel<Object>( 
                 new SerializerChannelImpl(
                     new JavaSerializer(),
                     new WrapperByteChannelImpl(
@@ -31,7 +32,7 @@ public class Worker2 {
                         )
                     )
                 ),
-                MAX_DELAY_MILLIS
+                Server.MAX_DELAY_MILLIS
             );
 
         Log.debug("Connection succeeded.");
@@ -40,7 +41,7 @@ public class Worker2 {
         InOrderProducers_Worker2 prot = new InOrderProducers_Worker2();
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
-            prot.go(ch, state, String.valueOf(i), new Token(i));
+            prot.go(ch, state, String.valueOf(i));
         }
         try {
             state.iterationsLeft.await();

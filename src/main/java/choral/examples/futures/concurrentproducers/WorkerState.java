@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import choral.Log;
 
 public class WorkerState {
-    String workerName;
-    int waitTime;
-    CountDownLatch iterationsLeft;
-    ConcurrentHashMap<String, Long> startTimes;
-    ConcurrentHashMap<String, Long> endTimes;
+    public String workerName;
+    public int waitTime;
+    public CountDownLatch iterationsLeft;
+    public ConcurrentHashMap<String, Long> startTimes;
+    public ConcurrentHashMap<String, Long> endTimes;
 
     public WorkerState(String workerName, int waitTime, int numIterations) {
         this.workerName = workerName;

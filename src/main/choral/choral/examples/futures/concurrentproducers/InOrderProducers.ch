@@ -7,8 +7,8 @@ import choral.channels.SymChannel;
  */
 public class InOrderProducers@( Worker1, Worker2, Server ) {
 	public void go( 
-      SymChannel@( Worker1, Server )< String > ch1, 
-      SymChannel@( Worker2, Server )< String > ch2, 
+      SymChannel@( Worker1, Server )< Object > ch1, 
+      SymChannel@( Worker2, Server )< Object > ch2, 
       WorkerState@Worker1 state1,
       WorkerState@Worker2 state2,
       ServerState@Server state_s,
