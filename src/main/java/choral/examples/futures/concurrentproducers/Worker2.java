@@ -1,5 +1,9 @@
 package choral.examples.futures.concurrentproducers;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
 import choral.runtime.AsyncChannel_A;
@@ -35,6 +39,16 @@ public class Worker2 {
             state.iterationsLeft.await();
             long endTime = System.currentTimeMillis();
             System.out.println(endTime - startTime);
+
+            Iterable<Long> latencies = state.getLatencies();
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("worker2-latencies.txt"))) {
+                for (long value : latencies) {
+                    writer.write(Long.toString(value));
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         catch (InterruptedException exn) {
             Log.debug("Interrupted while waiting for iterations to complete.");

@@ -39,4 +39,14 @@ public class WorkerState {
         endTimes.put(x, System.currentTimeMillis());
         iterationsLeft.countDown();
     }
+
+    public Iterable<Long> getLatencies() {
+        ArrayList<Long> latencies = new ArrayList<>();
+
+        for (String index : startTimes.keySet()) {
+            long latency = endTimes.get(index) - startTimes.get(index);
+            latencies.add(latency);
+        }
+        return latencies;
+    }
 }
