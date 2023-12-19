@@ -103,6 +103,23 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>choral-epp-inorder-producers</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>choral</executable>
+                            <arguments>
+                                <argument>epp</argument>
+                                <argument>--sources=${project.basedir}/src/main/choral</argument>
+                                <argument>--headers=${project.basedir}/src/main/choral</argument>
+                                <argument>--target=${project.build.directory}/generated-sources/choral</argument>
+                                <argument>InOrderProducers</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>choral-epp-concurrent-buyers</id>
                         <phase>generate-sources</phase>
                         <goals>
