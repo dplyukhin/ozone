@@ -42,6 +42,10 @@ public class Worker2 {
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
             prot.go(ch, state, String.valueOf(i));
+            try {
+                Thread.sleep(12);
+            }
+            catch (InterruptedException exn) {}
         }
         try {
             state.iterationsLeft.await();

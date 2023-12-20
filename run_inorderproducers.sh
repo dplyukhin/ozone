@@ -1,7 +1,7 @@
 #!/bin/bash
 trap "kill 0" EXIT
 
-mvn compile
+# mvn compile
 
 mvn exec:java -Dexec.mainClass="choral.examples.futures.inorderproducers.Server" &
 sleep 1
