@@ -17,19 +17,17 @@ def plot_histogram_from_csv(file_paths):
         # Plotting histogram
         axes[i].hist(data[0], bins=50, color='blue', alpha=0.7)
         axes[i].set_title(f'Histogram of {file_path}')
-        axes[i].set_xlabel('Values')
+        axes[i].set_xlabel('Latency (ms)')
         axes[i].set_ylabel('Frequency')
-        axes[i].set_xlim(left=0, right=50)  # Set x-axis to start at 0
+        axes[i].set_xlim(left=0, right=30)
 
     plt.tight_layout()
     plt.show()
 
-# Example file paths
 file_paths = [
     'data/concurrentproducers/worker1-latencies.csv', 
     'data/concurrentproducers/worker2-latencies.csv', 
     'data/inorderproducers/worker1-latencies.csv', 
     'data/inorderproducers/worker2-latencies.csv']
 
-# Uncomment the following line to run the function with the example file paths
 plot_histogram_from_csv(file_paths)
