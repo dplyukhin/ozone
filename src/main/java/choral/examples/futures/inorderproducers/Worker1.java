@@ -46,10 +46,10 @@ public class Worker1 {
             long endTime = System.currentTimeMillis();
             System.out.println(endTime - startTime);
 
-            Iterable<Long> latencies = state.getLatencies();
+            Iterable<Float> latencies = state.getLatencies();
             try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/inorderproducers/worker1-latencies.csv"))) {
-                for (long value : latencies) {
-                    writer.write(Long.toString(value));
+                for (float value : latencies) {
+                    writer.write(Float.toString(value));
                     writer.newLine();
                 }
             } catch (IOException e) {

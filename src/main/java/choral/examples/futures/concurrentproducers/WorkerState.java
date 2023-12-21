@@ -24,7 +24,7 @@ public class WorkerState {
     }
 
     public String produce(String input) {
-        startTimes.put(input, System.currentTimeMillis());
+        startTimes.put(input, System.nanoTime());
         try {
             Thread.sleep(waitTime);
         }
@@ -36,15 +36,15 @@ public class WorkerState {
 
     public void store(String x) {
         //Log.debug(workerName + " got responses: " + x);
-        endTimes.put(x, System.currentTimeMillis());
+        endTimes.put(x, System.nanoTime());
         iterationsLeft.countDown();
     }
 
-    public Iterable<Long> getLatencies() {
-        ArrayList<Long> latencies = new ArrayList<>();
+    public Iterable<Float> getLatencies() {
+        ArrayList<Float> latencies = new ArrayList<>();
 
         for (String index : startTimes.keySet()) {
-            long latency = endTimes.get(index) - startTimes.get(index);
+            float latency = ((float) (endTimes.get(index) - startTimes.get(index))) / 1000000.0F;
             latencies.add(latency);
         }
         return latencies;
