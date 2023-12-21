@@ -6,14 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import choral.Log;
-import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
+import choral.examples.futures.Scheduler;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Worker2;
 import choral.examples.futures.concurrentproducers.WorkerState;
 import choral.runtime.JavaSerializer;
-import choral.runtime.Token;
 import choral.runtime.Media.SocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannelImpl;
 import choral.runtime.SerializerChannel.SerializerChannel_A;
 import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 
@@ -37,12 +35,14 @@ public class Worker2 {
         WorkerState state = new WorkerState("Worker2", 0, Server.NUM_ITERATIONS);
         InOrderProducers_Worker2 prot = new InOrderProducers_Worker2();
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
-            prot.go(ch, state, String.valueOf(i));
-            try { Thread.sleep(12); } catch (InterruptedException exn) {}
-        }
+        new Scheduler().schedule(
+            i -> prot.go(ch, state, String.valueOf(i)), 
+            Server.ITERATION_PERIOD_MILLIS,
+            Server.NUM_ITERATIONS
+        );
         try {
             state.iterationsLeft.await();
+            Thread.sleep(1000);
             long endTime = System.currentTimeMillis();
             System.out.println(endTime - startTime);
 

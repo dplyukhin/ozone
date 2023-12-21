@@ -1,29 +1,21 @@
 package choral.examples.futures.concurrentproducers;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executors;
 
-import choral.channels.SymChannel_B;
-import choral.runtime.AsyncChannel_A;
+import choral.Log;
+import choral.examples.futures.Scheduler;
+import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
-import choral.runtime.AsyncChannelImpl;
-import choral.runtime.Media.ServerSocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannel_B;
-import choral.runtime.Serializers.KryoSerializer;
-import choral.runtime.Serializers.JSONSerializer;
-import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
 import choral.runtime.Token;
-import choral.Log;
+import choral.runtime.Serializers.KryoSerializer;
 
 public class Server {
     public static final String HOST = "localhost";
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
-    public static final int NUM_ITERATIONS = 500;
+    public static final int NUM_ITERATIONS = 2000;
+    public static final int ITERATION_PERIOD_MILLIS = 20;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -53,9 +45,11 @@ public class Server {
 
         ServerState state = new ServerState(5);
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
-        for (int i = 0; i < NUM_ITERATIONS; i++) {
-            prot.go(ch_w1, ch_w2, state, new Token(i));
-        }
+        new Scheduler().schedule(
+            i -> prot.go(ch_w1, ch_w2, state, new Token(i)), 
+            ITERATION_PERIOD_MILLIS,
+            NUM_ITERATIONS
+        );
 
         worker1_listener.close();
         worker2_listener.close();
