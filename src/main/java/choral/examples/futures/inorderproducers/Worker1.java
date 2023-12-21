@@ -10,11 +10,12 @@ import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Worker1;
 import choral.examples.futures.concurrentproducers.WorkerState;
-import choral.runtime.DelayableChannel;
 import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
 import choral.runtime.Media.SocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannelImpl;
+import choral.runtime.SerializerChannel.SerializerChannel_A;
+import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 
 public class Worker1 {
@@ -23,16 +24,13 @@ public class Worker1 {
         Log.debug("Connecting to server...");
 
         SymChannel_A<Object> ch = 
-            new DelayableChannel<Object>( 
-                new SerializerChannelImpl(
-                    new JavaSerializer(),
-                    new WrapperByteChannelImpl(
-                        SocketByteChannel.connect(
-                            Server.HOST, Server.WORKER1_PORT
-                        )
+            new SerializerChannel_A(
+                new JavaSerializer(),
+                new WrapperByteChannelImpl(
+                    SocketByteChannel.connect(
+                        Server.HOST, Server.WORKER1_PORT
                     )
-                ),
-                Server.MAX_DELAY_MILLIS
+                )
             );
 
         Log.debug("Connection succeeded.");
@@ -42,10 +40,7 @@ public class Worker1 {
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
             prot.go(ch, state, String.valueOf(i));
-            try {
-                Thread.sleep(12);
-            }
-            catch (InterruptedException exn) {}
+            try { Thread.sleep(12); } catch (InterruptedException exn) {}
         }
         try {
             state.iterationsLeft.await();
@@ -53,7 +48,7 @@ public class Worker1 {
             System.out.println(endTime - startTime);
 
             Iterable<Long> latencies = state.getLatencies();
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("worker1-latencies.csv"))) {
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/inorderproducers/worker1-latencies.csv"))) {
                 for (long value : latencies) {
                     writer.write(Long.toString(value));
                     writer.newLine();

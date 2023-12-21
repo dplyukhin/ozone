@@ -10,7 +10,6 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncSocketByteChannel;
-import choral.runtime.DelayableAsyncChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
@@ -21,13 +20,12 @@ public class Worker2 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_A<String> ch = new DelayableAsyncChannel<String>(
+        AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
             Executors.newScheduledThreadPool(4),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.WORKER2_PORT
-            ),
-            Server.MAX_DELAY_MILLIS
+            )
         );
 
         Log.debug("Connection succeeded.");
@@ -37,10 +35,7 @@ public class Worker2 {
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
             prot.go(ch, state, String.valueOf(i), new Token(i));
-            try {
-                Thread.sleep(12);
-            }
-            catch (InterruptedException exn) {}
+            try { Thread.sleep(12); } catch (InterruptedException exn) {}
         }
         try {
             state.iterationsLeft.await();
@@ -48,7 +43,7 @@ public class Worker2 {
             System.out.println(endTime - startTime);
 
             Iterable<Long> latencies = state.getLatencies();
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("worker2-latencies.csv"))) {
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/concurrentproducers/worker2-latencies.csv"))) {
                 for (long value : latencies) {
                     writer.write(Long.toString(value));
                     writer.newLine();

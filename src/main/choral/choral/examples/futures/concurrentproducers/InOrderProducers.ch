@@ -19,12 +19,10 @@ public class InOrderProducers@( Worker1, Worker2, Server ) {
       String@Worker1 x1 = state1.produce(input1);
       String@Worker2 x2 = state2.produce(input2);
 
-      // Workers send data to the server.
+      // Workers send data to the server, server computes results, and sends results back to the clients.
       String@Server f_x1 = ch1.<String>com( x1 );
-      String@Server f_x2 = ch2.<String>com( x2 );
-
-      // Server computes results and sends results back to the clients.
       String@Worker1 f_y1_w1 = ch1.<String>com( state_s.compute(f_x1) );
+      String@Server f_x2 = ch2.<String>com( x2 );
       String@Worker2 f_y2_w2 = ch2.<String>com( state_s.compute(f_x2) );
 
       // Producers store the data.
