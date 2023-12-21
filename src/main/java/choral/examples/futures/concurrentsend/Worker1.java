@@ -28,7 +28,7 @@ public class Worker1 {
 
         Log.debug("Connection succeeded.");
 
-        ConcurrentSend_Worker1 prot = new ConcurrentSend_Worker1();
+        ConcurrentSend_KeyService prot = new ConcurrentSend_KeyService();
         WorkerState state = new WorkerState("Worker1", 5000);
         prot.go(ch, state, new Token(0));
     }

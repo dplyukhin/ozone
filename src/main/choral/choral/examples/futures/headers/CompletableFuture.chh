@@ -12,5 +12,6 @@ public interface CompletableFuture@A< T@X > {
     public CompletableFuture@A<T> exceptionally(Function@A< Throwable, T > function);
 
     public CompletableFuture@A<Void> thenAccept(Consumer@A< T > action);
-    
+
+    public T@A join();
 }

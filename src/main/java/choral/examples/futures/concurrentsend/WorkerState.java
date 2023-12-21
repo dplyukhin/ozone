@@ -12,7 +12,7 @@ public class WorkerState {
         this.waitTime = waitTime;
     }
 
-    public String compute() {
+    public String compute(Integer input) {
         try {
             Thread.sleep(waitTime);
         }
