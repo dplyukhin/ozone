@@ -51,7 +51,7 @@ Plot the results with the following script (requires pandas and matplotlib):
 To simulate an unreliable network, install `iproute2` and run the following
 command:
 
-    sudo tc qdisc add dev lo root netem delay 10ms 5ms loss 1%
+    sudo tc qdisc add dev lo root netem delay 10ms 5ms
 
 ...where `lo` is the name of your local network interface. To disable 
 network emulation, run the following:

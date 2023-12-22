@@ -35,7 +35,7 @@ def plot_producers_histograms():
     }
     dims = {
         'left': 0,
-        'right': 50,
+        'right': 200,
         'bottom': 0,
         'top': 80
     }
