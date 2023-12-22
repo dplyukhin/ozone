@@ -20,6 +20,7 @@ public class Server {
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int WORKER_MAX_COMPUTE_TIME_MILLIS = 10;
+    public static final int NUM_ITERATIONS = 2000;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -60,9 +61,9 @@ public class Server {
 
         ConcurrentSend_Server prot = new ConcurrentSend_Server();
         ServerState state = new ServerState();
-        Integer input = 0;
         long startTime = System.nanoTime();
-        prot.concurrentFetchAndForward(ch_w1, ch_w2, ch_c, state, input, new Token(0));
+        for (int i = 0; i < NUM_ITERATIONS; i++)
+            prot.concurrentFetchAndForward(ch_w1, ch_w2, ch_c, state, i, new Token(i));
 
         long endTime = System.nanoTime();
         System.out.println((endTime - startTime) / 1000000);

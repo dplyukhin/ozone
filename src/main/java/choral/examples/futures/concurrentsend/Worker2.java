@@ -30,6 +30,7 @@ public class Worker2 {
 
         ConcurrentSend_ContentService prot = new ConcurrentSend_ContentService();
         WorkerState state = new WorkerState("Worker2");
-        prot.concurrentFetchAndForward(ch, state, new Token(0));
+        for (int i = 0; i < Server.NUM_ITERATIONS; i++)
+            prot.concurrentFetchAndForward(ch, state, new Token(i));
     }
 }

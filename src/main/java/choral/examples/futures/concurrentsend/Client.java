@@ -28,6 +28,7 @@ public class Client {
         Log.debug("Connection succeeded.");
 
         ConcurrentSend_Client prot = new ConcurrentSend_Client();
-        prot.concurrentFetchAndForward(ch, new Token(0));
+        for (int i = 0; i < Server.NUM_ITERATIONS; i++)
+            prot.concurrentFetchAndForward(ch, new Token(i));
     }
 }
