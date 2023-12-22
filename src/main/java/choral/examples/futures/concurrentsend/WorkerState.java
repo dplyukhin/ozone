@@ -5,16 +5,14 @@ import choral.Log;
 
 public class WorkerState {
     String workerName;
-    int waitTime;
 
-    public WorkerState(String workerName, int waitTime) {
+    public WorkerState(String workerName) {
         this.workerName = workerName;
-        this.waitTime = waitTime;
     }
 
     public String compute(Integer input) {
         try {
-            Thread.sleep(waitTime);
+            Thread.sleep(Server.WORKER_MAX_COMPUTE_TIME_MILLIS);
         }
         catch (InterruptedException e) {
             Log.debug("Worker wait interrupted!");

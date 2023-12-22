@@ -29,7 +29,7 @@ public class Worker2 {
         Log.debug("Connection succeeded.");
 
         ConcurrentSend_ContentService prot = new ConcurrentSend_ContentService();
-        WorkerState state = new WorkerState("Worker2", 0);
+        WorkerState state = new WorkerState("Worker2");
         prot.concurrentFetchAndForward(ch, state, new Token(0));
     }
 }
