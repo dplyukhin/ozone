@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import choral.runtime.AsyncChannel;
+import choral.channels.SymChannel;
 import choral.runtime.Token;
 
 public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
@@ -85,5 +86,36 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       // For benchmarking purposes, block the server until both futures are complete.
       f5.join();
       f6.join();
+   }
+
+   public void inorderFetchAndForward( 
+      SymChannel@( KeyService, Server )< Object > ch1, 
+      SymChannel@( ContentService, Server )< Object > ch2, 
+      SymChannel@( Server, Client )< Object > ch3, 
+      WorkerState@KeyService state_ks,
+      WorkerState@ContentService state_cs,
+      ServerState@Server state_s,
+      Integer@Server input
+   ) {
+      // For benchmarking purposes, let the server know that we're starting.
+      state_s.init(input);
+
+      // Server sends the input to KS and CS.
+      Integer@KeyService input_ks = ch1.< Integer >com( input );
+      Integer@ContentService input_cs = ch2.< Integer >com( input );
+
+      // Services compute data.
+      String@KeyService key = state_ks.compute( input_ks );
+      String@ContentService txt = state_cs.compute( input_cs );
+
+      // Services send data to the server, which forwards them to the client.
+      String@Client key_c = key >> ch1::< String >com >> ch3::< String >com;
+      String@Client txt_c = txt >> ch2::< String >com >> ch3::< String >com;
+
+      // Client acknowledges the data.
+      Boolean@Server keyAck = ch3.< Boolean >com( true@Client );
+      state_s.onKeyAck( input );
+      Boolean@Server txtAck = ch3.< Boolean >com( true@Client );
+      state_s.onTxtAck( input );
    }
 }
