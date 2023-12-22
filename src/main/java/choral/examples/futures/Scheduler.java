@@ -27,7 +27,7 @@ public class Scheduler {
 
             /** Check if the current time is within 3 milliseconds of the start of a period */
             public boolean isWithinTimeWindow(long now) {
-                return now % periodMillis < 15 || now % periodMillis > periodMillis - 15;
+                return now % periodMillis < 20 || now % periodMillis > periodMillis - 20;
             }
 
             /** Whether the function has been invoked in the current time window */
@@ -35,7 +35,7 @@ public class Scheduler {
                 if (lastRunTime.get() == 0) {
                     return false;
                 }
-                return Math.abs(lastRunTime.get() - now) <= 15;
+                return Math.abs(lastRunTime.get() - now) <= 20;
             }
 
             public void run() {

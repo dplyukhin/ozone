@@ -1,19 +1,21 @@
 package choral.examples.futures.concurrentproducers;
 
 import java.lang.Thread;
+import java.util.Random;
+
 import choral.Log;
 
 public class ServerState {
-    int waitTime;
+    Random random;
 
-    public ServerState(int waitTime) {
-        this.waitTime = waitTime;
+    public ServerState() {
+        this.random = new Random();
     }
 
     public String compute(String input) {
         Log.debug("Server processing the following input: " + input + "...");
         try {
-            Thread.sleep(waitTime);
+            Thread.sleep(random.nextLong(Server.SERVER_MAX_COMPUTE_TIME_MILLIS));
             Log.debug("Done processing " + input + ".");
         }
         catch (InterruptedException e) {

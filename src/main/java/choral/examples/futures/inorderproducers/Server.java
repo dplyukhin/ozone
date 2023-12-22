@@ -47,7 +47,7 @@ public class Server {
             );
         Log.debug("Worker2 connected.");
 
-        ServerState state = new ServerState(5);
+        ServerState state = new ServerState();
         InOrderProducers_Server prot = new InOrderProducers_Server();
         new Scheduler().schedule(
             i -> prot.go(ch_w1, ch_w2, state), 

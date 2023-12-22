@@ -34,10 +34,10 @@ def plot_producers_histograms():
         'Worker 2 (Choral)': 'data/inorderproducers/worker2-latencies.csv'
     }
     dims = {
-        'left': 5,
+        'left': 0,
         'right': 20,
         'bottom': 0,
-        'top': 390
+        'top': 80
     }
 
     plot_histogram_from_csv(inputs, dims)
@@ -59,4 +59,4 @@ def plot_senders_histograms():
     plot_histogram_from_csv(inputs, dims)
 
 plot_producers_histograms()
-plot_senders_histograms()
+# plot_senders_histograms()

@@ -16,6 +16,7 @@ public class Server {
     public static final int WORKER2_PORT = 8669;
     public static final int NUM_ITERATIONS = 1000;
     public static final int ITERATION_PERIOD_MILLIS = 100;
+    public static final long SERVER_MAX_COMPUTE_TIME_MILLIS = 5;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -43,7 +44,7 @@ public class Server {
         );
         Log.debug("Worker2 connected.");
 
-        ServerState state = new ServerState(5);
+        ServerState state = new ServerState();
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
         new Scheduler().schedule(
             i -> prot.go(ch_w1, ch_w2, state, new Token(i)), 
