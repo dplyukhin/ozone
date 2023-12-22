@@ -8,7 +8,7 @@ def plot_histogram_from_csv(file_paths):
     for i, file_path in enumerate(file_paths):
         # Reading data from CSV file
         data = pd.read_csv(file_path, header=None)
-        # Ignore the first 100 entries
+        # Ignore the first 100 entries; warming up the JVM
         data = data.iloc[100:]
 
         # Print the min, max, and average values - along with the file_path
@@ -24,10 +24,23 @@ def plot_histogram_from_csv(file_paths):
     plt.tight_layout()
     plt.show()
 
-file_paths = [
-    'data/concurrentproducers/worker1-latencies.csv', 
-    'data/concurrentproducers/worker2-latencies.csv', 
-    'data/inorderproducers/worker1-latencies.csv', 
-    'data/inorderproducers/worker2-latencies.csv']
+def plot_producers_histograms():
+    file_paths = [
+        'data/concurrentproducers/worker1-latencies.csv', 
+        'data/concurrentproducers/worker2-latencies.csv', 
+        'data/inorderproducers/worker1-latencies.csv', 
+        'data/inorderproducers/worker2-latencies.csv']
 
-plot_histogram_from_csv(file_paths)
+    plot_histogram_from_csv(file_paths)
+
+def plot_senders_histograms():
+    file_paths = [
+        'data/concurrentsend/key-latencies.csv', 
+        'data/concurrentsend/txt-latencies.csv', 
+        'data/inordersend/key-latencies.csv', 
+        'data/inordersend/txt-latencies.csv']
+
+    plot_histogram_from_csv(file_paths)
+
+# plot_producers_histograms()
+plot_senders_histograms()
