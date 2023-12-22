@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 
 import choral.Log;
 import choral.channels.SymChannel_A;
-import choral.examples.futures.Scheduler;
 import choral.examples.futures.concurrentproducers.InOrderProducers_Worker1;
 import choral.examples.futures.concurrentproducers.WorkerState;
 import choral.runtime.JavaSerializer;
@@ -35,11 +34,10 @@ public class Worker1 {
         WorkerState state = new WorkerState("Worker1", 0, Server.NUM_ITERATIONS);
         InOrderProducers_Worker1 prot = new InOrderProducers_Worker1();
         long startTime = System.currentTimeMillis();
-        new Scheduler().schedule(
-            i -> prot.go(ch, state, String.valueOf(i)), 
-            Server.ITERATION_PERIOD_MILLIS,
-            Server.NUM_ITERATIONS
-        );
+        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
+            ch.select();
+            prot.go(ch, state, String.valueOf(i));
+        }
         try {
             state.iterationsLeft.await();
             Thread.sleep(1000);

@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
 import choral.Log;
-import choral.examples.futures.Scheduler;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncSocketByteChannel;
@@ -32,11 +31,10 @@ public class Worker2 {
         WorkerState state = new WorkerState("Worker2", 0, Server.NUM_ITERATIONS);
         ConcurrentProducers_Worker2 prot = new ConcurrentProducers_Worker2();
         long startTime = System.currentTimeMillis();
-        new Scheduler().schedule(
-            i -> prot.go(ch, state, String.valueOf(i), new Token(i)), 
-            Server.ITERATION_PERIOD_MILLIS,
-            Server.NUM_ITERATIONS
-        );
+        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
+            ch.select();
+            prot.go(ch, state, String.valueOf(i), new Token(i));
+        }
         try {
             state.iterationsLeft.await();
             Thread.sleep(1000);

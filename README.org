@@ -36,13 +36,24 @@ of Choral. To build the project:
 
 * Running
 
-Run the server and the client programs separately:
+Benchmarks are executed by running one of the following scripts in the 
+project root directory:
 
-#+BEGIN_EXAMPLE
-  ./server.sh
-  ./client.sh
-#+END_EXAMPLE
+    bash run_concurrentproducers.sh    # Concurrent producers (Ozone)
+    bash run_inorderproducers.sh       # Concurrent producers (Choral)
+    bash run_concurrentsend.sh         # Concurrent send (Ozone)
+    bash run_inordersend.sh            # Concurrent send (Choral)
 
-Note that executing the Java code also requires the =--enable-preview=
-option, which we provide to Maven through =.mvn/jvm.config=. If you want to
-run the code in a different way, don't forget to pass the option.
+Plot the results with the following script (requires pandas and matplotlib):
+
+    python3 histograms.py
+
+To simulate an unreliable network, install `iproute2` and run the following
+command:
+
+    sudo tc qdisc add dev lo root netem delay 10ms 5ms loss 1%
+
+...where `lo` is the name of your local network interface. To disable 
+network emulation, run the following:
+
+    sudo tc qdisc delete dev lo root

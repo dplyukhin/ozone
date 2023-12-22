@@ -3,7 +3,6 @@ package choral.examples.futures.concurrentproducers;
 import java.util.concurrent.Executors;
 
 import choral.Log;
-import choral.examples.futures.Scheduler;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketByteChannel;
@@ -15,7 +14,7 @@ public class Server {
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int NUM_ITERATIONS = 1000;
-    public static final int ITERATION_PERIOD_MILLIS = 100;
+    public static final int ITERATION_PERIOD_MILLIS = 20;
     public static final long SERVER_MAX_COMPUTE_TIME_MILLIS = 5;
 
     public static void main(String[] args) throws java.io.IOException {
@@ -46,11 +45,16 @@ public class Server {
 
         ServerState state = new ServerState();
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
-        new Scheduler().schedule(
-            i -> prot.go(ch_w1, ch_w2, state, new Token(i)), 
-            ITERATION_PERIOD_MILLIS,
-            NUM_ITERATIONS
-        );
+        for (int i = 0; i < NUM_ITERATIONS; i++) {
+            ch_w1.select(Signal.START);
+            ch_w2.select(Signal.START);
+            prot.go(ch_w1, ch_w2, state, new Token(i));
+            try {
+                Thread.sleep(ITERATION_PERIOD_MILLIS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         worker1_listener.close();
         worker2_listener.close();

@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def plot_histogram_from_csv(inputs, dims):
+def plot_histogram_from_csv(inputs, dims, bins):
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
 
@@ -16,7 +16,7 @@ def plot_histogram_from_csv(inputs, dims):
         print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
         
         # Plotting histogram
-        axes[i].hist(data[0], bins=50, color='blue', alpha=0.7)
+        axes[i].hist(data[0], bins=bins, color='blue', alpha=0.7)
         axes[i].set_title(title)
         axes[i].set_xlabel('Latency (ms)')
         axes[i].set_ylabel('Frequency')
@@ -35,12 +35,12 @@ def plot_producers_histograms():
     }
     dims = {
         'left': 0,
-        'right': 20,
+        'right': 50,
         'bottom': 0,
         'top': 80
     }
 
-    plot_histogram_from_csv(inputs, dims)
+    plot_histogram_from_csv(inputs, dims, bins=30)
 
 def plot_senders_histograms():
     inputs = {
@@ -56,7 +56,7 @@ def plot_senders_histograms():
         'top': 330
     }
 
-    plot_histogram_from_csv(inputs, dims)
+    plot_histogram_from_csv(inputs, dims, bins=50)
 
 plot_producers_histograms()
 # plot_senders_histograms()
