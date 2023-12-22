@@ -17,7 +17,7 @@ public class Client {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_B<String> ch = new AsyncChannelImpl<String>(
+        AsyncChannel_B<Object> ch = new AsyncChannelImpl<Object>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
@@ -28,6 +28,6 @@ public class Client {
         Log.debug("Connection succeeded.");
 
         ConcurrentSend_Client prot = new ConcurrentSend_Client();
-        prot.go(ch, new Token(0));
+        prot.concurrentFetchAndForward(ch, new Token(0));
     }
 }

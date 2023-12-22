@@ -1,0 +1,7 @@
+package choral.examples.futures.concurrentsend;
+
+public class ServerState@A {
+    public void init(Integer@A input) {}
+    public void onKeyAck(Integer@A input) {}
+    public void onTxtAck(Integer@A input) {}
+}

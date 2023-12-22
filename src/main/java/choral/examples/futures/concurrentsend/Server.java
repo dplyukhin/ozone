@@ -46,26 +46,28 @@ public class Server {
                 Server.HOST, Server.WORKER2_PORT 
             );
 
-        AsyncChannel_A<String> ch_c = new AsyncChannelImpl<String>( 
+        AsyncChannel_A<Object> ch_c = new AsyncChannelImpl<Object>( 
             Executors.newSingleThreadScheduledExecutor(),
             client_listener.getNext()
         );
         Log.debug("Client connected.");
 
-        AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
+        AsyncChannel_B<Object> ch_w1 = new AsyncChannelImpl<Object>( 
             Executors.newSingleThreadScheduledExecutor(),
             worker1_listener.getNext()
         );
         Log.debug("Worker1 connected.");
 
-        AsyncChannel_B<String> ch_w2 = new AsyncChannelImpl<String>( 
+        AsyncChannel_B<Object> ch_w2 = new AsyncChannelImpl<Object>( 
             Executors.newSingleThreadScheduledExecutor(),
             worker2_listener.getNext()
         );
         Log.debug("Worker2 connected.");
 
         ConcurrentSend_Server prot = new ConcurrentSend_Server();
-        prot.go(ch_w1, ch_w2, ch_c, new Token(0));
+        ServerState state = new ServerState();
+        Integer input = 0;
+        prot.concurrentFetchAndForward(ch_w1, ch_w2, ch_c, state, input, new Token(0));
 
         client_listener.close();
         Log.debug("Done.");

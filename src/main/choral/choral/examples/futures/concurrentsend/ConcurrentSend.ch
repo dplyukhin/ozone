@@ -44,12 +44,16 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       AsyncChannel@( Server, Client )< Object > ch3, 
       WorkerState@KeyService state_ks,
       WorkerState@ContentService state_cs,
+      ServerState@Server state_s,
       Integer@Server input,
       Token@KeyService tok_ks,
       Token@ContentService tok_cs,
       Token@Server tok_s,
       Token@Client tok_c
    ) {
+      // For benchmarking purposes, let the server know that we're starting.
+      state_s.init(input);
+
       // Server sends the input to KS and CS.
       CompletableFuture@KeyService<Integer> input_ks = ch1.<Integer>com( input, 1@Server, tok_s, 1@KeyService, tok_ks );
       CompletableFuture@ContentService<Integer> input_cs = ch2.<Integer>com( input, 2@Server, tok_s, 2@ContentService, tok_cs );
@@ -75,9 +79,10 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       CompletableFuture@Server<Void> f6 = ch3.<Void>com( acceptedTxt, 8@Client, tok_c, 8@Server, tok_s );
 
       // Server handles acknowledgments.
-      f5.thenAccept( new OnKeyAck@Server() );
-      f6.thenAccept( new OnTxtAck@Server() );
+      f5.thenAccept( new OnKeyAck@Server(state_s, input) );
+      f6.thenAccept( new OnTxtAck@Server(state_s, input) );
 
+      // For benchmarking purposes, block the server until both futures are complete.
       f5.join();
       f6.join();
    }

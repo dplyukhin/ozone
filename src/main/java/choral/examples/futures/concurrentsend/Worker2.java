@@ -18,7 +18,7 @@ public class Worker2 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
+        AsyncChannel_A<Object> ch = new AsyncChannelImpl<Object>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketByteChannel.connect( 
                 KryoSerializer.getInstance(),
@@ -30,6 +30,6 @@ public class Worker2 {
 
         ConcurrentSend_ContentService prot = new ConcurrentSend_ContentService();
         WorkerState state = new WorkerState("Worker2", 0);
-        prot.go(ch, state, new Token(0));
+        prot.concurrentFetchAndForward(ch, state, new Token(0));
     }
 }
