@@ -108,13 +108,12 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       String@KeyService key = state_ks.compute( input_ks );
       String@ContentService txt = state_cs.compute( input_cs );
 
-      // Services send data to the server, which forwards them to the client.
+      // Services send data to the server, which forwards them to the client, which acknowledges.
       String@Client key_c = key >> ch1::< String >com >> ch3::< String >com;
-      String@Client txt_c = txt >> ch2::< String >com >> ch3::< String >com;
-
-      // Client acknowledges the data.
       Boolean@Server keyAck = ch3.< Boolean >com( true@Client );
       state_s.onKeyAck( input );
+
+      String@Client txt_c = txt >> ch2::< String >com >> ch3::< String >com;
       Boolean@Server txtAck = ch3.< Boolean >com( true@Client );
       state_s.onTxtAck( input );
    }
