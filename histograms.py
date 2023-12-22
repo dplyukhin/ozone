@@ -1,46 +1,62 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def plot_histogram_from_csv(file_paths):
-    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
+def plot_histogram_from_csv(inputs, dims):
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
 
-    for i, file_path in enumerate(file_paths):
+    for i, title in enumerate(inputs.keys()):
+        file_path = inputs[title]
         # Reading data from CSV file
         data = pd.read_csv(file_path, header=None)
         # Ignore the first 100 entries; warming up the JVM
         data = data.iloc[100:]
 
         # Print the min, max, and average values - along with the file_path
-        print(f'{file_path} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
+        print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
         
         # Plotting histogram
         axes[i].hist(data[0], bins=50, color='blue', alpha=0.7)
-        axes[i].set_title(f'Histogram of {file_path}')
+        axes[i].set_title(title)
         axes[i].set_xlabel('Latency (ms)')
         axes[i].set_ylabel('Frequency')
-        axes[i].set_xlim(left=0, right=30)
+        axes[i].set_xlim(left=dims['left'], right=dims['right'])
+        axes[i].set_ylim(bottom=dims['bottom'], top=dims['top'])
 
     plt.tight_layout()
     plt.show()
 
 def plot_producers_histograms():
-    file_paths = [
-        'data/concurrentproducers/worker1-latencies.csv', 
-        'data/concurrentproducers/worker2-latencies.csv', 
-        'data/inorderproducers/worker1-latencies.csv', 
-        'data/inorderproducers/worker2-latencies.csv']
+    inputs = {
+        'Worker 1 (Ozone)': 'data/concurrentproducers/worker1-latencies.csv', 
+        'Worker 2 (Ozone)': 'data/concurrentproducers/worker2-latencies.csv', 
+        'Worker 1 (Choral)': 'data/inorderproducers/worker1-latencies.csv', 
+        'Worker 2 (Choral)': 'data/inorderproducers/worker2-latencies.csv'
+    }
+    dims = {
+        'left': 5,
+        'right': 20,
+        'bottom': 0,
+        'top': 390
+    }
 
-    plot_histogram_from_csv(file_paths)
+    plot_histogram_from_csv(inputs, dims)
 
 def plot_senders_histograms():
-    file_paths = [
-        'data/concurrentsend/key-latencies.csv', 
-        'data/concurrentsend/txt-latencies.csv', 
-        'data/inordersend/key-latencies.csv', 
-        'data/inordersend/txt-latencies.csv']
+    inputs = {
+        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
+        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
+        'txt (Choral)': 'data/inordersend/key-latencies.csv', 
+        'key (Choral)': 'data/inordersend/txt-latencies.csv'
+    }
+    dims = {
+        'left': 0,
+        'right': 18,
+        'bottom': 0,
+        'top': 330
+    }
 
-    plot_histogram_from_csv(file_paths)
+    plot_histogram_from_csv(inputs, dims)
 
-# plot_producers_histograms()
+plot_producers_histograms()
 plot_senders_histograms()
