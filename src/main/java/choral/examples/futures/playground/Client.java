@@ -1,34 +1,26 @@
 package choral.examples.futures.playground;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import choral.lang.Unit;
-import choral.runtime.AsyncChannel_A;
-import choral.runtime.AsyncSocketByteChannel;
-import choral.runtime.DataMsg;
-import choral.runtime.Serializers.JSONSerializer;
-import choral.runtime.Serializers.KryoSerializer;
-import choral.runtime.Token;
-import choral.runtime.IntegrityKey;
-import choral.Log;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 public class Client {
 
     public static void main(String[] args) {
-        Log.debug("Connecting to server...");
+        try{
+            SocketChannel ch = SocketChannel.open();
+            ch.connect( new InetSocketAddress( Server.HOST, Server.PORT ) );
+            ch.configureBlocking( true );
 
-        AsyncSocketByteChannel ch = 
-            //new AsyncChannel_A<Object>(
-            //Executors.newSingleThreadScheduledExecutor(),
-            AsyncSocketByteChannel.connect( 
-                KryoSerializer.getInstance(),
-                Server.HOST, Server.PORT
-            );
-        //);
-
-        ch.com(new IntegrityKey(0, new Token(0)));
-        Log.debug("Sent hello");
-        Log.debug("Got: " + ch.com());
+            for (int i = 0; i < 50; i++) {
+                System.out.println("Iteration " + i + ": Client starting at time " + System.currentTimeMillis());
+                ch.write( ByteBuffer.wrap(new byte[] { 1, 1, 1, 1 }));
+                ch.read(ByteBuffer.allocate(4));
+                System.out.println("Iteration " + i + ": Client ending at time " + System.currentTimeMillis());
+                //try { Thread.sleep(100); } catch (InterruptedException e) { }
+            }
+        }
+        catch (IOException e) {}
     }
 }
