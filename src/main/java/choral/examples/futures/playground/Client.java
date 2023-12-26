@@ -11,7 +11,7 @@ public class Client {
     public static void main(String[] args) {
         WrapperByteChannelImpl ch =
             new WrapperByteChannelImpl(
-                SocketByteChannel.connect(
+                MySocketByteChannel.connect(
                     Server.HOST, Server.PORT
                 )
             );

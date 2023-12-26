@@ -11,8 +11,8 @@ public class Server {
     public static final int PORT = 8667;
 
     public static void main(String[] args) throws java.io.IOException {
-        ServerSocketByteChannel client_listener =
-            ServerSocketByteChannel.at( 
+        MyServerSocketByteChannel client_listener =
+            MyServerSocketByteChannel.at( 
                 Server.HOST, Server.PORT 
             );
 
