@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
-import choral.runtime.AsyncSocketByteChannel;
+import choral.runtime.AsyncSocketChannel;
 import choral.runtime.Serializers.JSONSerializer;
 import choral.runtime.Serializers.KryoSerializer;
 import choral.runtime.Token;
@@ -19,7 +19,7 @@ public class Client {
 
         AsyncChannel_A<String> ch = new UnreliableAsyncChannel<String>(
             Executors.newScheduledThreadPool(2),
-            AsyncSocketByteChannel.connect( 
+            AsyncSocketChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.PORT
             )

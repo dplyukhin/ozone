@@ -8,12 +8,12 @@ import java.nio.channels.SocketChannel;
 
 import choral.runtime.Serializers.ChoralSerializer;
 
-public class AsyncServerSocketByteChannel {
+public class AsyncServerSocketChannel {
 
 	private final ServerSocketChannel listeningChannel;
     private final ChoralSerializer< Object, ByteBuffer > serializer; 
 
-	private AsyncServerSocketByteChannel( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
+	private AsyncServerSocketChannel( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
 		try {
 			this.listeningChannel = ServerSocketChannel.open();
             this.serializer = serializer;
@@ -24,14 +24,14 @@ public class AsyncServerSocketByteChannel {
 		}
 	}
 
-	public static AsyncServerSocketByteChannel at( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
-		return new AsyncServerSocketByteChannel( serializer, hostname, portNumber );
+	public static AsyncServerSocketChannel at( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
+		return new AsyncServerSocketChannel( serializer, hostname, portNumber );
 	}
 
-	public AsyncSocketByteChannel getNext() throws IOException {
+	public AsyncSocketChannel getNext() throws IOException {
 		SocketChannel channel = listeningChannel.accept();
 		channel.configureBlocking( true );
-		return new AsyncSocketByteChannel( this.serializer, channel );
+		return new AsyncSocketChannel( this.serializer, channel );
 	}
 
 	public void close() {

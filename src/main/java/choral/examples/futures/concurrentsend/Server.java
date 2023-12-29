@@ -10,7 +10,7 @@ import choral.Log;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
-import choral.runtime.AsyncServerSocketByteChannel;
+import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.Token;
 import choral.runtime.Serializers.KryoSerializer;
 
@@ -25,18 +25,18 @@ public class Server {
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
 
-		AsyncServerSocketByteChannel client_listener =
-            AsyncServerSocketByteChannel.at( 
+		AsyncServerSocketChannel client_listener =
+            AsyncServerSocketChannel.at( 
                 KryoSerializer.getInstance(), 
                 Server.HOST, Server.CLIENT_PORT 
             );
-		AsyncServerSocketByteChannel worker1_listener =
-            AsyncServerSocketByteChannel.at( 
+		AsyncServerSocketChannel worker1_listener =
+            AsyncServerSocketChannel.at( 
                 KryoSerializer.getInstance(), 
                 Server.HOST, Server.WORKER1_PORT 
             );
-		AsyncServerSocketByteChannel worker2_listener =
-            AsyncServerSocketByteChannel.at( 
+		AsyncServerSocketChannel worker2_listener =
+            AsyncServerSocketChannel.at( 
                 KryoSerializer.getInstance(), 
                 Server.HOST, Server.WORKER2_PORT 
             );

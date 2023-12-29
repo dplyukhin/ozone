@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import choral.Log;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
-import choral.runtime.AsyncSocketByteChannel;
+import choral.runtime.AsyncSocketChannel;
 import choral.runtime.Token;
 import choral.runtime.Serializers.KryoSerializer;
 
@@ -20,7 +20,7 @@ public class Worker2 {
 
         AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
             Executors.newScheduledThreadPool(4),
-            AsyncSocketByteChannel.connect( 
+            AsyncSocketChannel.connect( 
                 KryoSerializer.getInstance(),
                 Server.HOST, Server.WORKER2_PORT
             )
