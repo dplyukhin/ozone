@@ -56,11 +56,17 @@ public class AsyncSocketChannel implements SymChannelImpl< Object > {
 	public < T extends Object > T com() {
 		// This method doesn't need synchronization, because only a single thread will read here.
         try {
-            int transmissionLength = recvTransmissionLength();
-            ByteBuffer recv = ByteBuffer.allocate( transmissionLength );
-            channel.read( recv );
-            Object obj = this.serializer.toObject( recv );
-            return (T) obj;
+			Log.debug("Waiting for transmission length...");
+			ByteBuffer buffer = ByteBuffer.allocate( 4 );
+			channel.read( buffer );
+			buffer.flip();
+			int transmissionLength = buffer.getInt();
+			Log.debug("Receiving " + transmissionLength + " bytes...");
+			buffer = ByteBuffer.allocate( transmissionLength );
+			channel.read( buffer );
+			buffer.flip();
+			Log.debug("Done reading.");
+			return (T) this.serializer.toObject( buffer );
         } catch( IOException e ) {
             throw new RuntimeException( e.getMessage() );
         }
@@ -78,8 +84,10 @@ public class AsyncSocketChannel implements SymChannelImpl< Object > {
 			ByteBuffer buf2 = ByteBuffer.allocate( 4 + buf.limit() );
 			buf2.putInt( buf.limit() );
 			buf2.put( buf );
+			buf2.flip();
             synchronized (this) {
-                channel.write( buf2 );
+                int n = channel.write( buf2 );
+				Log.debug("Sent " + n + " bytes");
             }
             return Unit.id;
 		} catch( IOException e ) {
@@ -100,11 +108,6 @@ public class AsyncSocketChannel implements SymChannelImpl< Object > {
 	@Override
 	public < T extends Enum< T > > T select() {
 		return this.com();
-	}
-
-	private int recvTransmissionLength() throws IOException {
-		DataInputStream dis = new DataInputStream( channel.socket().getInputStream() );
-		return dis.readInt();
 	}
 
 }
