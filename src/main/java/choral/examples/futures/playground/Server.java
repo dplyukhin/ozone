@@ -16,10 +16,7 @@ public class Server {
                 Server.HOST, Server.PORT 
             );
 
-        WrapperByteChannelImpl ch = 
-            new WrapperByteChannelImpl(
-                client_listener.getNext()
-            );
+        MySocketByteChannel ch = client_listener.getNext();
 
         for (int i = 0; i < 50; i++) {
             ch.com();

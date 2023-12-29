@@ -9,11 +9,9 @@ import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 public class Client {
 
     public static void main(String[] args) {
-        WrapperByteChannelImpl ch =
-            new WrapperByteChannelImpl(
-                MySocketByteChannel.connect(
-                    Server.HOST, Server.PORT
-                )
+        MySocketByteChannel ch =
+            MySocketByteChannel.connect(
+                Server.HOST, Server.PORT
             );
 
         for (int i = 0; i < 50; i++) {
