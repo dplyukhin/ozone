@@ -11,8 +11,8 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketChannel;
+import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
-import choral.runtime.Serializers.KryoSerializer;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -20,24 +20,24 @@ public class Server {
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int WORKER_MAX_COMPUTE_TIME_MILLIS = 10;
-    public static final int NUM_ITERATIONS = 2000;
+    public static final int NUM_ITERATIONS = 1000;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
 
 		AsyncServerSocketChannel client_listener =
             AsyncServerSocketChannel.at( 
-                KryoSerializer.getInstance(), 
+                new JavaSerializer(), 
                 Server.HOST, Server.CLIENT_PORT 
             );
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
-                KryoSerializer.getInstance(), 
+                new JavaSerializer(), 
                 Server.HOST, Server.WORKER1_PORT 
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
-                KryoSerializer.getInstance(), 
+                new JavaSerializer(), 
                 Server.HOST, Server.WORKER2_PORT 
             );
 

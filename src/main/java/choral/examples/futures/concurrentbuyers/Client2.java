@@ -2,14 +2,12 @@ package choral.examples.futures.concurrentbuyers;
 
 import java.util.concurrent.Executors;
 
+import choral.Log;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_A;
-import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncSocketChannel;
-import choral.runtime.Serializers.JSONSerializer;
-import choral.runtime.Serializers.KryoSerializer;
+import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
-import choral.Log;
 
 public class Client2 {
 
@@ -19,7 +17,7 @@ public class Client2 {
         AsyncChannel_A<String> ch = new AsyncChannelImpl<String>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketChannel.connect( 
-                KryoSerializer.getInstance(),
+                new JavaSerializer(),
                 Server.HOST, Server.CLIENT2_PORT
             )
         );

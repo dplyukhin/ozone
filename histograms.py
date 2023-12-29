@@ -35,12 +35,12 @@ def plot_producers_histograms():
     }
     dims = {
         'left': 0,
-        'right': 30,
+        'right': 60,
         'bottom': 0,
-        'top': 80
+        'top': 400
     }
 
-    plot_histogram_from_csv(inputs, dims, bins=30)
+    plot_histogram_from_csv(inputs, dims, bins=60)
 
 def plot_senders_histograms():
     inputs = {

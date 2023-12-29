@@ -1,30 +1,21 @@
 package choral.runtime;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import choral.Log;
 import choral.channels.SymChannelImpl;
-import choral.channels.SymDataChannelImpl;
+import choral.channels.SymChannel_A;
+import choral.channels.SymChannel_B;
 import choral.lang.Unit;
-import choral.runtime.ChoralByteChannel.SymByteChannelImpl;
 import choral.runtime.Serializers.ChoralSerializer;
 
 /** 
  * A SRMW socket channel, parameterized by a serializer.
  */
-public class AsyncSocketChannel implements SymChannelImpl< Object > {
+public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_A< Object >, SymChannel_B< Object > {
 
 	private final SocketChannel channel;
     private final ChoralSerializer< Object, ByteBuffer > serializer;

@@ -4,10 +4,8 @@ import choral.Log;
 import choral.channels.SymChannel_A;
 import choral.examples.futures.concurrentsend.ConcurrentSend_ContentService;
 import choral.examples.futures.concurrentsend.WorkerState;
+import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
-import choral.runtime.Media.SocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannel_A;
-import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 
 public class Worker2 {
 
@@ -15,13 +13,9 @@ public class Worker2 {
         Log.debug("Connecting to server...");
 
         SymChannel_A<Object> ch = 
-            new SerializerChannel_A(
+            AsyncSocketChannel.connect(
                 new JavaSerializer(),
-                new WrapperByteChannelImpl(
-                    SocketByteChannel.connect(
-                        Server.HOST, Server.WORKER2_PORT
-                    )
-                )
+                Server.HOST, Server.WORKER2_PORT
             );
 
         Log.debug("Connection succeeded.");

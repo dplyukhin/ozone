@@ -10,11 +10,8 @@ import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
 import choral.examples.futures.concurrentsend.ConcurrentSend_Server;
 import choral.examples.futures.concurrentsend.ServerState;
+import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.JavaSerializer;
-import choral.runtime.Media.ServerSocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannel_A;
-import choral.runtime.SerializerChannel.SerializerChannel_B;
-import choral.runtime.WrapperByteChannel.WrapperByteChannelImpl;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -22,49 +19,34 @@ public class Server {
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int WORKER_MAX_COMPUTE_TIME_MILLIS = 10;
-    public static final int NUM_ITERATIONS = 2000;
+    public static final int NUM_ITERATIONS = 1000;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
 
-        ServerSocketByteChannel client_listener =
-            ServerSocketByteChannel.at( 
+        AsyncServerSocketChannel client_listener =
+            AsyncServerSocketChannel.at( 
+                new JavaSerializer(),
                 Server.HOST, Server.CLIENT_PORT 
             );
-		ServerSocketByteChannel worker1_listener =
-            ServerSocketByteChannel.at( 
+		AsyncServerSocketChannel worker1_listener =
+            AsyncServerSocketChannel.at( 
+                new JavaSerializer(),
                 Server.HOST, Server.WORKER1_PORT 
             );
-		ServerSocketByteChannel worker2_listener =
-            ServerSocketByteChannel.at( 
+		AsyncServerSocketChannel worker2_listener =
+            AsyncServerSocketChannel.at( 
+                new JavaSerializer(),
                 Server.HOST, Server.WORKER2_PORT 
             );
 
-        SymChannel_A<Object> ch_c = 
-            new SerializerChannel_A(
-                new JavaSerializer(),
-                new WrapperByteChannelImpl(
-                    client_listener.getNext()
-                )
-            );
+        SymChannel_A<Object> ch_c = client_listener.getNext();
         Log.debug("Client connected.");
 
-        SymChannel_B<Object> ch_w1 = 
-            new SerializerChannel_B(
-                new JavaSerializer(),
-                new WrapperByteChannelImpl(
-                    worker1_listener.getNext()
-                )
-            );
+        SymChannel_B<Object> ch_w1 = worker1_listener.getNext();
         Log.debug("Worker1 connected.");
 
-        SymChannel_B<Object> ch_w2 = 
-            new SerializerChannel_B(
-                new JavaSerializer(),
-                new WrapperByteChannelImpl(
-                    worker2_listener.getNext()
-                )
-            );
+        SymChannel_B<Object> ch_w2 = worker2_listener.getNext();
         Log.debug("Worker2 connected.");
 
         ConcurrentSend_Server prot = new ConcurrentSend_Server();

@@ -1,24 +1,13 @@
 package choral.examples.futures.simpletimeout;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executors;
 
-import choral.channels.SymChannel_B;
-import choral.runtime.AsyncChannelImpl;
+import choral.Log;
 import choral.runtime.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketChannel;
-import choral.runtime.Media.ServerSocketByteChannel;
-import choral.runtime.SerializerChannel.SerializerChannel_B;
-import choral.runtime.Serializers.KryoSerializer;
-import choral.runtime.Serializers.JSONSerializer;
-import choral.runtime.WrapperByteChannel.WrapperByteChannel_B;
+import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
 import choral.runtime.UnreliableAsyncChannel;
-import choral.examples.futures.hello.HelloRoles_Server;
-import choral.Log;
 
 public class Server {
     public static final String HOST = "localhost";
@@ -29,7 +18,7 @@ public class Server {
         // Run server and create a channel from the first open connection
 		AsyncServerSocketChannel listener =
             AsyncServerSocketChannel.at( 
-                KryoSerializer.getInstance(), 
+                new JavaSerializer(), 
                 Server.HOST, Server.PORT 
             );
 
