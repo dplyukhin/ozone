@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import choral.channels.SymChannel_B;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncChannel_B;
-import choral.runtime.AsyncServerSocketByteChannel;
+import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.Media.ServerSocketByteChannel;
 import choral.runtime.SerializerChannel.SerializerChannel_B;
 import choral.runtime.Serializers.KryoSerializer;
@@ -27,8 +27,8 @@ public class Server {
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
         // Run server and create a channel from the first open connection
-		AsyncServerSocketByteChannel listener =
-            AsyncServerSocketByteChannel.at( 
+		AsyncServerSocketChannel listener =
+            AsyncServerSocketChannel.at( 
                 KryoSerializer.getInstance(), 
                 Server.HOST, Server.PORT 
             );
