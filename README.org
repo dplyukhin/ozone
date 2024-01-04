@@ -48,10 +48,10 @@ Plot the results with the following script (requires pandas and matplotlib):
 
     python3 histograms.py
 
-To simulate an unreliable network, install `iproute2` and run the following
+To simulate the effects of network latency, install `iproute2` and run the following
 command:
 
-    sudo tc qdisc add dev lo root netem delay 10ms 10ms
+    sudo tc qdisc add dev lo root netem delay 2ms 2ms
 
 ...where `lo` is the name of your local network interface. To disable 
 network emulation, run the following:
