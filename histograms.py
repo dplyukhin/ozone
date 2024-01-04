@@ -11,6 +11,10 @@ def plot_histogram_from_csv(inputs, dims, bins):
         data = pd.read_csv(file_path, header=None)
         # Ignore the first 100 entries; warming up the JVM
         data = data.iloc[100:]
+        # Convert each datum to integer
+        data = data.astype(int)
+        # Remove outliers
+        data = data[data[0] < dims['right']]
 
         # Print the min, max, and average values - along with the file_path
         print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
@@ -35,12 +39,12 @@ def plot_producers_histograms():
     }
     dims = {
         'left': 0,
-        'right': 60,
+        'right': 20,
         'bottom': 0,
         'top': 400
     }
 
-    plot_histogram_from_csv(inputs, dims, bins=60)
+    plot_histogram_from_csv(inputs, dims, bins=10)
 
 def plot_senders_histograms():
     inputs = {
