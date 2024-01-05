@@ -8,4 +8,8 @@ public class Log {
             System.out.println(str);
         }
     }
+
+    public static void info(String str) {
+        System.out.println(str);
+    }
 }

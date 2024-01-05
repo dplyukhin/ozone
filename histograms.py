@@ -57,10 +57,10 @@ def plot_senders_histograms():
         'left': 0,
         'right': 18,
         'bottom': 0,
-        'top': 330
+        'top': 800
     }
 
-    plot_histogram_from_csv(inputs, dims, bins=50)
+    plot_histogram_from_csv(inputs, dims, bins=15)
 
 plot_producers_histograms()
-# plot_senders_histograms()
+plot_senders_histograms()
