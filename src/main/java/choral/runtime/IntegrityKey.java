@@ -1,9 +1,9 @@
 package choral.runtime;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import choral.runtime.Serializers.KryoSerializable;
-import java.io.Serializable;
 
 @KryoSerializable
 public class IntegrityKey implements Serializable {

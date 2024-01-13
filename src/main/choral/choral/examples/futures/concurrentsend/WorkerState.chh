@@ -1,5 +1,0 @@
-package choral.examples.futures.concurrentsend;
-
-public class WorkerState@A {
-    public String@A compute(Integer@A x) {}
-}

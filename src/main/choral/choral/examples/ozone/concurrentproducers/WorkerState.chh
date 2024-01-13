@@ -1,0 +1,7 @@
+package choral.examples.ozone.concurrentproducers;
+
+public class WorkerState@A {
+    public String@A compute() {}
+    public String@A produce(String@A input) {}
+    public void store(String@A x) {}
+}

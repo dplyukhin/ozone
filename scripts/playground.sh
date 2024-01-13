@@ -3,8 +3,8 @@ trap "kill 0" EXIT
 
 # mvn compile
 
-mvn exec:java -Dexec.mainClass="choral.examples.futures.playground.Server" &
+mvn exec:java -Dexec.mainClass="choral.examples.ozone.playground.Server" &
 sleep 1
-mvn exec:java -Dexec.mainClass="choral.examples.futures.playground.Client" &
+mvn exec:java -Dexec.mainClass="choral.examples.ozone.playground.Client" &
 
 wait

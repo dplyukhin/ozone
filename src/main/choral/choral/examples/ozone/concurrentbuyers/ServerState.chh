@@ -1,0 +1,5 @@
+package choral.examples.ozone.concurrentbuyers;
+
+public class ServerState@A {
+    public String@A sell(String@A itemID) {}
+}

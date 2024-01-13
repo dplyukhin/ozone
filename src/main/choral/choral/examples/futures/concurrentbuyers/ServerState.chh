@@ -1,5 +1,0 @@
-package choral.examples.futures.concurrentbuyers;
-
-public class ServerState@A {
-    public String@A sell(String@A itemID) {}
-}

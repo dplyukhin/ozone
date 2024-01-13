@@ -3,9 +3,9 @@ trap "kill 0" EXIT
 
 # mvn compile
 
-mvn exec:java -Dexec.mainClass="choral.examples.futures.concurrentproducers.Server" &
+mvn exec:java -Dexec.mainClass="choral.examples.ozone.concurrentproducers.Server" &
 sleep 1
-mvn exec:java -Dexec.mainClass="choral.examples.futures.concurrentproducers.Worker2" &
-mvn exec:java -Dexec.mainClass="choral.examples.futures.concurrentproducers.Worker1" &
+mvn exec:java -Dexec.mainClass="choral.examples.ozone.concurrentproducers.Worker2" &
+mvn exec:java -Dexec.mainClass="choral.examples.ozone.concurrentproducers.Worker1" &
 
 wait

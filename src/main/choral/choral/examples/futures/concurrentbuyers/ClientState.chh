@@ -1,5 +1,0 @@
-package choral.examples.futures.concurrentbuyers;
-
-public class ClientState@A {
-    public void store(String@A x) {}
-}

@@ -1,0 +1,5 @@
+package choral.examples.ozone.concurrentbuyers;
+
+public class ClientState@A {
+    public void store(String@A x) {}
+}

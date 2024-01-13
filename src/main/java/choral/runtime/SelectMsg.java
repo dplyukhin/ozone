@@ -1,7 +1,8 @@
 package choral.runtime;
 
-import choral.runtime.Serializers.KryoSerializable;
 import java.io.Serializable;
+
+import choral.runtime.Serializers.KryoSerializable;
 
 @KryoSerializable
 public class SelectMsg<T extends Enum<T>> implements Serializable {

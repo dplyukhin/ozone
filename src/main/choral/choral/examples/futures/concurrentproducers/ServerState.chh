@@ -1,5 +1,0 @@
-package choral.examples.futures.concurrentproducers;
-
-public class ServerState@A {
-    public String@A compute(String@A input) {}
-}
