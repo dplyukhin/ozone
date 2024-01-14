@@ -15,7 +15,7 @@ public class WorkerState {
 
     public String compute(Integer input) {
         try {
-            Thread.sleep(random.nextLong(Server.WORKER_MAX_COMPUTE_TIME_MILLIS));
+            Thread.sleep(random.nextLong(Config.WORKER_MAX_COMPUTE_TIME_MILLIS));
         }
         catch (InterruptedException e) {
             Log.debug("Worker wait interrupted!");

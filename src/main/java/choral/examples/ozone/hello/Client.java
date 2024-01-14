@@ -4,7 +4,6 @@ import java.util.concurrent.Executors;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
-import choral.examples.ozone.hello.HelloRoles_Client;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
@@ -19,7 +18,7 @@ public class Client {
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Server.HOST, Server.PORT
+                Config.HOST, Config.PORT
             )
         );
 

@@ -4,7 +4,6 @@ import java.util.concurrent.Executors;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
-import choral.examples.ozone.concurrentsend.ConcurrentSend_KeyService;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
@@ -19,7 +18,7 @@ public class Worker1 {
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Server.HOST, Server.WORKER1_PORT
+                Config.HOST, Config.WORKER1_PORT
             )
         );
 
@@ -27,7 +26,7 @@ public class Worker1 {
 
         ConcurrentSend_KeyService prot = new ConcurrentSend_KeyService();
         WorkerState state = new WorkerState("Worker1");
-        for (int i = 0; i < Server.NUM_ITERATIONS; i++)
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             prot.concurrentFetchAndForward(ch, state, new Token(i));
     }
 }

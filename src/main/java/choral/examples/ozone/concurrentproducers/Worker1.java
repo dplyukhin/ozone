@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
-import choral.examples.ozone.concurrentproducers.ConcurrentProducers_Worker1;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
@@ -23,16 +22,16 @@ public class Worker1 {
             Executors.newScheduledThreadPool(4),
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Server.HOST, Server.WORKER1_PORT
+                Config.HOST, Config.WORKER1_PORT
             )
         );
 
         Log.debug("Connection succeeded.");
 
-        WorkerState state = new WorkerState("Worker1", 0, Server.NUM_ITERATIONS);
+        WorkerState state = new WorkerState("Worker1", 0, Config.NUM_ITERATIONS);
         ConcurrentProducers_Worker1 prot = new ConcurrentProducers_Worker1();
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             ch.select();
             prot.go(ch, state, String.valueOf(i), new Token(i));
         }

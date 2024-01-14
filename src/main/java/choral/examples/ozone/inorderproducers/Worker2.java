@@ -20,14 +20,14 @@ public class Worker2 {
         SymChannel_A<Object> ch = 
             AsyncSocketChannel.connect(
                 new JavaSerializer(),
-                Server.HOST, Server.WORKER2_PORT
+                Config.HOST, Config.WORKER2_PORT
             );
         Log.debug("Connection succeeded.");
 
-        WorkerState state = new WorkerState("Worker2", 0, Server.NUM_ITERATIONS);
+        WorkerState state = new WorkerState("Worker2", 0, Config.NUM_ITERATIONS);
         InOrderProducers_Worker2 prot = new InOrderProducers_Worker2();
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < Server.NUM_ITERATIONS; i++) {
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             ch.select();
             prot.go(ch, state, String.valueOf(i));
         }

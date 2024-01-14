@@ -14,12 +14,6 @@ import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.JavaSerializer;
 
 public class Server {
-    public static final String HOST = "localhost";
-    public static final int CLIENT_PORT = 8667;
-    public static final int WORKER1_PORT = 8668;
-    public static final int WORKER2_PORT = 8669;
-    public static final int WORKER_MAX_COMPUTE_TIME_MILLIS = 10;
-    public static final int NUM_ITERATIONS = 4000;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -27,17 +21,17 @@ public class Server {
         AsyncServerSocketChannel client_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(),
-                Server.HOST, Server.CLIENT_PORT 
+                Config.HOST, Config.CLIENT_PORT
             );
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(),
-                Server.HOST, Server.WORKER1_PORT 
+                Config.HOST, Config.WORKER1_PORT
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(),
-                Server.HOST, Server.WORKER2_PORT 
+                Config.HOST, Config.WORKER2_PORT
             );
 
         SymChannel_A<Object> ch_c = client_listener.getNext();
@@ -52,7 +46,7 @@ public class Server {
         ConcurrentSend_Server prot = new ConcurrentSend_Server();
         ServerState state = new ServerState();
         long startTime = System.nanoTime();
-        for (int i = 0; i < NUM_ITERATIONS; i++)
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             prot.inorderFetchAndForward(ch_w1, ch_w2, ch_c, state, i);
 
         long endTime = System.nanoTime();

@@ -3,7 +3,6 @@ package choral.examples.ozone.simpletimeout;
 import java.util.concurrent.Executors;
 
 import choral.Log;
-import choral.examples.ozone.simpletimeout.SimpleTimeout_Server;
 import choral.channels.AsyncChannel_B;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.JavaSerializer;
@@ -11,8 +10,6 @@ import choral.runtime.Token;
 import choral.runtime.UnreliableAsyncChannel;
 
 public class Server {
-    public static final String HOST = "localhost";
-    public static final int PORT = 8667;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -20,7 +17,7 @@ public class Server {
 		AsyncServerSocketChannel listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Server.HOST, Server.PORT 
+                Config.HOST, Config.PORT
             );
 
         AsyncChannel_B<String> ch = new UnreliableAsyncChannel<String>( 

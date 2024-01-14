@@ -14,12 +14,12 @@ public class Client {
         SymChannel_B<Object> ch = 
             AsyncSocketChannel.connect(
                 new JavaSerializer(),
-                Server.HOST, Server.CLIENT_PORT
+                Config.HOST, Config.CLIENT_PORT
             );
         Log.debug("Connection succeeded.");
 
         ConcurrentSend_Client prot = new ConcurrentSend_Client();
-        for (int i = 0; i < Server.NUM_ITERATIONS; i++)
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             prot.inorderFetchAndForward(ch);
     }
 }

@@ -3,7 +3,6 @@ package choral.examples.ozone.simpletimeout;
 import java.util.concurrent.Executors;
 
 import choral.Log;
-import choral.examples.ozone.simpletimeout.SimpleTimeout_Client;
 import choral.channels.AsyncChannel_A;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
@@ -19,7 +18,7 @@ public class Client {
             Executors.newScheduledThreadPool(2),
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Server.HOST, Server.PORT
+                Config.HOST, Config.PORT
             )
         );
 

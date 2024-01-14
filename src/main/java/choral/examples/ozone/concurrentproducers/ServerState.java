@@ -14,7 +14,7 @@ public class ServerState {
     public String compute(String input) {
         Log.debug("Server processing the following input: " + input + "...");
         try {
-            Thread.sleep(Server.SERVER_MAX_COMPUTE_TIME_MILLIS);
+            Thread.sleep(Config.SERVER_MAX_COMPUTE_TIME_MILLIS);
             Log.debug("Done processing " + input + ".");
         }
         catch (InterruptedException e) {

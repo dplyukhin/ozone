@@ -4,19 +4,12 @@ import java.util.concurrent.Executors;
 
 import choral.Log;
 import choral.channels.AsyncChannel_B;
-import choral.examples.ozone.concurrentproducers.ConcurrentProducers_Server;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
 
 public class Server {
-    public static final String HOST = "localhost";
-    public static final int WORKER1_PORT = 8668;
-    public static final int WORKER2_PORT = 8669;
-    public static final int NUM_ITERATIONS = 1000;
-    public static final int ITERATION_PERIOD_MILLIS = 100;
-    public static final long SERVER_MAX_COMPUTE_TIME_MILLIS = 5;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -24,12 +17,12 @@ public class Server {
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Server.HOST, Server.WORKER1_PORT 
+                Config.HOST, Config.WORKER1_PORT
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Server.HOST, Server.WORKER2_PORT 
+                Config.HOST, Config.WORKER2_PORT
             );
 
         AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
@@ -46,12 +39,12 @@ public class Server {
 
         ServerState state = new ServerState();
         ConcurrentProducers_Server prot = new ConcurrentProducers_Server();
-        for (int i = 0; i < NUM_ITERATIONS; i++) {
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             ch_w1.select(Signal.START);
             ch_w2.select(Signal.START);
             prot.go(ch_w1, ch_w2, state, new Token(i));
             try {
-                Thread.sleep(ITERATION_PERIOD_MILLIS);
+                Thread.sleep(Config.ITERATION_PERIOD_MILLIS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

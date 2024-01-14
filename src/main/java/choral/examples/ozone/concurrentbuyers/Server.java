@@ -4,16 +4,12 @@ import java.util.concurrent.Executors;
 
 import choral.Log;
 import choral.channels.AsyncChannel_B;
-import choral.examples.ozone.concurrentbuyers.ConcurrentBuyers_Server;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.JavaSerializer;
 import choral.runtime.Token;
 
 public class Server {
-    public static final String HOST = "localhost";
-    public static final int CLIENT1_PORT = 8668;
-    public static final int CLIENT2_PORT = 8669;
 
     public static void main(String[] args) throws java.io.IOException {
         Log.debug("Running server...");
@@ -21,12 +17,12 @@ public class Server {
 		AsyncServerSocketChannel client1_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Server.HOST, Server.CLIENT1_PORT 
+                Config.HOST, Config.CLIENT1_PORT
             );
 		AsyncServerSocketChannel client2_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Server.HOST, Server.CLIENT2_PORT 
+                Config.HOST, Config.CLIENT2_PORT
             );
 
         AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
