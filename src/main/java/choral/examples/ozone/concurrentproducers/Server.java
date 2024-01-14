@@ -1,6 +1,7 @@
 package choral.examples.ozone.concurrentproducers;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import choral.Log;
 import choral.channels.AsyncChannel_B;
@@ -25,14 +26,16 @@ public class Server {
                 Config.HOST, Config.WORKER2_PORT
             );
 
-        AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<String>( 
-            Executors.newScheduledThreadPool(4),
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
+
+        AsyncChannel_B<String> ch_w1 = new AsyncChannelImpl<>(
+            threadPool,
             worker1_listener.getNext()
         );
         Log.debug("Worker1 connected.");
 
-        AsyncChannel_B<String> ch_w2 = new AsyncChannelImpl<String>( 
-            Executors.newScheduledThreadPool(4),
+        AsyncChannel_B<String> ch_w2 = new AsyncChannelImpl<>(
+            threadPool,
             worker2_listener.getNext()
         );
         Log.debug("Worker2 connected.");
@@ -52,6 +55,7 @@ public class Server {
 
         worker1_listener.close();
         worker2_listener.close();
+        threadPool.shutdownNow();
         Log.debug("Done.");
     }
 }
