@@ -14,7 +14,7 @@ public class Client {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        AsyncChannel_B<Object> ch = new AsyncChannelImpl<Object>(
+        AsyncChannel_B<Object> ch = new AsyncChannelImpl<>(
             Executors.newSingleThreadScheduledExecutor(),
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),

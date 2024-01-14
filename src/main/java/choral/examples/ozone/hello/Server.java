@@ -20,7 +20,7 @@ public class Server {
                 Config.HOST, Config.PORT
             );
 
-        AsyncChannel_B<Object> ch = new AsyncChannelImpl<Object>( 
+        AsyncChannel_B<String> ch = new AsyncChannelImpl<>(
             Executors.newSingleThreadScheduledExecutor(),
             listener.getNext()
         );
