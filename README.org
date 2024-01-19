@@ -1,6 +1,18 @@
-* About
+* Ozone
 
-* Building
+Ozone is library that adds safe, non-blocking channels to the [Choral](https://www.choral-lang.org/)
+programming language.
+
+** Overview
+
+- `/src/main/java/choral/channels/`: The `AsyncChannel` interface, used by Choral choreographies.
+- `/src/main/java/choral/runtime/`: An implementation of `AsyncChannel`, used by driver code written in Java.
+- `/src/main/java/choral/examples/ozone/`: Driver code for the Choral/Ozone choreographies used in the paper.
+- `/src/main/choral/choral/examples/ozone/`: Choral/Ozone choreographies used in the paper.
+  - `concurrentproducers/`: Microbenchmark code used to generate Figure 18 (a).
+  - `concurrentsend/`: Microbenchmark code used to generate Figure 18 (b).
+
+** Building
 
 It should always be possible to build the project with the most recent version
 of Choral. To build the project:
@@ -34,7 +46,7 @@ of Choral. To build the project:
    older, either update your Java compiler or modify =pom.xml= to match the one
    you have installed.
 
-* Running
+** Running
 
 Benchmarks are executed by running one of the following scripts in the 
 `scripts/` directory:
