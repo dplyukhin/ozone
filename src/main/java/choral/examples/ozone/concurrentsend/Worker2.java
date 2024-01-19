@@ -31,6 +31,12 @@ public class Worker2 {
             prot.concurrentFetchAndForward(ch, state, new Token(i));
 
         state.await();
+        try {
+            Thread.sleep(1000); // Give worker time to send final message
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         threadPool.shutdownNow();
+        Log.debug("Worker 2 done.");
     }
 }

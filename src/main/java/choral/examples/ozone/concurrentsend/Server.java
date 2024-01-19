@@ -53,8 +53,9 @@ public class Server {
         ConcurrentSend_Server prot = new ConcurrentSend_Server();
         ServerState state = new ServerState();
         long startTime = System.nanoTime();
-        for (int i = 0; i < Config.NUM_ITERATIONS; i++)
+        for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             prot.concurrentFetchAndForward(ch_w1, ch_w2, ch_c, state, i, new Token(i));
+        }
 
         long endTime = System.nanoTime();
         System.out.println((endTime - startTime) / 1000000);
@@ -83,6 +84,6 @@ public class Server {
         worker1_listener.close();
         worker2_listener.close();
         threadPool.shutdownNow();
-        Log.info("Done.");
+        Log.debug("Server done.");
     }
 }

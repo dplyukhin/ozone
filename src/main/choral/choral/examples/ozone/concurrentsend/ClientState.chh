@@ -1,0 +1,6 @@
+package choral.examples.ozone.concurrentsend;
+
+public class ClientState@A {
+    public void consume(String@A input) {}
+    public void await() {}
+}

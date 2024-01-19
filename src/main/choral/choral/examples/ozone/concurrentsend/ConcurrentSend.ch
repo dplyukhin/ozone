@@ -46,6 +46,7 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       WorkerState@KeyService state_ks,
       WorkerState@ContentService state_cs,
       ServerState@Server state_s,
+      ClientState@Client state_c,
       Integer@Server input,
       Token@KeyService tok_ks,
       Token@ContentService tok_cs,
@@ -72,8 +73,8 @@ public class ConcurrentSend@( KeyService, ContentService, Server, Client ) {
       CompletableFuture@Client<String> f4 = ch3.<String>com( f2, 6@Server, tok_s, 6@Client, tok_c );
 
       // Client handles the data.
-      CompletableFuture@Client<Void> acceptedKey = f3.thenAccept( new OnClientKey@Client() );
-      CompletableFuture@Client<Void> acceptedTxt = f4.thenAccept( new OnClientTxt@Client() );
+      CompletableFuture@Client<Void> acceptedKey = f3.thenAccept( new OnClientKey@Client(state_c) );
+      CompletableFuture@Client<Void> acceptedTxt = f4.thenAccept( new OnClientTxt@Client(state_c) );
 
       // Client sends back acknowledgments.
       CompletableFuture@Server<Void> f5 = ch3.<Void>com( acceptedKey, 7@Client, tok_c, 7@Server, tok_s );
