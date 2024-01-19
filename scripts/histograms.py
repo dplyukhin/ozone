@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def plot_histogram_from_csv(inputs, dims, bins):
+def plot_histogram_from_csv(filename, inputs, dims, bins):
+    print(f'Plotting histograms to {filename}...')
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
 
@@ -16,8 +17,8 @@ def plot_histogram_from_csv(inputs, dims, bins):
         # Remove outliers
         data = data[data[0] < dims['right']]
 
-        # Print the min, max, and average values - along with the file_path
-        print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
+        # Uncomment to print the min, max, and average values - along with the file_path
+        #print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
         
         # Plotting histogram
         axes[i].hist(data[0], bins=bins, color='blue', alpha=0.7)
@@ -28,7 +29,8 @@ def plot_histogram_from_csv(inputs, dims, bins):
         axes[i].set_ylim(bottom=dims['bottom'], top=dims['top'])
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(filename, format='png')
+    print(f'Done.')
 
 def plot_producers_histograms():
     inputs = {
@@ -44,7 +46,7 @@ def plot_producers_histograms():
         'top': 400
     }
 
-    plot_histogram_from_csv(inputs, dims, bins=10)
+    plot_histogram_from_csv("figures/producers.png", inputs, dims, bins=10)
 
 def plot_senders_histograms():
     inputs = {
@@ -60,7 +62,7 @@ def plot_senders_histograms():
         'top': 800
     }
 
-    plot_histogram_from_csv(inputs, dims, bins=15)
+    plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=15)
 
 plot_producers_histograms()
 plot_senders_histograms()

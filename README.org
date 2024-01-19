@@ -3,6 +3,15 @@
 Ozone is library that adds safe, non-blocking channels to the [Choral](https://www.choral-lang.org/)
 programming language.
 
+** Quickstart
+
+Run `scripts/benchmarks.sh` in the project root directory. The script will compile the Ozone library,
+run benchmarks, and plot figures. 
+
+Figure `figures/producers.png` corresponds to Figure 18 (a) in the paper.
+
+Figure `figures/senders.png` corresponds to Figure 18 (b) in the paper.
+
 ** Overview
 
 - `/src/main/java/choral/channels/`: The `AsyncChannel` interface, used by Choral choreographies.
