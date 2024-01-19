@@ -37,16 +37,17 @@ of Choral. To build the project:
 * Running
 
 Benchmarks are executed by running one of the following scripts in the 
-project root directory:
+`scripts/` directory:
 
-    bash run_concurrentproducers.sh    # Concurrent producers (Ozone)
-    bash run_inorderproducers.sh       # Concurrent producers (Choral)
-    bash run_concurrentsend.sh         # Concurrent send (Ozone)
-    bash run_inordersend.sh            # Concurrent send (Choral)
+    bash scripts/concurrentproducers.sh    # Concurrent producers (Ozone)
+    bash scripts/inorderproducers.sh       # Concurrent producers (Choral)
+    bash scripts/concurrentsend.sh         # Concurrent send (Ozone)
+    bash scripts/inordersend.sh            # Concurrent send (Choral)
 
-Plot the results with the following script (requires pandas and matplotlib):
+Plot the results with the following Python 3 script:
 
-    python3 histograms.py
+    pip3 install pandas matplotlib         # Install dependencies if necessary
+    python3 scripts/histograms.py          # Generate figures
 
 To simulate the effects of network latency, install `iproute2` and run the following
 command:
