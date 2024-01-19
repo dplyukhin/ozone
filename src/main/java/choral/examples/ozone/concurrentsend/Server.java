@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
@@ -21,35 +22,31 @@ public class Server {
 
 		AsyncServerSocketChannel client_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), 
-                Config.HOST, Config.CLIENT_PORT
+                new JavaSerializer(), Config.HOST, Config.CLIENT_PORT
             );
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), 
-                Config.HOST, Config.WORKER1_PORT
+                new JavaSerializer(), Config.HOST, Config.WORKER1_PORT
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), 
-                Config.HOST, Config.WORKER2_PORT
+                new JavaSerializer(), Config.HOST, Config.WORKER2_PORT
             );
 
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
+
         AsyncChannel_A<Object> ch_c = new AsyncChannelImpl<Object>( 
-            Executors.newSingleThreadScheduledExecutor(),
-            client_listener.getNext()
+            threadPool, client_listener.getNext()
         );
         Log.debug("Client connected.");
 
         AsyncChannel_B<Object> ch_w1 = new AsyncChannelImpl<Object>( 
-            Executors.newSingleThreadScheduledExecutor(),
-            worker1_listener.getNext()
+            threadPool, worker1_listener.getNext()
         );
         Log.debug("Worker1 connected.");
 
         AsyncChannel_B<Object> ch_w2 = new AsyncChannelImpl<Object>( 
-            Executors.newSingleThreadScheduledExecutor(),
-            worker2_listener.getNext()
+            threadPool, worker2_listener.getNext()
         );
         Log.debug("Worker2 connected.");
 
@@ -83,6 +80,9 @@ public class Server {
         }
 
         client_listener.close();
+        worker1_listener.close();
+        worker2_listener.close();
+        threadPool.shutdownNow();
         Log.info("Done.");
     }
 }

@@ -21,7 +21,7 @@ public class Worker1 {
         Log.debug("Connection succeeded.");
 
         ConcurrentSend_KeyService prot = new ConcurrentSend_KeyService();
-        WorkerState state = new WorkerState("Worker1");
+        WorkerState state = new WorkerState("Worker1", Config.NUM_ITERATIONS);
         for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             prot.inorderFetchAndForward(ch, state);
     }
