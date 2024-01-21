@@ -4,7 +4,7 @@ trap "kill 0" EXIT
 # mvn compile
 
 mvn exec:java -Dexec.mainClass="choral.examples.ozone.playground.Server" &
-sleep 1
+sleep 3
 mvn exec:java -Dexec.mainClass="choral.examples.ozone.playground.Client" &
 
 wait
