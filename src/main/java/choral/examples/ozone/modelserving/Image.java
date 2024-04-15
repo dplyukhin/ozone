@@ -1,7 +1,8 @@
 package choral.examples.ozone.modelserving;
 
+import java.io.Serializable;
 
-public class Image {
+public class Image implements Serializable {
     private byte[] imgBytes;
 
     public Image(byte[] imgBytes) {

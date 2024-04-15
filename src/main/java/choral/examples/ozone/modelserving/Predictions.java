@@ -1,6 +1,8 @@
 package choral.examples.ozone.modelserving;
 
-public class Predictions {
+import java.io.Serializable;
+
+public class Predictions implements Serializable {
     private final String[] predictions;
 
     public Predictions(String[] predictions) {

@@ -1,6 +1,8 @@
 package choral.examples.ozone.modelserving;
 
-public class BatchIDs {
+import java.io.Serializable;
+
+public class BatchIDs implements Serializable {
     private final int[] imgIDs;
 
     public BatchIDs(int[] imgIDs) {
