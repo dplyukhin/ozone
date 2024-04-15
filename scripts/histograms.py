@@ -18,7 +18,7 @@ def plot_histogram_from_csv(filename, inputs, dims, bins):
         data = data[data[0] < dims['right']]
 
         # Uncomment to print the min, max, and average values - along with the file_path
-        #print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
+        print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
         
         # Plotting histogram
         axes[i].hist(data[0], bins=bins, color='blue', alpha=0.7)
@@ -50,10 +50,10 @@ def plot_producers_histograms():
 
 def plot_senders_histograms():
     inputs = {
-        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
-        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
-        'txt (Choral)': 'data/inordersend/key-latencies.csv', 
-        'key (Choral)': 'data/inordersend/txt-latencies.csv'
+        'txt (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
+        'key (Ozone)': 'data/concurrentsend/key-latencies.csv', 
+        'txt (Choral)': 'data/inordersend/txt-latencies.csv', 
+        'key (Choral)': 'data/inordersend/key-latencies.csv'
     }
     dims = {
         'left': 0,
