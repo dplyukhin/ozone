@@ -10,10 +10,10 @@ public class Config {
     public static final int BATCHER_FOR_MODEL2 = 8671;
     public static final int BATCHER_FOR_WORKER1 = 8672;
     public static final int BATCHER_FOR_WORKER2 = 8673;
-    public static final int MODEL1_FOR_WORKER1 = 8674;
-    public static final int MODEL1_FOR_WORKER2 = 8675;
-    public static final int MODEL2_FOR_WORKER1 = 8676;
-    public static final int MODEL2_FOR_WORKER2 = 8677;
+    public static final int WORKER1_FOR_MODEL1 = 8674;
+    public static final int WORKER1_FOR_MODEL2 = 8675;
+    public static final int WORKER2_FOR_MODEL1 = 8676;
+    public static final int WORKER2_FOR_MODEL2 = 8677;
 
     public static final int BATCH_SIZE = 10;
     public static final int IMAGES_PER_CLIENT = 1000;

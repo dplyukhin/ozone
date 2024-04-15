@@ -21,10 +21,10 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    AsyncChannel@( Batcher, Model2 )< Object > chBM2;
    SymChannel@( Batcher, Worker1 )< Object > chBW1;
    SymChannel@( Batcher, Worker2 )< Object > chBW2;
-   SymChannel@( Model1, Worker1 )< Object > chM1W1;
-   SymChannel@( Model1, Worker2 )< Object > chM1W2;
-   SymChannel@( Model2, Worker1 )< Object > chM2W1;
-   SymChannel@( Model2, Worker2 )< Object > chM2W2;
+   SymChannel@( Worker1, Model1 )< Object > chM1W1;
+   SymChannel@( Worker2, Model1 )< Object > chM1W2;
+   SymChannel@( Worker1, Model2 )< Object > chM2W1;
+   SymChannel@( Worker2, Model2 )< Object > chM2W2;
 
    public ModelServing(
       SymChannel@( Client, Worker1 )< Object > chCW1,
@@ -34,10 +34,10 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       AsyncChannel@( Batcher, Model2 )< Object > chBM2,
       SymChannel@( Batcher, Worker1 )< Object > chBW1,
       SymChannel@( Batcher, Worker2 )< Object > chBW2,
-      SymChannel@( Model1, Worker1 )< Object > chM1W1,
-      SymChannel@( Model1, Worker2 )< Object > chM1W2,
-      SymChannel@( Model2, Worker1 )< Object > chM2W1,
-      SymChannel@( Model2, Worker2 )< Object > chM2W2
+      SymChannel@( Worker1, Model1 )< Object > chM1W1,
+      SymChannel@( Worker2, Model1 )< Object > chM1W2,
+      SymChannel@( Worker1, Model2 )< Object > chM2W1,
+      SymChannel@( Worker2, Model2 )< Object > chM2W2
    ) {
       this.chCW1 = chCW1;
       this.chCW2 = chCW2;
