@@ -13,13 +13,16 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
 
    SymChannel@( Client, Worker1 )< Object > ch_c_w1;
    SymChannel@( Client, Worker2 )< Object > ch_c_w2;
+   SymChannel@( Client, Batcher )< Object > ch_c_b;
 
    public ModelServing(
       SymChannel@( Client, Worker1 )< Object > ch_c_w1,
-      SymChannel@( Client, Worker2 )< Object > ch_c_w2
+      SymChannel@( Client, Worker2 )< Object > ch_c_w2,
+      SymChannel@( Client, Batcher )< Object > ch_c_b
    ) {
       this.ch_c_w1 = ch_c_w1;
       this.ch_c_w2 = ch_c_w2;
+      this.ch_c_b  = ch_c_b;
    }
 
 	public void onImage( 
@@ -29,6 +32,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       ClientState@Client clientState, 
       WorkerState@Worker1 worker1State, 
       WorkerState@Worker2 worker2State, 
+      BatcherState@Batcher batcherState, 
 
       // Token at each participant
       Token@Client tok_c, Token@Worker1 tok_w1, Token@Worker2 tok_w2, Token@Batcher tok_b, Token@Model1 tok_m1, Token@Model2 tok_m2
@@ -60,7 +64,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       }
 
       // Tell the batcher about it.
-      //BatchID@Batcher batchID_b = ch_c_b.< Integer >com(batchID);
-      //batcherState.newImage(batchID_b);
+      BatchID@Batcher batchID_b = ch_c_b.< BatchID >com(batchID);
+      batcherState.newImage(batchID_b);
    }
 }
