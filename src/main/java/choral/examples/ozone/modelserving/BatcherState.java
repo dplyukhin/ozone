@@ -13,22 +13,22 @@ public class BatcherState {
         this.imagesPerBatch = new HashMap<>();
     }
 
-    public void newImage(BatchID batchID) {
+    public synchronized void newImage(BatchID batchID) {
         if (!imagesPerBatch.containsKey(batchID)) {
             imagesPerBatch.put(batchID, 0);
         }
         imagesPerBatch.put(batchID, imagesPerBatch.get(batchID) + 1);
     }
 
-    public boolean isBatchFull(BatchID batchID) {
+    public synchronized boolean isBatchFull(BatchID batchID) {
         return imagesPerBatch.get(batchID) == Config.BATCH_SIZE;
     }
 
-    public void clearBatch(BatchID batchID) {
+    public synchronized void clearBatch(BatchID batchID) {
         imagesPerBatch.remove(batchID);
     }
 
-    public int chooseModel(int numModels) {
+    public synchronized int chooseModel(int numModels) {
         if (previousModel == -1) {
             previousModel = 0;
             return 0;
