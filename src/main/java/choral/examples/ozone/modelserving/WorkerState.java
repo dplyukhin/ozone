@@ -23,4 +23,12 @@ public class WorkerState {
         }
         processedBatches.get(batchID).add(img);
     }
+
+    public ArrayList<Image> dumpBatch(BatchID batchID) {
+        ArrayList<Image> batch = processedBatches.remove(batchID);
+        if (batch == null) {
+            batch = new ArrayList<>();
+        }
+        return batch;
+    }
 }

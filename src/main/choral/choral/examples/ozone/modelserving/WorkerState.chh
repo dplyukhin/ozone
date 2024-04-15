@@ -1,8 +1,10 @@
 package choral.examples.ozone.modelserving;
 
 import java.awt.Image;
+import java.util.ArrayList;
 
 public class WorkerState@A {
     public Image@A preprocess(Image@A img) {}
     public void store(BatchID@A batchID, Image@A img) {}
+    public ArrayList@A<Image> dumpBatch(BatchID@A batchID) {}
 }
