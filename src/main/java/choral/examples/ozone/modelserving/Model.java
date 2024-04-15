@@ -20,7 +20,7 @@ public class Model {
     private static int modelID = -1;
 
     public static void debug(String msg) {
-        Log.debug("WORKER" + modelID + ": " + msg);
+        Log.debug("MODEL" + modelID + ": " + msg);
     }
 
     public static void main(String[] args) {
