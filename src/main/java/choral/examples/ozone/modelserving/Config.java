@@ -9,4 +9,6 @@ public class Config {
     public static final int MODEL1_PORT = 8671;
     public static final int MODEL2_PORT = 8672;
     public static final int BATCH_SIZE = 10;
+    public static final int IMAGES_PER_CLIENT = 1000;
+    public static final int IMAGES_PER_SECOND = 60;
 }
