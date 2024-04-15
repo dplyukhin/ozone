@@ -14,42 +14,42 @@ import java.util.concurrent.CompletableFuture;
  */
 public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) {
 
-   SymChannel@( Client, Worker1 )< Object > ch_c_w1;
-   SymChannel@( Client, Worker2 )< Object > ch_c_w2;
-   AsyncChannel@( Client, Batcher )< Object > ch_c_b;
-   AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1;
-   AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2;
-   SymChannel@( Batcher, Worker1 )< Object > ch_b_w1;
-   SymChannel@( Batcher, Worker2 )< Object > ch_b_w2;
-   SymChannel@( Model1, Worker1 )< Object > ch_m1_w1;
-   SymChannel@( Model1, Worker2 )< Object > ch_m1_w2;
-   SymChannel@( Model2, Worker1 )< Object > ch_m2_w1;
-   SymChannel@( Model2, Worker2 )< Object > ch_m2_w2;
+   SymChannel@( Client, Worker1 )< Object > chCW1;
+   SymChannel@( Client, Worker2 )< Object > chCW2;
+   AsyncChannel@( Client, Batcher )< Object > chCB;
+   AsyncChannel@( Batcher, Model1 )< Object > chBM1;
+   AsyncChannel@( Batcher, Model2 )< Object > chBM2;
+   SymChannel@( Batcher, Worker1 )< Object > chBW1;
+   SymChannel@( Batcher, Worker2 )< Object > chBW2;
+   SymChannel@( Model1, Worker1 )< Object > chM1W1;
+   SymChannel@( Model1, Worker2 )< Object > chM1W2;
+   SymChannel@( Model2, Worker1 )< Object > chM2W1;
+   SymChannel@( Model2, Worker2 )< Object > chM2W2;
 
    public ModelServing(
-      SymChannel@( Client, Worker1 )< Object > ch_c_w1,
-      SymChannel@( Client, Worker2 )< Object > ch_c_w2,
-      AsyncChannel@( Client, Batcher )< Object > ch_c_b,
-      AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1,
-      AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2,
-      SymChannel@( Batcher, Worker1 )< Object > ch_b_w1,
-      SymChannel@( Batcher, Worker2 )< Object > ch_b_w2,
-      SymChannel@( Model1, Worker1 )< Object > ch_m1_w1,
-      SymChannel@( Model1, Worker2 )< Object > ch_m1_w2,
-      SymChannel@( Model2, Worker1 )< Object > ch_m2_w1,
-      SymChannel@( Model2, Worker2 )< Object > ch_m2_w2
+      SymChannel@( Client, Worker1 )< Object > chCW1,
+      SymChannel@( Client, Worker2 )< Object > chCW2,
+      AsyncChannel@( Client, Batcher )< Object > chCB,
+      AsyncChannel@( Batcher, Model1 )< Object > chBM1,
+      AsyncChannel@( Batcher, Model2 )< Object > chBM2,
+      SymChannel@( Batcher, Worker1 )< Object > chBW1,
+      SymChannel@( Batcher, Worker2 )< Object > chBW2,
+      SymChannel@( Model1, Worker1 )< Object > chM1W1,
+      SymChannel@( Model1, Worker2 )< Object > chM1W2,
+      SymChannel@( Model2, Worker1 )< Object > chM2W1,
+      SymChannel@( Model2, Worker2 )< Object > chM2W2
    ) {
-      this.ch_c_w1 = ch_c_w1;
-      this.ch_c_w2 = ch_c_w2;
-      this.ch_c_b  = ch_c_b;
-      this.ch_b_m1 = ch_b_m1;
-      this.ch_b_m2 = ch_b_m2;
-      this.ch_b_w1 = ch_b_w1;
-      this.ch_b_w2 = ch_b_w2;
-      this.ch_m1_w1 = ch_m1_w1;
-      this.ch_m1_w2 = ch_m1_w2;
-      this.ch_m2_w1 = ch_m2_w1;
-      this.ch_m2_w2 = ch_m2_w2;
+      this.chCW1 = chCW1;
+      this.chCW2 = chCW2;
+      this.chCB  = chCB;
+      this.chBM1 = chBM1;
+      this.chBM2 = chBM2;
+      this.chBW1 = chBW1;
+      this.chBW2 = chBW2;
+      this.chM1W1 = chM1W1;
+      this.chM1W2 = chM1W2;
+      this.chM2W1 = chM2W1;
+      this.chM2W2 = chM2W2;
    }
 
 	public CompletableFuture@Client< Predictions > onImage( 
@@ -64,97 +64,97 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       ModelState@Model2 model2State, 
 
       // Token at each participant
-      Token@Client tok_c, Token@Worker1 tok_w1, Token@Worker2 tok_w2, Token@Batcher tok_b, Token@Model1 tok_m1, Token@Model2 tok_m2
+      Token@Client tokC, Token@Worker1 tokW1, Token@Worker2 tokW2, Token@Batcher tokB, Token@Model1 tokM1, Token@Model2 tokM2
 
    ) { 
       // Choose which Worker will preprocess the data, and send them both the batchID since they'll need it later.
-      int@Client worker_id = clientState.chooseWorker(2@Client);
-      BatchID@Worker1 batchID_w1 = ch_c_w1.< BatchID >com(batchID);
-      BatchID@Worker2 batchID_w2 = ch_c_w2.< BatchID >com(batchID);
-      if (worker_id == 0@Client) {
-         ch_c_w1.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
-         ch_c_w2.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
+      int@Client workerID = clientState.chooseWorker(2@Client);
+      BatchID@Worker1 batchIDW1 = chCW1.< BatchID >com(batchID);
+      BatchID@Worker2 batchIDW2 = chCW2.< BatchID >com(batchID);
+      if (workerID == 0@Client) {
+         chCW1.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
+         chCW2.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
          System@Client.out.println("Chose Worker 1"@Client);
 
-         Image@Worker1 img_w = ch_c_w1.< Image >com(img);
+         Image@Worker1 imgW = chCW1.< Image >com(img);
 
-         Image@Worker1 processed = worker1State.preprocess(img_w);
-         worker1State.store(batchID_w1, processed);
+         Image@Worker1 processed = worker1State.preprocess(imgW);
+         worker1State.store(batchIDW1, processed);
       }
       else {
-         ch_c_w1.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
-         ch_c_w2.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
+         chCW1.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
+         chCW2.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
          System@Client.out.println("Chose Worker 2"@Client);
 
-         Image@Worker2 img_w = ch_c_w2.< Image >com(img);
+         Image@Worker2 imgW = chCW2.< Image >com(img);
 
-         Image@Worker2 processed = worker2State.preprocess(img_w);
-         worker2State.store(batchID_w2, processed);
+         Image@Worker2 processed = worker2State.preprocess(imgW);
+         worker2State.store(batchIDW2, processed);
       }
 
       // Tell the batcher about it.
-      BatchID@Batcher batchID_b = ch_c_b.< BatchID >com( batchID, 0@Client, tok_c, 0@Batcher, tok_b ).join();
-      batcherState.newImage(batchID_b);
+      BatchID@Batcher batchIDB = chCB.< BatchID >com( batchID, 0@Client, tokC, 0@Batcher, tokB ).join();
+      batcherState.newImage(batchIDB);
       
-      if (batcherState.isBatchFull(batchID_b)) {
-         ch_b_m1.< BatchReady >select( BatchReady@Batcher.READY );
-         ch_b_m2.< BatchReady >select( BatchReady@Batcher.READY );
-         ch_c_b.< BatchReady >select( BatchReady@Batcher.READY );
-         ch_b_w1.< BatchReady >select( BatchReady@Batcher.READY );
-         ch_b_w2.< BatchReady >select( BatchReady@Batcher.READY );
+      if (batcherState.isBatchFull(batchIDB)) {
+         chBM1.< BatchReady >select( BatchReady@Batcher.READY );
+         chBM2.< BatchReady >select( BatchReady@Batcher.READY );
+         chCB.< BatchReady >select( BatchReady@Batcher.READY );
+         chBW1.< BatchReady >select( BatchReady@Batcher.READY );
+         chBW2.< BatchReady >select( BatchReady@Batcher.READY );
  
-         int@Batcher model_id = batcherState.chooseModel(2@Batcher);
-         if (model_id == 0@Batcher) {
-            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-            ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-            ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+         int@Batcher modelID = batcherState.chooseModel(2@Batcher);
+         if (modelID == 0@Batcher) {
+            chBM1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            chBM2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            chBW1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            chBW2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
             System@Batcher.out.println("Sending batch to Model 1"@Batcher);
 
             // Send the batch ID to the model
-            BatchID@Model1 batchID_m = 
-              ch_b_m1.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model1, tok_m1 ).join();
+            BatchID@Model1 batchIDM = 
+              chBM1.< BatchID >com( batchIDB, 1@Batcher, tokB, 1@Model1, tokM1 ).join();
 
             // The preprocessors send their data to the model
-            ProcessedImages@Model1 batch1 = ch_m1_w1.< ProcessedImages >com( worker1State.dumpBatch( batchID_w1 ) );
-            ProcessedImages@Model1 batch2 = ch_m1_w2.< ProcessedImages >com( worker2State.dumpBatch( batchID_w2 ) );
+            ProcessedImages@Model1 batch1 = chM1W1.< ProcessedImages >com( worker1State.dumpBatch( batchIDW1 ) );
+            ProcessedImages@Model1 batch2 = chM1W2.< ProcessedImages >com( worker2State.dumpBatch( batchIDW2 ) );
 
             // Model outputs predictions on the data, and sends it to the client through the batcher
             batch1.addAll(batch2);
             Predictions@Model1 predictions = model1State.classify(batch1);
-            CompletableFuture@Batcher< Predictions > predictions_b =
-               ch_b_m1.< Predictions >com( predictions, 2@Model1, tok_m1, 2@Batcher, tok_b );
-            return ch_c_b.< Predictions >com( predictions_b, 3@Batcher, tok_b, 3@Client, tok_c );
+            CompletableFuture@Batcher< Predictions > predictionsB =
+               chBM1.< Predictions >com( predictions, 2@Model1, tokM1, 2@Batcher, tokB );
+            return chCB.< Predictions >com( predictionsB, 3@Batcher, tokB, 3@Client, tokC );
          }
          else {
-            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-            ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-            ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            chBM1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            chBM2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            chBW1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            chBW2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
             System@Batcher.out.println("Sending batch to Model 2"@Batcher);
 
             // Send the batch ID to the model
-            BatchID@Model2 batchID_m = 
-              ch_b_m2.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model2, tok_m2 ).join();
+            BatchID@Model2 batchIDM = 
+              chBM2.< BatchID >com( batchIDB, 1@Batcher, tokB, 1@Model2, tokM2 ).join();
 
             // The preprocessors send their data to the model
-            ProcessedImages@Model2 batch1 = ch_m2_w1.< ProcessedImages >com( worker1State.dumpBatch( batchID_w1 ) );
-            ProcessedImages@Model2 batch2 = ch_m2_w2.< ProcessedImages >com( worker2State.dumpBatch( batchID_w2 ) );
+            ProcessedImages@Model2 batch1 = chM2W1.< ProcessedImages >com( worker1State.dumpBatch( batchIDW1 ) );
+            ProcessedImages@Model2 batch2 = chM2W2.< ProcessedImages >com( worker2State.dumpBatch( batchIDW2 ) );
             
             // Model outputs predictions on the data, and sends it to the client through the batcher
             batch1.addAll(batch2);
             Predictions@Model2 predictions = model2State.classify(batch1);
-            CompletableFuture@Batcher< Predictions > predictions_b =
-               ch_b_m2.< Predictions >com( predictions, 2@Model2, tok_m2, 2@Batcher, tok_b );
-            return ch_c_b.< Predictions >com( predictions_b, 3@Batcher, tok_b, 3@Client, tok_c );
+            CompletableFuture@Batcher< Predictions > predictionsB =
+               chBM2.< Predictions >com( predictions, 2@Model2, tokM2, 2@Batcher, tokB );
+            return chCB.< Predictions >com( predictionsB, 3@Batcher, tokB, 3@Client, tokC );
          }
       } 
       else {
-         ch_b_m1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
-         ch_b_m2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
-         ch_c_b.< BatchReady >select( BatchReady@Batcher.NOT_READY );
-         ch_b_w1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
-         ch_b_w2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         chBM1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         chBM2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         chCB.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         chBW1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         chBW2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
          
          return null@Client;
       }
