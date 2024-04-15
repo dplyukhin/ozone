@@ -94,36 +94,57 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       BatchID@Batcher batchID_b = ch_c_b.< BatchID >com(batchID);
       batcherState.newImage(batchID_b);
       
-      int@Batcher model_id = batcherState.chooseModel(2@Batcher);
-      if (model_id == 0@Batcher) {
-         ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-         ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-         ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-         ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-         System@Batcher.out.println("Sending batch to Model 1"@Batcher);
+      if (batcherState.isBatchFull(batchID_b)) {
+         ch_b_m1.< BatchReady >select( BatchReady@Batcher.READY );
+         ch_b_m2.< BatchReady >select( BatchReady@Batcher.READY );
+         ch_c_b.< BatchReady >select( BatchReady@Batcher.READY );
+         ch_b_w1.< BatchReady >select( BatchReady@Batcher.READY );
+         ch_b_w2.< BatchReady >select( BatchReady@Batcher.READY );
+ 
+         int@Batcher model_id = batcherState.chooseModel(2@Batcher);
+         if (model_id == 0@Batcher) {
+            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            System@Batcher.out.println("Sending batch to Model 1"@Batcher);
 
-         // Send the batch ID to the model
-         BatchID@Model1 batchID_m = 
-           ch_b_m1.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model1, tok_m1 ).join();
+            // Send the batch ID to the model
+            BatchID@Model1 batchID_m = 
+            ch_b_m1.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model1, tok_m1 ).join();
 
-         // The preprocessors send their data to the model
-         ArrayList@Model1< Image > batch1 = ch_m1_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
-         ArrayList@Model1< Image > batch2 = ch_m1_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
-      }
+            // The preprocessors send their data to the model
+            ArrayList@Model1< Image > batch1 = ch_m1_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
+            ArrayList@Model1< Image > batch2 = ch_m1_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+
+            // Model concatenates the data
+            // Model outputs predictions on the data
+            // Model sends the result to the batcher
+            // Batcher sends the result to the client
+         }
+         else {
+            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            System@Batcher.out.println("Sending batch to Model 2"@Batcher);
+
+            // Send the batch ID to the model
+            BatchID@Model2 batchID_m = 
+            ch_b_m2.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model2, tok_m2 ).join();
+
+            // The preprocessors send their data to the model
+            ArrayList@Model2< Image > batch1 = ch_m2_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
+            ArrayList@Model2< Image > batch2 = ch_m2_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+         }
+      } 
       else {
-         ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-         ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-         ch_b_w1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-         ch_b_w2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-         System@Batcher.out.println("Sending batch to Model 2"@Batcher);
-
-         // Send the batch ID to the model
-         BatchID@Model2 batchID_m = 
-           ch_b_m2.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model2, tok_m2 ).join();
-
-         // The preprocessors send their data to the model
-         ArrayList@Model2< Image > batch1 = ch_m2_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
-         ArrayList@Model2< Image > batch2 = ch_m2_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+         ch_b_m1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         ch_b_m2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         ch_c_b.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         ch_b_w1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         ch_b_w2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         
       }
    }
 }
