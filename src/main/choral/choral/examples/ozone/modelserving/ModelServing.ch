@@ -21,7 +21,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    }
 
 	public void go( 
-
+      
       // Local state at each process
       ClientState@Client clientState, 
 
