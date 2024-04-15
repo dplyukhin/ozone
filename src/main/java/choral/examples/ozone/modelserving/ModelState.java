@@ -1,6 +1,6 @@
 package choral.examples.ozone.modelserving;
 
-import java.awt.Image;
+
 import java.util.ArrayList;
 
 public class ModelState {

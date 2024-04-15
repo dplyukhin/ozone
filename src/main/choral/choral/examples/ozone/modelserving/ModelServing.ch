@@ -4,7 +4,7 @@ import choral.runtime.Token;
 import choral.channels.SymChannel;
 import choral.channels.AsyncChannel;
 
-import java.awt.Image;
+
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 

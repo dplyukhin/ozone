@@ -1,3 +1,4 @@
-package java.awt;
+package choral.examples.ozone.modelserving;
 
-public interface Image@A {}
+public class Image@A {
+}

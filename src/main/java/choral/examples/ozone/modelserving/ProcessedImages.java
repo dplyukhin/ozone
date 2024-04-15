@@ -1,6 +1,6 @@
 package choral.examples.ozone.modelserving;
 
-import java.awt.Image;
+
 
 public class ProcessedImages {
     private Image[] images;

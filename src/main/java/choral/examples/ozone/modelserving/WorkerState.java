@@ -1,6 +1,6 @@
 package choral.examples.ozone.modelserving;
 
-import java.awt.Image;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

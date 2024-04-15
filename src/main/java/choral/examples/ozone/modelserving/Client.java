@@ -1,12 +1,11 @@
 package choral.examples.ozone.modelserving;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import javax.imageio.ImageIO;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
@@ -26,6 +25,24 @@ public class Client {
     }
 
     public static void main(String[] args) {
+
+        // Read the image filename from args
+        if (args.length < 1) {
+            debug("Image filename not provided. Exiting.");
+            return;
+        }
+        String filePath = args[0];
+
+        Image img = null;
+        try {
+            byte[] imgBytes = Files.readAllBytes(Paths.get(filePath));
+            img = new Image(imgBytes);
+        } 
+        catch (IOException e) {
+            debug("Couldn't find image " + filePath + ". Exiting.");
+            return;
+        }
+
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
         debug("Connecting to other nodes...");
@@ -54,7 +71,7 @@ public class Client {
 
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
-            Image img = ImageIO.read(new File("img.jpg"));
+
             prot.onImage(img, 0, state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
