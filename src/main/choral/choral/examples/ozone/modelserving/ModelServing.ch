@@ -118,6 +118,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
             ArrayList@Model1< Image > batch2 = ch_m1_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
 
             // Model concatenates the data
+            batch1.addAll(batch2);
             // Model outputs predictions on the data
             // Model sends the result to the batcher
             // Batcher sends the result to the client

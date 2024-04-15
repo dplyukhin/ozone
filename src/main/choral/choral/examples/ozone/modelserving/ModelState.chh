@@ -1,0 +1,8 @@
+package choral.examples.ozone.modelserving;
+
+import java.awt.Image;
+import java.util.ArrayList;
+
+public class ModelState@A {
+    public ArrayList@A< String > classify(ArrayList@A< Image > batch) {}
+}
