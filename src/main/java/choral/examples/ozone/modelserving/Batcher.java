@@ -14,6 +14,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
+import choral.runtime.Token;
 
 public class Batcher {
 
@@ -60,6 +61,8 @@ public class Batcher {
             debug("Starting!");
 
             ModelServing_Batcher prot = new ModelServing_Batcher(chC, chM1, chM2, chW1, chW2);
+            BatcherState state = new BatcherState();
+            prot.onImage(state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
 

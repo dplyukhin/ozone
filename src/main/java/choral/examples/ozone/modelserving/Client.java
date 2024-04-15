@@ -1,8 +1,12 @@
 package choral.examples.ozone.modelserving;
 
+import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import javax.imageio.ImageIO;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
@@ -13,6 +17,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
+import choral.runtime.Token;
 
 public class Client {
 
@@ -48,6 +53,9 @@ public class Client {
             debug("Client starting!");
 
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
+            ClientState state = new ClientState();
+            Image img = ImageIO.read(new File("img.jpg"));
+            prot.onImage(img, 0, state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
 

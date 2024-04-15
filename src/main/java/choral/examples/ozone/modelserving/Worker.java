@@ -14,6 +14,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
+import choral.runtime.Token;
 
 public class Worker {
 
@@ -82,13 +83,16 @@ public class Worker {
 
             debug("Starting!");
 
+            WorkerState state = new WorkerState();
             if (workerID == 1) {
                 ModelServing_Worker1 prot = new ModelServing_Worker1(chC, chB, chM1, chM2);
+                prot.onImage(state, new Token(0));
                 //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
                 //    prot.on
             }
             else if (workerID == 2) {
                 ModelServing_Worker2 prot = new ModelServing_Worker2(chC, chB, chM1, chM2);
+                prot.onImage(state, new Token(0));
                 //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
                 //    prot.on
             }

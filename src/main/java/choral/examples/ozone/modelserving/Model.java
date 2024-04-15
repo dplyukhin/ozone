@@ -14,6 +14,7 @@ import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
 import choral.runtime.JavaSerializer;
+import choral.runtime.Token;
 
 public class Model {
 
@@ -72,13 +73,16 @@ public class Model {
 
         debug("Starting!");
 
+        ModelState state = new ModelState();
         if (modelID == 1) {
             ModelServing_Model1 prot = new ModelServing_Model1(chB, chW1, chW2);
+            prot.onImage(state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
         }
         else if (modelID == 2) {
             ModelServing_Model2 prot = new ModelServing_Model2(chB, chW1, chW2);
+            prot.onImage(state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
         }
