@@ -1,0 +1,5 @@
+package choral.examples.ozone.modelserving;
+
+public class ClientState@A {
+    public int@A chooseWorker(int@A numWorkers) {}
+}
