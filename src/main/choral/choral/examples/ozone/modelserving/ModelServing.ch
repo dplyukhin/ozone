@@ -23,7 +23,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    }
 
 	public void onImage( 
-      Image@Client img, int@Client batchID,
+      Image@Client img, BatchID@Client batchID,
       
       // Local state at each process
       ClientState@Client clientState, 
@@ -42,7 +42,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
          System@Client.out.println("Chose Worker 1"@Client);
 
          Image@Worker1 img_w = ch_c_w1.< Image >com(img);
-         int@Worker1 batchID_w = ch_c_w1.< Integer >com(batchID);
+         BatchID@Worker1 batchID_w = ch_c_w1.< BatchID >com(batchID);
 
          Image@Worker1 processed = worker1State.preprocess(img_w);
          worker1State.store(batchID_w, processed);
@@ -53,10 +53,14 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
          System@Client.out.println("Chose Worker 2"@Client);
 
          Image@Worker2 img_w = ch_c_w2.< Image >com(img);
-         int@Worker2 batchID_w = ch_c_w2.< Integer >com(batchID);
+         BatchID@Worker2 batchID_w = ch_c_w2.< BatchID >com(batchID);
 
          Image@Worker2 processed = worker2State.preprocess(img_w);
          worker2State.store(batchID_w, processed);
       }
+
+      // Tell the batcher about it.
+      //BatchID@Batcher batchID_b = ch_c_b.< Integer >com(batchID);
+      //batcherState.newImage(batchID_b);
    }
 }

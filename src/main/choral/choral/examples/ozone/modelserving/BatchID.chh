@@ -1,0 +1,4 @@
+package choral.examples.ozone.modelserving;
+
+public class BatchID@A {
+}

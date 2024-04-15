@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class WorkerState {
 
-    private Map<Integer, ArrayList<Image>> processedBatches;
+    private Map<BatchID, ArrayList<Image>> processedBatches;
 
     public WorkerState() {
         this.processedBatches = new HashMap<>();
@@ -17,7 +17,7 @@ public class WorkerState {
         return img;
     }
 
-    public void store(int batchID, Image img) {
+    public void store(BatchID batchID, Image img) {
         if (!processedBatches.containsKey(batchID)) {
             processedBatches.put(batchID, new ArrayList<>());
         }
