@@ -16,7 +16,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
 
    SymChannel@( Client, Worker1 )< Object > ch_c_w1;
    SymChannel@( Client, Worker2 )< Object > ch_c_w2;
-   SymChannel@( Client, Batcher )< Object > ch_c_b;
+   AsyncChannel@( Client, Batcher )< Object > ch_c_b;
    AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1;
    AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2;
    SymChannel@( Batcher, Worker1 )< Object > ch_b_w1;
@@ -29,7 +29,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    public ModelServing(
       SymChannel@( Client, Worker1 )< Object > ch_c_w1,
       SymChannel@( Client, Worker2 )< Object > ch_c_w2,
-      SymChannel@( Client, Batcher )< Object > ch_c_b,
+      AsyncChannel@( Client, Batcher )< Object > ch_c_b,
       AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1,
       AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2,
       SymChannel@( Batcher, Worker1 )< Object > ch_b_w1,
@@ -52,7 +52,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       this.ch_m2_w2 = ch_m2_w2;
    }
 
-	public void onImage( 
+	public CompletableFuture@Client< Predictions > onImage( 
       Image@Client img, BatchID@Client batchID,
       
       // Local state at each process
@@ -60,6 +60,8 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       WorkerState@Worker1 worker1State, 
       WorkerState@Worker2 worker2State, 
       BatcherState@Batcher batcherState, 
+      ModelState@Model1 model1State, 
+      ModelState@Model2 model2State, 
 
       // Token at each participant
       Token@Client tok_c, Token@Worker1 tok_w1, Token@Worker2 tok_w2, Token@Batcher tok_b, Token@Model1 tok_m1, Token@Model2 tok_m2
@@ -91,7 +93,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       }
 
       // Tell the batcher about it.
-      BatchID@Batcher batchID_b = ch_c_b.< BatchID >com(batchID);
+      BatchID@Batcher batchID_b = ch_c_b.< BatchID >com( batchID, 0@Client, tok_c, 0@Batcher, tok_b ).join();
       batcherState.newImage(batchID_b);
       
       if (batcherState.isBatchFull(batchID_b)) {
@@ -117,11 +119,12 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
             ArrayList@Model1< Image > batch1 = ch_m1_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
             ArrayList@Model1< Image > batch2 = ch_m1_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
 
-            // Model concatenates the data
+            // Model outputs predictions on the data, and sends it to the client through the batcher
             batch1.addAll(batch2);
-            // Model outputs predictions on the data
-            // Model sends the result to the batcher
-            // Batcher sends the result to the client
+            Predictions@Model1 predictions = model1State.classify(batch1);
+            CompletableFuture@Batcher< Predictions > predictions_b =
+               ch_b_m1.< Predictions >com( predictions, 2@Model1, tok_m1, 2@Batcher, tok_b );
+            return ch_c_b.< Predictions >com( predictions_b, 3@Batcher, tok_b, 3@Client, tok_c );
          }
          else {
             ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
@@ -137,6 +140,13 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
             // The preprocessors send their data to the model
             ArrayList@Model2< Image > batch1 = ch_m2_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
             ArrayList@Model2< Image > batch2 = ch_m2_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+            
+            // Model outputs predictions on the data, and sends it to the client through the batcher
+            batch1.addAll(batch2);
+            Predictions@Model2 predictions = model2State.classify(batch1);
+            CompletableFuture@Batcher< Predictions > predictions_b =
+               ch_b_m2.< Predictions >com( predictions, 2@Model2, tok_m2, 2@Batcher, tok_b );
+            return ch_c_b.< Predictions >com( predictions_b, 3@Batcher, tok_b, 3@Client, tok_c );
          }
       } 
       else {
@@ -146,6 +156,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
          ch_b_w1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
          ch_b_w2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
          
+         return null@Client;
       }
    }
 }
