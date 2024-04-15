@@ -67,6 +67,8 @@ public class Client {
             );
             debug("Batcher connected.");
 
+            chB.select();
+
             debug("Client starting!");
 
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);

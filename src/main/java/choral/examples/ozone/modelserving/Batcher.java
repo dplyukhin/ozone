@@ -58,6 +58,10 @@ public class Batcher {
             SymChannel_A<Object> chW2 = worker2_listener.getNext();
             debug("Workers connected.");
 
+            chW1.select();
+            chW2.select();
+            chC.<BenchmarkReady>select(BenchmarkReady.READY);
+
             debug("Starting!");
 
             ModelServing_Batcher prot = new ModelServing_Batcher(chC, chM1, chM2, chW1, chW2);
