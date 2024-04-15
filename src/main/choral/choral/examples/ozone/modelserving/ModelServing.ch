@@ -3,6 +3,8 @@ package choral.examples.ozone.modelserving;
 import choral.runtime.Token;
 import choral.channels.SymChannel;
 
+import java.awt.Image;
+
 /**
  * Model serving choreography, adapted from 
  * https://github.com/stephanie-wang/ownership-nsdi2021-artifact/tree/main/model-serving
@@ -20,10 +22,13 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       this.ch_c_w2 = ch_c_w2;
    }
 
-	public void go( 
+	public void onImage( 
+      Image@Client img, int@Client batchID,
       
       // Local state at each process
       ClientState@Client clientState, 
+      WorkerState@Worker1 worker1State, 
+      WorkerState@Worker2 worker2State, 
 
       // Token at each participant
       Token@Client tok_c, Token@Worker1 tok_w1, Token@Worker2 tok_w2, Token@Batcher tok_b, Token@Model1 tok_m1, Token@Model2 tok_m2
@@ -35,11 +40,23 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
          ch_c_w1.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
          ch_c_w2.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
          System@Client.out.println("Chose Worker 1"@Client);
+
+         Image@Worker1 img_w = ch_c_w1.< Image >com(img);
+         int@Worker1 batchID_w = ch_c_w1.< Integer >com(batchID);
+
+         Image@Worker1 processed = worker1State.preprocess(img_w);
+         worker1State.store(batchID_w, processed);
       }
       else {
          ch_c_w1.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
          ch_c_w2.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
          System@Client.out.println("Chose Worker 2"@Client);
+
+         Image@Worker2 img_w = ch_c_w2.< Image >com(img);
+         int@Worker2 batchID_w = ch_c_w2.< Integer >com(batchID);
+
+         Image@Worker2 processed = worker2State.preprocess(img_w);
+         worker2State.store(batchID_w, processed);
       }
    }
 }
