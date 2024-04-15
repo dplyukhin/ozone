@@ -17,14 +17,14 @@ public class WorkerState {
         return img;
     }
 
-    public void store(BatchID batchID, Image img) {
+    public synchronized void store(BatchID batchID, Image img) {
         if (!processedBatches.containsKey(batchID)) {
             processedBatches.put(batchID, new ArrayList<>());
         }
         processedBatches.get(batchID).add(img);
     }
 
-    public ProcessedImages dumpBatch(BatchID batchID) {
+    public synchronized ProcessedImages dumpBatch(BatchID batchID) {
         ArrayList<Image> batch = processedBatches.remove(batchID);
         if (batch == null) {
             batch = new ArrayList<>();
