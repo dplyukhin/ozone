@@ -5,6 +5,6 @@ import java.util.ArrayList;
 
 public class WorkerState@A {
     public Image@A preprocess(Image@A img) {}
-    public void store(BatchID@A batchID, Image@A img) {}
-    public ProcessedImages@A dumpBatch(BatchID@A batchID) {}
+    public void store(int@A imgID, Image@A img) {}
+    public ProcessedImages@A dumpBatch(BatchIDs@A batchIDs) {}
 }

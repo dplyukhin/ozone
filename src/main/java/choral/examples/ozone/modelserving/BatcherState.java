@@ -6,26 +6,24 @@ import java.util.Map;
 
 public class BatcherState {
 
-    private Map<BatchID, Integer> imagesPerBatch;
+    private ArrayList<Integer> currentBatch;
     private int previousModel = -1;
 
     public BatcherState() {
-        this.imagesPerBatch = new HashMap<>();
+        this.currentBatch = new ArrayList<>();
     }
 
-    public synchronized void newImage(BatchID batchID) {
-        if (!imagesPerBatch.containsKey(batchID)) {
-            imagesPerBatch.put(batchID, 0);
+    public synchronized void newImage(int imgID) {
+        currentBatch.add(imgID);
+    }
+
+    public synchronized BatchIDs getBatchIfFull() {
+        if (currentBatch.size() == Config.BATCH_SIZE) {
+            BatchIDs batchIDs = new BatchIDs(currentBatch.stream().mapToInt(i -> i).toArray());
+            currentBatch.clear();
+            return batchIDs;
         }
-        imagesPerBatch.put(batchID, imagesPerBatch.get(batchID) + 1);
-    }
-
-    public synchronized boolean isBatchFull(BatchID batchID) {
-        return imagesPerBatch.get(batchID) == Config.BATCH_SIZE;
-    }
-
-    public synchronized void clearBatch(BatchID batchID) {
-        imagesPerBatch.remove(batchID);
+        return null;
     }
 
     public synchronized int chooseModel(int numModels) {

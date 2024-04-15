@@ -7,28 +7,25 @@ import java.util.Map;
 
 public class WorkerState {
 
-    private Map<BatchID, ArrayList<Image>> processedBatches;
+    private Map<Integer, Image> processedImages;
 
     public WorkerState() {
-        this.processedBatches = new HashMap<>();
+        this.processedImages = new HashMap<>();
     }
 
     public Image preprocess(Image img) {
         return img;
     }
 
-    public synchronized void store(BatchID batchID, Image img) {
-        if (!processedBatches.containsKey(batchID)) {
-            processedBatches.put(batchID, new ArrayList<>());
-        }
-        processedBatches.get(batchID).add(img);
+    public synchronized void store(int imgID, Image img) {
+        processedImages.put(imgID, img);
     }
 
-    public synchronized ProcessedImages dumpBatch(BatchID batchID) {
-        ArrayList<Image> batch = processedBatches.remove(batchID);
-        if (batch == null) {
-            batch = new ArrayList<>();
+    public synchronized ProcessedImages dumpBatch(BatchIDs batchIDs) {
+        Image[] batch = new Image[batchIDs.getBatchIDs().length];
+        for (int i = 0; i < batchIDs.getBatchIDs().length; i++) {
+            batch[i] = processedImages.remove(batchIDs.getBatchIDs()[i]);
         }
-        return new ProcessedImages(batch.toArray(new Image[0]));
+        return new ProcessedImages(batch);
     }
 }

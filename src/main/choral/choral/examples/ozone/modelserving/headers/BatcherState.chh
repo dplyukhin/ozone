@@ -1,8 +1,7 @@
 package choral.examples.ozone.modelserving;
 
 public class BatcherState@A {
-    public void newImage(BatchID@A batchID) {}
-    public boolean@A isBatchFull(BatchID@A batchID) { }
-    public void clearBatch(BatchID@A batchID) { }
+    public void newImage(int@A imgID) {}
+    public BatchIDs@A getBatchIfFull() { }
     public int@A chooseModel(int@A numModels) { }
 }
