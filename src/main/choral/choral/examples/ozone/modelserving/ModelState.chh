@@ -4,5 +4,5 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 public class ModelState@A {
-    public Predictions@A classify(ArrayList@A< Image > batch) {}
+    public Predictions@A classify(ProcessedImages@A batch) {}
 }

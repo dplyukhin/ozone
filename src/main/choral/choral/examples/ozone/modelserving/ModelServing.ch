@@ -113,11 +113,11 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
 
             // Send the batch ID to the model
             BatchID@Model1 batchID_m = 
-            ch_b_m1.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model1, tok_m1 ).join();
+              ch_b_m1.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model1, tok_m1 ).join();
 
             // The preprocessors send their data to the model
-            ArrayList@Model1< Image > batch1 = ch_m1_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
-            ArrayList@Model1< Image > batch2 = ch_m1_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+            ProcessedImages@Model1 batch1 = ch_m1_w1.< ProcessedImages >com( worker1State.dumpBatch( batchID_w1 ) );
+            ProcessedImages@Model1 batch2 = ch_m1_w2.< ProcessedImages >com( worker2State.dumpBatch( batchID_w2 ) );
 
             // Model outputs predictions on the data, and sends it to the client through the batcher
             batch1.addAll(batch2);
@@ -135,11 +135,11 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
 
             // Send the batch ID to the model
             BatchID@Model2 batchID_m = 
-            ch_b_m2.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model2, tok_m2 ).join();
+              ch_b_m2.< BatchID >com( batchID_b, 1@Batcher, tok_b, 1@Model2, tok_m2 ).join();
 
             // The preprocessors send their data to the model
-            ArrayList@Model2< Image > batch1 = ch_m2_w1.< ArrayList<Image> >com( worker1State.dumpBatch( batchID_w1 ) );
-            ArrayList@Model2< Image > batch2 = ch_m2_w2.< ArrayList<Image> >com( worker2State.dumpBatch( batchID_w2 ) );
+            ProcessedImages@Model2 batch1 = ch_m2_w1.< ProcessedImages >com( worker1State.dumpBatch( batchID_w1 ) );
+            ProcessedImages@Model2 batch2 = ch_m2_w2.< ProcessedImages >com( worker2State.dumpBatch( batchID_w2 ) );
             
             // Model outputs predictions on the data, and sends it to the client through the batcher
             batch1.addAll(batch2);
