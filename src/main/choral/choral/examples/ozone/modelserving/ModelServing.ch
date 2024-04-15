@@ -2,6 +2,7 @@ package choral.examples.ozone.modelserving;
 
 import choral.runtime.Token;
 import choral.channels.SymChannel;
+import choral.channels.AsyncChannel;
 
 import java.awt.Image;
 
@@ -14,15 +15,21 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    SymChannel@( Client, Worker1 )< Object > ch_c_w1;
    SymChannel@( Client, Worker2 )< Object > ch_c_w2;
    SymChannel@( Client, Batcher )< Object > ch_c_b;
+   AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1;
+   AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2;
 
    public ModelServing(
       SymChannel@( Client, Worker1 )< Object > ch_c_w1,
       SymChannel@( Client, Worker2 )< Object > ch_c_w2,
-      SymChannel@( Client, Batcher )< Object > ch_c_b
+      SymChannel@( Client, Batcher )< Object > ch_c_b,
+      AsyncChannel@( Batcher, Model1 )< Object > ch_b_m1,
+      AsyncChannel@( Batcher, Model2 )< Object > ch_b_m2
    ) {
       this.ch_c_w1 = ch_c_w1;
       this.ch_c_w2 = ch_c_w2;
       this.ch_c_b  = ch_c_b;
+      this.ch_b_m1 = ch_b_m1;
+      this.ch_b_m2 = ch_b_m2;
    }
 
 	public void onImage( 
@@ -66,5 +73,14 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       // Tell the batcher about it.
       BatchID@Batcher batchID_b = ch_c_b.< BatchID >com(batchID);
       batcherState.newImage(batchID_b);
+
+      if (batcherState.isBatchFull(batchID_b)) {
+         ch_b_m1.< BatchReady >select( BatchReady@Batcher.READY );
+         ch_b_m2.< BatchReady >select( BatchReady@Batcher.READY );
+      }
+      else {
+         ch_b_m1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         ch_b_m2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+      }
    }
 }
