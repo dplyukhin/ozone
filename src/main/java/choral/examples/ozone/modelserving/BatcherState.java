@@ -7,6 +7,7 @@ import java.util.Map;
 public class BatcherState {
 
     private Map<BatchID, Integer> imagesPerBatch;
+    private int previousModel = -1;
 
     public BatcherState() {
         this.imagesPerBatch = new HashMap<>();
@@ -25,5 +26,16 @@ public class BatcherState {
 
     public void clearBatch(BatchID batchID) {
         imagesPerBatch.remove(batchID);
+    }
+
+    public int chooseModel(int numModels) {
+        if (previousModel == -1) {
+            previousModel = 0;
+            return 0;
+        }
+        else {
+            previousModel = (previousModel + 1) % numModels;
+            return previousModel;
+        }
     }
 }

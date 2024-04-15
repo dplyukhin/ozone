@@ -4,4 +4,5 @@ public class BatcherState@A {
     public void newImage(BatchID@A batchID) {}
     public boolean@A isBatchFull(BatchID@A batchID) { }
     public void clearBatch(BatchID@A batchID) { }
+    public int@A chooseModel(int@A numModels) { }
 }

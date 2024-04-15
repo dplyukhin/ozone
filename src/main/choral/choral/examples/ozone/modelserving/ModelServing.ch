@@ -77,10 +77,23 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       if (batcherState.isBatchFull(batchID_b)) {
          ch_b_m1.< BatchReady >select( BatchReady@Batcher.READY );
          ch_b_m2.< BatchReady >select( BatchReady@Batcher.READY );
+
+         int@Batcher model_id = batcherState.chooseModel(2@Batcher);
+         if (model_id == 0@Batcher) {
+            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
+            System@Batcher.out.println("Sending batch to Model 1"@Batcher);
+         }
+         else {
+            ch_b_m1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            ch_b_m2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
+            System@Batcher.out.println("Sending batch to Model 2"@Batcher);
+         }
       }
       else {
          ch_b_m1.< BatchReady >select( BatchReady@Batcher.NOT_READY );
          ch_b_m2.< BatchReady >select( BatchReady@Batcher.NOT_READY );
+         System@Batcher.out.println("Batch isn't full yet..."@Batcher);
       }
    }
 }
