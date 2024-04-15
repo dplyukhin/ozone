@@ -16,32 +16,36 @@ import choral.runtime.JavaSerializer;
 
 public class Client {
 
+    public static void debug(String msg) {
+        Log.debug("CLIENT: " + msg);
+    }
+
     public static void main(String[] args) {
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
-        Log.debug("Connecting to other nodes...");
+        debug("Connecting to other nodes...");
 
         AsyncServerSocketChannel worker1_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.WORKER1_PORT
+            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_WORKER1
         );
         AsyncServerSocketChannel worker2_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.WORKER2_PORT
+            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_WORKER2
         );
         AsyncServerSocketChannel batcher_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.BATCHER_PORT
+            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
         );
 
         try {
             SymChannel_A<Object> chW1 = worker1_listener.getNext();
-            Log.debug("Worker 1 connected.");
+            debug("Worker 1 connected.");
             SymChannel_A<Object> chW2 = worker2_listener.getNext();
-            Log.debug("Worker 2 connected.");
+            debug("Worker 2 connected.");
             AsyncChannel_A<Object> chB = new AsyncChannelImpl<Object>( 
                 threadPool, batcher_listener.getNext()
             );
-            Log.debug("Batcher connected.");
+            debug("Batcher connected.");
 
-            Log.debug("Client starting!");
+            debug("Client starting!");
 
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
@@ -49,14 +53,14 @@ public class Client {
 
         } 
         catch (IOException e) {
-            Log.debug("Error in client, aborting: " + e.getMessage());
+            debug("Error in client, aborting: " + e.getMessage());
         }
         finally {
             threadPool.shutdownNow();
             worker1_listener.close();
             worker2_listener.close();
             batcher_listener.close();
-            Log.debug("Client done.");
+            debug("Client done.");
         }
     }
 }
