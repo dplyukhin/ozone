@@ -66,12 +66,22 @@ def plot_senders_histograms():
 
     plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=15)
 
-def plot_modelserving_throughput(batch_size):
+
+####################################################################################################
+# Model serving
+####################################################################################################
+
+def find_modelserving_rates(batch_size):
     ozone_files = glob.glob('data/modelserving/throughput-concurrent-rate*-batch*.csv')
     choral_files = glob.glob('data/modelserving/throughput-inorder-rate*-batch*.csv')
 
     ozone_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in ozone_files])
     choral_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in choral_files])
+
+    return ozone_rates, choral_rates
+
+def plot_modelserving_throughput(batch_size):
+    ozone_rates, choral_rates = find_modelserving_rates(batch_size)
 
     ozone_throughputs = []
     choral_throughputs = []
@@ -95,7 +105,38 @@ def plot_modelserving_throughput(batch_size):
     plt.legend()
     plt.show()
 
+def calculate_latency_percentile(data, percentile):
+    data = data.iloc[100:]
+    data = data.astype(int)
+    return data[0].quantile(percentile / 100)
 
-plot_producers_histograms()
-plot_senders_histograms()
+def plot_modelserving_99pi(batch_size):
+    ozone_rates, choral_rates = find_modelserving_rates(batch_size)
+
+    ozone_latency = []
+    choral_latency = []
+
+    for rate in ozone_rates:
+        path = f'data/modelserving/latency-concurrent-rate{rate}-batch{batch_size}.csv'
+        data = pd.read_csv(path, header=None)
+        latency = calculate_latency_percentile(data, 99)
+        ozone_latency.append(latency)
+
+    for rate in choral_rates:
+        path = f'data/modelserving/latency-inorder-rate{rate}-batch{batch_size}.csv'
+        data = pd.read_csv(path, header=None)
+        latency = calculate_latency_percentile(data, 99)
+        choral_latency.append(latency)
+
+    plt.plot(ozone_rates, ozone_latency, 'o-', label='Ozone')
+    plt.plot(choral_rates, choral_latency, 'x-', label='Choral')
+    plt.xlabel('Requests per second')
+    plt.ylabel('99th percentile latency (ms)')
+    plt.legend()
+    plt.show()
+
+
+#plot_producers_histograms()
+#plot_senders_histograms()
 plot_modelserving_throughput(10)
+plot_modelserving_99pi(10)

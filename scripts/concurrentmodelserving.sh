@@ -7,9 +7,9 @@ batchSize=10
 
 for useOzone in false true; do
     if [ "$useOzone" = "false" ]; then
-        requestsPerSecondValues=(125 150 175 200)
+        requestsPerSecondValues=(100 125 150 175)
     else
-        requestsPerSecondValues=(275 300 325 350)
+        requestsPerSecondValues=(100 125 150 175 200 225 250 275 300 325 350)
     fi
 
     for requestsPerSecond in ${requestsPerSecondValues[@]}; do
