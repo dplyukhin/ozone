@@ -104,6 +104,16 @@ public class Batcher {
 
             }
 
+            if (Config.USE_OZONE) {
+                debug("Sleeping while waiting for futures to complete...");
+                try {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e) {
+                    debug("Sleep interrupted: " + e.getMessage());
+                }
+            }
+
         } 
         catch (IOException e) {
             debug("Aborting: " + e.getMessage());

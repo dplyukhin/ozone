@@ -162,8 +162,18 @@ public class Client {
                 }
             }
 
+            if (Config.USE_OZONE) {
+                debug("Sleeping while waiting for futures to complete...");
+                try {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e) {
+                    debug("Sleep interrupted: " + e.getMessage());
+                }
+            }
+
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
-                debug("Image " + i + " latency: " + (endTimes.get(i) - startTimes.get(i)) + " ms");
+                System.out.println("Image " + i + " latency: " + (endTimes.get(i) - startTimes.get(i)) + " ms");
             }
             
 
