@@ -54,7 +54,13 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 			int transmissionLength = buffer.getInt();
 			Log.debug("Receiving " + transmissionLength + " bytes...");
 			buffer = ByteBuffer.allocate( transmissionLength );
-			channel.read( buffer );
+
+			// Read from the channel, counting bytes as we go, until we have read the entire transmission.
+			int bytesRead = 0;
+			while( bytesRead < transmissionLength ) {
+				bytesRead += channel.read( buffer );
+			}
+
 			buffer.flip();
 			Log.debug("Done reading.");
 			return (T) this.serializer.toObject( buffer );
