@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
  * Model serving choreography, adapted from 
  * https://github.com/stephanie-wang/ownership-nsdi2021-artifact/tree/main/model-serving
  */
-public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) {
+public class ConcurrentServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) {
 
    SymChannel@( Client, Worker1 )< Object > chCW1;
    SymChannel@( Client, Worker2 )< Object > chCW2;
@@ -26,7 +26,7 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
    SymChannel@( Worker1, Model2 )< Object > chM2W1;
    SymChannel@( Worker2, Model2 )< Object > chM2W2;
 
-   public ModelServing(
+   public ConcurrentServing(
       SymChannel@( Client, Worker1 )< Object > chCW1,
       SymChannel@( Client, Worker2 )< Object > chCW2,
       AsyncChannel@( Client, Batcher )< Object > chCB,

@@ -9,7 +9,7 @@ import choral.channels.AsyncChannel_A;
 import choral.channels.AsyncChannel_B;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
-import choral.examples.ozone.modelserving.ModelServing_Client;
+import choral.examples.ozone.modelserving.ConcurrentServing_Client;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
@@ -87,13 +87,13 @@ public class Worker {
 
             WorkerState state = new WorkerState();
             if (workerID == 1) {
-                ModelServing_Worker1 prot = new ModelServing_Worker1(chC, chB, chM1, chM2);
+                ConcurrentServing_Worker1 prot = new ConcurrentServing_Worker1(chC, chB, chM1, chM2);
 
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
                     prot.onImage(state, new Token(i));
             }
             else if (workerID == 2) {
-                ModelServing_Worker2 prot = new ModelServing_Worker2(chC, chB, chM1, chM2);
+                ConcurrentServing_Worker2 prot = new ConcurrentServing_Worker2(chC, chB, chM1, chM2);
 
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
                     prot.onImage(state, new Token(i));

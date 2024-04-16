@@ -9,7 +9,7 @@ import choral.channels.AsyncChannel_A;
 import choral.channels.AsyncChannel_B;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
-import choral.examples.ozone.modelserving.ModelServing_Client;
+import choral.examples.ozone.modelserving.ConcurrentServing_Client;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
@@ -75,12 +75,12 @@ public class Model {
 
         ModelState state = new ModelState();
         if (modelID == 1) {
-            ModelServing_Model1 prot = new ModelServing_Model1(chB, chW1, chW2);
+            ConcurrentServing_Model1 prot = new ConcurrentServing_Model1(chB, chW1, chW2);
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
                 prot.onImage(state, new Token(i));
         }
         else if (modelID == 2) {
-            ModelServing_Model2 prot = new ModelServing_Model2(chB, chW1, chW2);
+            ConcurrentServing_Model2 prot = new ConcurrentServing_Model2(chB, chW1, chW2);
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
                 prot.onImage(state, new Token(i));
         }

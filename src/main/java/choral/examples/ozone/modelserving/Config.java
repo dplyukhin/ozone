@@ -18,4 +18,5 @@ public class Config {
     public static final int BATCH_SIZE = 10;
     public static final int IMAGES_PER_CLIENT = 1000;
     public static final int IMAGES_PER_SECOND = 120;
+    public static final boolean USE_OZONE = false;
 }

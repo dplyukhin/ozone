@@ -9,7 +9,7 @@ import choral.channels.AsyncChannel_A;
 import choral.channels.AsyncChannel_B;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
-import choral.examples.ozone.modelserving.ModelServing_Client;
+import choral.examples.ozone.modelserving.ConcurrentServing_Client;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
@@ -64,7 +64,7 @@ public class Batcher {
 
             debug("Starting!");
 
-            ModelServing_Batcher prot = new ModelServing_Batcher(chC, chM1, chM2, chW1, chW2);
+            ConcurrentServing_Batcher prot = new ConcurrentServing_Batcher(chC, chM1, chM2, chW1, chW2);
             BatcherState state = new BatcherState();
 
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)

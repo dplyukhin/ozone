@@ -18,7 +18,7 @@ import choral.Log;
 import choral.channels.AsyncChannel_A;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
-import choral.examples.ozone.modelserving.ModelServing_Client;
+import choral.examples.ozone.modelserving.ConcurrentServing_Client;
 import choral.runtime.AsyncChannelImpl;
 import choral.runtime.AsyncServerSocketChannel;
 import choral.runtime.AsyncSocketChannel;
@@ -92,7 +92,7 @@ public class Client {
             // For tracking the response time of each request.
             ArrayList<Long> responseTimes = new ArrayList<Long>();
 
-            ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
+            ConcurrentServing_Client prot = new ConcurrentServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
 
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
