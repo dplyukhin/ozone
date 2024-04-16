@@ -88,7 +88,7 @@ public class Client {
             AsyncChannel_A<Object> chB_async = new AsyncChannelImpl<Object>(threadPool, chB);
             debug("Batcher connected.");
 
-            chB.select();
+            chB_async.select();
             debug("Client starting!");
 
             /******************** START **********************/

@@ -63,7 +63,7 @@ public class Batcher {
 
             chW1.select();
             chW2.select();
-            chC.<BenchmarkReady>select(BenchmarkReady.READY);
+            chC_async.<BenchmarkReady>select(BenchmarkReady.READY);
 
             debug("Starting!");
 
