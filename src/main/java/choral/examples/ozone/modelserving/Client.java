@@ -103,6 +103,12 @@ public class Client {
 
             /******************** START **********************/
 
+            debug(
+                "Starting. Batch size: " + Config.BATCH_SIZE + 
+                ", Images per second: " + Config.IMAGES_PER_SECOND +
+                ", use Ozone: " + Config.USE_OZONE
+            );
+
             ConcurrentHashMap<Integer, Long> startTimes = new ConcurrentHashMap<>();
             ConcurrentHashMap<Integer, Long> endTimes = new ConcurrentHashMap<>();
 
