@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.checkerframework.checker.units.qual.A;
+
 import choral.Log;
 import choral.channels.AsyncChannel_A;
 import choral.channels.AsyncChannel_B;
@@ -58,10 +60,21 @@ public class Model {
 
         debug("Connecting to other nodes...");
 
-        AsyncSocketChannel chB = AsyncSocketChannel.connect(new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL);
-        SymChannel_B<Object> chB_sync = chB;
-        AsyncChannel_B<Object> chB_async = new AsyncChannelImpl<>(threadPool, chB);
+        Object chB;
+        if (Config.USE_OZONE) {
+            chB = new AsyncChannelImpl<>(threadPool, 
+                AsyncSocketChannel.connect(
+                    new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL
+                )
+            );
+        }
+        else {
+            chB = AsyncSocketChannel.connect(
+                new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL
+            );
+        }
         debug("Connected to batcher.");
+
         SymChannel_B<Object> chW1 = AsyncSocketChannel.connect(
             new JavaSerializer(), Config.HOST, WORKER1_FOR_MODEL
         );
@@ -75,12 +88,16 @@ public class Model {
         ModelState state = new ModelState();
         if (modelID == 1) {
             if (Config.USE_OZONE) {
+                AsyncChannel_B<Object> chB_async = (AsyncChannel_B<Object>) chB;
+
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
                     new ConcurrentServing_Model1(chB_async, chW1, chW2)
                         .onImage(state, new Token(i));
                 }
             }
             else {
+                SymChannel_B<Object> chB_sync = (SymChannel_B<Object>) chB;
+
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
                     new InOrderServing_Model1(chB_sync, chW1, chW2)
                         .onImage(state);
@@ -89,12 +106,16 @@ public class Model {
         }
         else if (modelID == 2) {
             if (Config.USE_OZONE) {
+                AsyncChannel_B<Object> chB_async = (AsyncChannel_B<Object>) chB;
+
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
                     new ConcurrentServing_Model2(chB_async, chW1, chW2)
                         .onImage(state, new Token(i));
                 }
             }
             else {
+                SymChannel_B<Object> chB_sync = (SymChannel_B<Object>) chB;
+
                 for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
                     new InOrderServing_Model2(chB_sync, chW1, chW2)
                         .onImage(state);

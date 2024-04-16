@@ -45,18 +45,23 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 
 	@Override
 	public < T extends Object > T com() {
-		// This method doesn't need synchronization, because only a single thread will read here.
+		// This method doesn't need synchronization because we assumed only a single thread will read here.
         try {
 			Log.debug("Waiting for transmission length...");
 			ByteBuffer buffer = ByteBuffer.allocate( 4 );
-			channel.read( buffer );
+
+			int bytesRead = 0;
+			while( bytesRead < 4 ) { 
+				bytesRead += channel.read( buffer );
+			}
+
 			buffer.flip();
 			int transmissionLength = buffer.getInt();
 			Log.debug("Receiving " + transmissionLength + " bytes...");
 			buffer = ByteBuffer.allocate( transmissionLength );
 
 			// Read from the channel, counting bytes as we go, until we have read the entire transmission.
-			int bytesRead = 0;
+			bytesRead = 0;
 			while( bytesRead < transmissionLength ) {
 				bytesRead += channel.read( buffer );
 			}
@@ -73,7 +78,6 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 	public < T extends Object > Unit com( T m ) {
 		// This method uses synchronization to prevent concurrent writes from being interleaved.
         try {
-			Log.debug("Sending " + m);
 			ByteBuffer buf = this.serializer.fromObject( m );
 			// TODO: We make an extra copy here, because we need to prepend the length of the transmission.
 			// We could make this unnecessary by (a) prepending the length at the serializer itself, or
@@ -84,7 +88,7 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 			buf2.flip();
             synchronized (this) {
                 int n = channel.write( buf2 );
-				Log.debug("Sent " + n + " bytes");
+				Log.debug("Sent " + buf.limit() + " bytes");
             }
             return Unit.id;
 		} catch( IOException e ) {

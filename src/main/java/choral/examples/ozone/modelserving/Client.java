@@ -83,12 +83,22 @@ public class Client {
 
             // Only the synchronous version or the async version will be used, depending
             // on whether USE_OZONE is true or false.
-            AsyncSocketChannel chB = batcher_listener.getNext();
-            SymChannel_A<Object> chB_sync = chB;
-            AsyncChannel_A<Object> chB_async = new AsyncChannelImpl<Object>(threadPool, chB);
+            Object chB;
+            if (Config.USE_OZONE) {
+                chB = new AsyncChannelImpl<Object>(threadPool, batcher_listener.getNext());
+            }
+            else {
+                chB = batcher_listener.getNext();
+            }
             debug("Batcher connected.");
 
-            chB_async.select();
+            debug("Waiting for the batcher to be ready...");
+            if (Config.USE_OZONE) {
+                ((AsyncChannel_A<Object>) chB).select();
+            }
+            else {
+                ((SymChannel_A<Object>) chB).select();
+            }
             debug("Client starting!");
 
             /******************** START **********************/
@@ -105,6 +115,8 @@ public class Client {
 
                 if (Config.USE_OZONE) {
 
+                    AsyncChannel_A<Object> chB_async = (AsyncChannel_A<Object>) chB;
+
                     CompletableFuture<Predictions> batch =
                         new ConcurrentServing_Client(chW1, chW2, chB_async)
                             .onImage(img, i, state, new Token(i));
@@ -120,6 +132,8 @@ public class Client {
 
                 }
                 else {
+
+                    SymChannel_A<Object> chB_sync = (SymChannel_A<Object>) chB;
                     
                     Predictions batch =
                         new InOrderServing_Client(chW1, chW2, chB_sync)

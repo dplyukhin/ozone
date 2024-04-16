@@ -27,11 +27,19 @@ public class Batcher {
 
         debug("Connecting to other nodes...");
 
-        AsyncSocketChannel chC = AsyncSocketChannel.connect(
-            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
-        );
-        SymChannel_B<Object> chC_sync = chC;
-        AsyncChannel_B<Object> chC_async = new AsyncChannelImpl<>(threadPool, chC);
+        Object chC;
+        if (Config.USE_OZONE) {
+            chC = new AsyncChannelImpl<>(threadPool, 
+                AsyncSocketChannel.connect(
+                    new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
+                )
+            );
+        }
+        else {
+            chC = AsyncSocketChannel.connect(
+                new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
+            );
+        }
         debug("Connected to client.");
 
         AsyncServerSocketChannel model1_listener = AsyncServerSocketChannel.at( 
@@ -48,22 +56,28 @@ public class Batcher {
         );
 
         try {
-            AsyncSocketChannel chM1 = model1_listener.getNext();
-            SymChannel_A<Object> chM1_sync = chM1;
-            AsyncChannel_A<Object> chM1_async = new AsyncChannelImpl<Object>(threadPool, chM1);
-
-            AsyncSocketChannel chM2 = model2_listener.getNext();
-            SymChannel_A<Object> chM2_sync = chM2;
-            AsyncChannel_A<Object> chM2_async = new AsyncChannelImpl<Object>(threadPool, chM2);
+            Object chM1;
+            Object chM2;
+            if (Config.USE_OZONE) {
+                chM1 = new AsyncChannelImpl<Object>(threadPool, model1_listener.getNext());
+                chM2 = new AsyncChannelImpl<Object>(threadPool, model2_listener.getNext());
+            }
+            else {
+                chM1 = model1_listener.getNext();
+                chM2 = model2_listener.getNext();
+            }
             debug("Models connected.");
 
             SymChannel_A<Object> chW1 = worker1_listener.getNext();
             SymChannel_A<Object> chW2 = worker2_listener.getNext();
             debug("Workers connected.");
 
-            chW1.select();
-            chW2.select();
-            chC_async.<BenchmarkReady>select(BenchmarkReady.READY);
+            if (Config.USE_OZONE) {
+                ((AsyncChannel_B<Object>) chC).<BenchmarkReady>select(BenchmarkReady.READY);
+            }
+            else {
+                ((SymChannel_B<Object>) chC).<BenchmarkReady>select(BenchmarkReady.READY);
+            }
 
             debug("Starting!");
 
@@ -72,10 +86,18 @@ public class Batcher {
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
 
                 if (Config.USE_OZONE) {
+                    AsyncChannel_B<Object> chC_async = (AsyncChannel_B<Object>) chC;
+                    AsyncChannel_A<Object> chM1_async = (AsyncChannel_A<Object>) chM1;
+                    AsyncChannel_A<Object> chM2_async = (AsyncChannel_A<Object>) chM2;
+
                     new ConcurrentServing_Batcher(chC_async, chM1_async, chM2_async, chW1, chW2)
                         .onImage(state, new Token(i));
                 }
                 else {
+                    SymChannel_B<Object> chC_sync = (SymChannel_B<Object>) chC;
+                    SymChannel_A<Object> chM1_sync = (SymChannel_A<Object>) chM1;
+                    SymChannel_A<Object> chM2_sync = (SymChannel_A<Object>) chM2;
+
                     new InOrderServing_Batcher(chC_sync, chM1_sync, chM2_sync, chW1, chW2)
                         .onImage(state);
                 }

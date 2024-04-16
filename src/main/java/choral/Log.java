@@ -1,7 +1,7 @@
 package choral;
 
 public class Log {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public static void debug(String str) {
         if (DEBUG) {

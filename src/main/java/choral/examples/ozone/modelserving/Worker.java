@@ -81,8 +81,6 @@ public class Worker {
             SymChannel_A<Object> chM2 = model2_listener.getNext();
             debug("Models connected.");
 
-            chB.<BenchmarkReady>select(BenchmarkReady.READY);
-
             debug("Starting!");
 
             WorkerState state = new WorkerState();
