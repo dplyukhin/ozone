@@ -86,13 +86,13 @@ public class Worker {
             WorkerState state = new WorkerState();
             if (workerID == 1) {
                 if (Config.USE_OZONE) {
-                    for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                         new ConcurrentServing_Worker1(chC, chB, chM1, chM2) 
                             .onImage(state, new Token(i));
                     }
                 }
                 else {
-                    for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                         new InOrderServing_Worker1(chC, chB, chM1, chM2) 
                             .onImage(state);
                     }
@@ -100,13 +100,13 @@ public class Worker {
             }
             else if (workerID == 2) {
                 if (Config.USE_OZONE) {
-                    for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                         new ConcurrentServing_Worker2(chC, chB, chM1, chM2) 
                             .onImage(state, new Token(i));
                     }
                 }
                 else {
-                    for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                         new InOrderServing_Worker2(chC, chB, chM1, chM2) 
                             .onImage(state);
                     }

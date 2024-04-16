@@ -83,7 +83,7 @@ public class Batcher {
 
             BatcherState state = new BatcherState();
 
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+            for (int i = 0; i < Config.NUM_REQUESTS; i++) {
 
                 if (Config.USE_OZONE) {
                     AsyncChannel_B<Object> chC_async = (AsyncChannel_B<Object>) chC;

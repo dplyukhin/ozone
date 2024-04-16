@@ -15,11 +15,11 @@ public class Config {
     public static final int WORKER2_FOR_MODEL1 = 8676;
     public static final int WORKER2_FOR_MODEL2 = 8677;
 
+    public static final int NUM_REQUESTS = 1000;
     public static final int BATCH_SIZE =
         Integer.parseInt(System.getProperty("batchSize", "10"));
-    public static final int IMAGES_PER_CLIENT = 1000;
-    public static final int IMAGES_PER_SECOND = 
-        Integer.parseInt(System.getProperty("imagesPerSecond", "120"));
+    public static final int REQUESTS_PER_SECOND = 
+        Integer.parseInt(System.getProperty("requestsPerSecond", "120"));
     public static final boolean USE_OZONE = 
         Boolean.parseBoolean(System.getProperty("useOzone", "true"));
 }

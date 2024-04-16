@@ -90,7 +90,7 @@ public class Model {
             if (Config.USE_OZONE) {
                 AsyncChannel_B<Object> chB_async = (AsyncChannel_B<Object>) chB;
 
-                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     new ConcurrentServing_Model1(chB_async, chW1, chW2)
                         .onImage(state, new Token(i));
                 }
@@ -98,7 +98,7 @@ public class Model {
             else {
                 SymChannel_B<Object> chB_sync = (SymChannel_B<Object>) chB;
 
-                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     new InOrderServing_Model1(chB_sync, chW1, chW2)
                         .onImage(state);
                 }
@@ -108,7 +108,7 @@ public class Model {
             if (Config.USE_OZONE) {
                 AsyncChannel_B<Object> chB_async = (AsyncChannel_B<Object>) chB;
 
-                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     new ConcurrentServing_Model2(chB_async, chW1, chW2)
                         .onImage(state, new Token(i));
                 }
@@ -116,7 +116,7 @@ public class Model {
             else {
                 SymChannel_B<Object> chB_sync = (SymChannel_B<Object>) chB;
 
-                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     new InOrderServing_Model2(chB_sync, chW1, chW2)
                         .onImage(state);
                 }

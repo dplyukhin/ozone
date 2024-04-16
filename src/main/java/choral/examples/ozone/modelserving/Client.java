@@ -43,7 +43,7 @@ public class Client {
         }
         String filePath = args[0];
 
-        int requestInterval = 1000 / Config.IMAGES_PER_SECOND;
+        int requestInterval = 1000 / Config.REQUESTS_PER_SECOND;
 
         Image img = null;
         try {
@@ -106,7 +106,7 @@ public class Client {
 
             debug(
                 "Starting. Batch size: " + Config.BATCH_SIZE + 
-                ", Images per second: " + Config.IMAGES_PER_SECOND +
+                ", Images per second: " + Config.REQUESTS_PER_SECOND +
                 ", use Ozone: " + Config.USE_OZONE
             );
 
@@ -116,7 +116,7 @@ public class Client {
             ClientState state = new ClientState();
             long requestStart = System.currentTimeMillis();
 
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+            for (int i = 0; i < Config.NUM_REQUESTS; i++) {
 
                 startTimes.put(i, requestStart);
 
@@ -182,11 +182,11 @@ public class Client {
             String filename = 
                 "data/modelserving/modelserving-" + 
                 (Config.USE_OZONE ? "concurrent" : "inorder") +  
-                "-rate" + Config.IMAGES_PER_SECOND + "-batch" + Config.BATCH_SIZE + ".csv";
+                "-rate" + Config.REQUESTS_PER_SECOND + "-batch" + Config.BATCH_SIZE + ".csv";
             debug("Writing to " + filename + "...");
 
             try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename))) {
-                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     long latency = endTimes.get(i) - startTimes.get(i);
                     writer.write(Long.toString(latency));
                     writer.newLine();
