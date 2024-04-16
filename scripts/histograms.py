@@ -113,25 +113,29 @@ def calculate_latency_percentile(data, percentile):
 def plot_modelserving_99pi(batch_size):
     ozone_rates, choral_rates = find_modelserving_rates(batch_size)
 
-    ozone_latency = []
-    choral_latency = []
+    ozone_median = []
+    ozone_99pi = []
+    choral_median = []
+    choral_99pi = []
 
     for rate in ozone_rates:
         path = f'data/modelserving/latency-concurrent-rate{rate}-batch{batch_size}.csv'
         data = pd.read_csv(path, header=None)
-        latency = calculate_latency_percentile(data, 99)
-        ozone_latency.append(latency)
+        ozone_median.append(calculate_latency_percentile(data, 50))
+        ozone_99pi.append(calculate_latency_percentile(data, 99))
 
     for rate in choral_rates:
         path = f'data/modelserving/latency-inorder-rate{rate}-batch{batch_size}.csv'
         data = pd.read_csv(path, header=None)
-        latency = calculate_latency_percentile(data, 99)
-        choral_latency.append(latency)
+        choral_median.append(calculate_latency_percentile(data, 50))
+        choral_99pi.append(calculate_latency_percentile(data, 99))
 
-    plt.plot(ozone_rates, ozone_latency, 'o-', label='Ozone')
-    plt.plot(choral_rates, choral_latency, 'x-', label='Choral')
+    plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)')
+    plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)')
+    plt.plot(choral_rates, choral_median, 'o--', label='Choral (median)')
+    plt.plot(choral_rates, choral_99pi, 'x--', label='Choral (99pi)')
     plt.xlabel('Requests per second')
-    plt.ylabel('99th percentile latency (ms)')
+    plt.ylabel('Latency (ms)')
     plt.legend()
     plt.show()
 

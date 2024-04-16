@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -209,21 +210,25 @@ public class Client {
             String throughputPath = "data/modelserving/throughput-" + suffix;
 
             debug("Writing to " + throughputPath + "...");
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(throughputPath))) {
+            final BufferedWriter throughputWriter = Files.newBufferedWriter(Paths.get(throughputPath), 
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            try (throughputWriter) {
                 long throughput = Config.NUM_REQUESTS * 1000 / (benchmarkEnd.get() - benchmarkStart);
-                writer.write(Long.toString(throughput));
-                writer.newLine();
+                throughputWriter.write(Long.toString(throughput));
+                throughputWriter.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             debug("Wrote to " + throughputPath + ".");
 
             debug("Writing to " + latencyPath + "...");
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(latencyPath))) {
+            final BufferedWriter latencyWriter = Files.newBufferedWriter(Paths.get(latencyPath), 
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            try (latencyWriter) {
                 for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     long latency = endTimes.get(i) - startTimes.get(i);
-                    writer.write(Long.toString(latency));
-                    writer.newLine();
+                    latencyWriter.write(Long.toString(latency));
+                    latencyWriter.newLine();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

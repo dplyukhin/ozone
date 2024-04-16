@@ -17,7 +17,7 @@ public class Config {
 
 
     public static final int WARMUP_ITERATIONS = 100;
-    public static final int NUM_REQUESTS = 1000;
+    public static final int NUM_REQUESTS = 2000;
 
     public static final int BATCH_SIZE =
         Integer.parseInt(System.getProperty("batchSize", "10"));
