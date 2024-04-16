@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.imageio.ImageIO;
 
@@ -115,6 +116,8 @@ public class Client {
 
             ClientState state = new ClientState();
             long requestStart = System.currentTimeMillis();
+            long benchmarkStart = requestStart;
+            AtomicLong benchmarkEnd = new AtomicLong();
 
             for (int i = 0; i < Config.NUM_REQUESTS; i++) {
 
@@ -134,6 +137,9 @@ public class Client {
                             for (int imgID : predictions.getImgIDs()) {
                                 endTimes.put(imgID, end);
                             }
+                            if (endTimes.size() == Config.NUM_REQUESTS) {
+                                benchmarkEnd.set(System.currentTimeMillis());
+                            }
                         });
                     }
 
@@ -151,6 +157,10 @@ public class Client {
                         for (int imgID : batch.getImgIDs()) {
                             endTimes.put(imgID, end);
                         }
+                    }
+
+                    if (i == Config.NUM_REQUESTS - 1) {
+                        benchmarkEnd.set(System.currentTimeMillis());
                     }
 
                 }
@@ -179,13 +189,27 @@ public class Client {
                 }
             }
 
-            String filename = 
-                "data/modelserving/modelserving-" + 
+            /********************** WRITING DATA *************************/
+
+            String suffix = 
                 (Config.USE_OZONE ? "concurrent" : "inorder") +  
                 "-rate" + Config.REQUESTS_PER_SECOND + "-batch" + Config.BATCH_SIZE + ".csv";
-            debug("Writing to " + filename + "...");
 
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename))) {
+            String latencyPath = "data/modelserving/latency-" + suffix;
+            String throughputPath = "data/modelserving/throughput-" + suffix;
+
+            debug("Writing to " + throughputPath + "...");
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(throughputPath))) {
+                long throughput = Config.NUM_REQUESTS * 1000 / (benchmarkEnd.get() - benchmarkStart);
+                writer.write(Long.toString(throughput));
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            debug("Wrote to " + throughputPath + ".");
+
+            debug("Writing to " + latencyPath + "...");
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(latencyPath))) {
                 for (int i = 0; i < Config.NUM_REQUESTS; i++) {
                     long latency = endTimes.get(i) - startTimes.get(i);
                     writer.write(Long.toString(latency));
@@ -194,7 +218,7 @@ public class Client {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            debug("Wrote to " + filename + ".");
+            debug("Wrote to " + latencyPath + ".");
             
 
         } 
