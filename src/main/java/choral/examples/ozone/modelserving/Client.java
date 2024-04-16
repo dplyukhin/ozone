@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -36,6 +37,8 @@ public class Client {
             return;
         }
         String filePath = args[0];
+
+        int requestInterval = 1000 / Config.IMAGES_PER_SECOND;
 
         Image img = null;
         try {
@@ -85,10 +88,28 @@ public class Client {
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
 
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
-                prot.onImage(img, i, state, new Token(i));
-            //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
-            //    prot.on
+            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                long start = System.currentTimeMillis();
+
+                CompletableFuture<Predictions> batch = // Might be null
+                    prot.onImage(img, i, state, new Token(i));
+
+                if (batch != null) {
+                    System.out.println("Got a batch!");
+                }
+
+                long end = System.currentTimeMillis();
+
+                long sleepTime = requestInterval - (end - start);
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } 
+                    catch (InterruptedException e) {
+                        debug("Sleep interrupted.");
+                    }
+                }
+            }
 
         } 
         catch (IOException e) {

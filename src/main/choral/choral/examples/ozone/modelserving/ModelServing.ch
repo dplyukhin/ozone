@@ -72,7 +72,6 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       if (workerID == 0@Client) {
          chCW1.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
          chCW2.< WorkerChoice >select( WorkerChoice@Client.WORKER1 );
-         System@Client.out.println("Chose Worker 1"@Client);
 
          Image@Worker1 imgW = chCW1.< Image >com(img);
          int@Worker1 imgidW1 = chCW1.< Integer >com(imgid);
@@ -83,7 +82,6 @@ public class ModelServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 ) 
       else {
          chCW1.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
          chCW2.< WorkerChoice >select( WorkerChoice@Client.WORKER2 );
-         System@Client.out.println("Chose Worker 2"@Client);
 
          Image@Worker2 imgW = chCW2.< Image >com(img);
          int@Worker2 imgidW2 = chCW2.< Integer >com(imgid);

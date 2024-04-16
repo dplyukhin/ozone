@@ -16,6 +16,6 @@ public class Config {
     public static final int WORKER2_FOR_MODEL2 = 8677;
 
     public static final int BATCH_SIZE = 10;
-    public static final int IMAGES_PER_CLIENT = 20;
+    public static final int IMAGES_PER_CLIENT = 1000;
     public static final int IMAGES_PER_SECOND = 60;
 }
