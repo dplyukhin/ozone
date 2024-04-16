@@ -100,7 +100,6 @@ public class InOrderServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 
             chBM2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
             chBW1.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
             chBW2.< ModelChoice >select( ModelChoice@Batcher.MODEL1 );
-            System@Batcher.out.println("Sending batch to Model 1"@Batcher);
 
             // Send the batch IDs to the model and workers
             BatchIDs@Model1 batchidsM = chBM1.< BatchIDs >com( batchids );
@@ -122,7 +121,6 @@ public class InOrderServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 
             chBM2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
             chBW1.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
             chBW2.< ModelChoice >select( ModelChoice@Batcher.MODEL2 );
-            System@Batcher.out.println("Sending batch to Model 2"@Batcher);
 
             // Send the batch IDs to the model and workers
             BatchIDs@Model2 batchidsM = chBM2.< BatchIDs >com( batchids );
