@@ -58,10 +58,9 @@ public class Model {
 
         debug("Connecting to other nodes...");
 
-        AsyncChannel_B<Object> chB = new AsyncChannelImpl<>(
-            threadPool,
-            AsyncSocketChannel.connect(new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL)
-        );
+        AsyncSocketChannel chB = AsyncSocketChannel.connect(new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL);
+        SymChannel_B<Object> chB_sync = chB;
+        AsyncChannel_B<Object> chB_async = new AsyncChannelImpl<>(threadPool, chB);
         debug("Connected to batcher.");
         SymChannel_B<Object> chW1 = AsyncSocketChannel.connect(
             new JavaSerializer(), Config.HOST, WORKER1_FOR_MODEL
@@ -75,14 +74,32 @@ public class Model {
 
         ModelState state = new ModelState();
         if (modelID == 1) {
-            ConcurrentServing_Model1 prot = new ConcurrentServing_Model1(chB, chW1, chW2);
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
-                prot.onImage(state, new Token(i));
+            if (Config.USE_OZONE) {
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    new ConcurrentServing_Model1(chB_async, chW1, chW2)
+                        .onImage(state, new Token(i));
+                }
+            }
+            else {
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    new InOrderServing_Model1(chB_sync, chW1, chW2)
+                        .onImage(state);
+                }
+            }
         }
         else if (modelID == 2) {
-            ConcurrentServing_Model2 prot = new ConcurrentServing_Model2(chB, chW1, chW2);
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
-                prot.onImage(state, new Token(i));
+            if (Config.USE_OZONE) {
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    new ConcurrentServing_Model2(chB_async, chW1, chW2)
+                        .onImage(state, new Token(i));
+                }
+            }
+            else {
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    new InOrderServing_Model2(chB_sync, chW1, chW2)
+                        .onImage(state);
+                }
+            }
         }
 
         threadPool.shutdownNow();

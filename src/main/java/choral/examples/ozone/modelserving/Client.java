@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
+import choral.channels.SymChannelImpl;
 import choral.channels.SymChannel_A;
 import choral.channels.SymChannel_B;
 import choral.examples.ozone.modelserving.ConcurrentServing_Client;
@@ -78,42 +80,64 @@ public class Client {
             debug("Worker 1 connected.");
             SymChannel_A<Object> chW2 = worker2_listener.getNext();
             debug("Worker 2 connected.");
-            AsyncChannel_A<Object> chB = new AsyncChannelImpl<Object>( 
-                threadPool, batcher_listener.getNext()
-            );
+
+            // Only the synchronous version or the async version will be used, depending
+            // on whether USE_OZONE is true or false.
+            AsyncSocketChannel chB = batcher_listener.getNext();
+            SymChannel_A<Object> chB_sync = chB;
+            AsyncChannel_A<Object> chB_async = new AsyncChannelImpl<Object>(threadPool, chB);
             debug("Batcher connected.");
 
             chB.select();
-
             debug("Client starting!");
 
-            // For tracking the start times of each request that hasn't received a response yet.
-            ArrayList<Long> startTimes = new ArrayList<Long>();
-            // For tracking the response time of each request.
-            ArrayList<Long> responseTimes = new ArrayList<Long>();
+            /******************** START **********************/
 
-            ConcurrentServing_Client prot = new ConcurrentServing_Client(chW1, chW2, chB);
+            ConcurrentHashMap<Integer, Long> startTimes = new ConcurrentHashMap<>();
+            ConcurrentHashMap<Integer, Long> endTimes = new ConcurrentHashMap<>();
+
             ClientState state = new ClientState();
+            long requestStart = System.currentTimeMillis();
 
             for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
-                long start = System.currentTimeMillis();
 
-                CompletableFuture<Predictions> batch = // Might be null
-                    prot.onImage(img, i, state, new Token(i));
+                startTimes.put(i, requestStart);
 
-                long end = System.currentTimeMillis();
+                if (Config.USE_OZONE) {
 
-                startTimes.add(start);
+                    CompletableFuture<Predictions> batch =
+                        new ConcurrentServing_Client(chW1, chW2, chB_async)
+                            .onImage(img, i, state, new Token(i));
 
-                if (batch != null) {
-                    for (long startTime : startTimes) {
-                        long responseTime = end - startTime;
-                        responseTimes.add(responseTime);
+                    if (batch != null) {
+                        batch.thenAccept(predictions -> {
+                            long end = System.currentTimeMillis();
+                            for (int imgID : predictions.getImgIDs()) {
+                                endTimes.put(imgID, end);
+                            }
+                        });
                     }
-                    startTimes.clear();
+
+                }
+                else {
+                    
+                    Predictions batch =
+                        new InOrderServing_Client(chW1, chW2, chB_sync)
+                            .onImage(img, i, state);
+
+                    if (batch != null) {
+                        long end = System.currentTimeMillis();
+                        for (int imgID : batch.getImgIDs()) {
+                            endTimes.put(imgID, end);
+                        }
+                    }
+
                 }
 
-                long sleepTime = requestInterval - (end - start);
+                // Compute the time when the next request will start, and
+                // sleep until that happens if necessary.
+                requestStart += requestInterval;
+                long sleepTime = requestStart - System.currentTimeMillis();
                 if (sleepTime > 0) {
                     try {
                         Thread.sleep(sleepTime);
@@ -124,7 +148,10 @@ public class Client {
                 }
             }
 
-            responseTimes.forEach(responseTime -> System.out.println("Response time: " + responseTime + "ms"));
+            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                debug("Image " + i + " latency: " + (endTimes.get(i) - startTimes.get(i)) + " ms");
+            }
+            
 
         } 
         catch (IOException e) {

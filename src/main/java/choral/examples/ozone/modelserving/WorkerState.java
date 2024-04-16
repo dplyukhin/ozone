@@ -22,10 +22,12 @@ public class WorkerState {
     }
 
     public synchronized ProcessedImages dumpBatch(BatchIDs batchIDs) {
-        Image[] batch = new Image[batchIDs.getBatchIDs().length];
-        for (int i = 0; i < batchIDs.getBatchIDs().length; i++) {
-            batch[i] = processedImages.remove(batchIDs.getBatchIDs()[i]);
+        int batchSize = batchIDs.getBatchIDs().length;
+        Image[] batch = new Image[batchSize];
+        int[] imgIDs = batchIDs.getBatchIDs();
+        for (int i = 0; i < batchSize; i++) {
+            batch[i] = processedImages.remove(imgIDs[i]);
         }
-        return new ProcessedImages(batch);
+        return new ProcessedImages(batch, imgIDs);
     }
 }

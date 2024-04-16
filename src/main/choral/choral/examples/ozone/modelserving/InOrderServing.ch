@@ -1,12 +1,7 @@
 package choral.examples.ozone.modelserving;
 
-import choral.runtime.Token;
 import choral.channels.SymChannel;
-import choral.channels.AsyncChannel;
-
-
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Model serving choreography, adapted from 
@@ -60,12 +55,8 @@ public class InOrderServing@( Client, Worker1, Worker2, Batcher, Model1, Model2 
       WorkerState@Worker1 worker1State, 
       WorkerState@Worker2 worker2State, 
       BatcherState@Batcher batcherState, 
-      ModelState@Model1 model1State, 
-      ModelState@Model2 model2State, 
-
-      // Token at each participant
-      Token@Client tokC, Token@Worker1 tokW1, Token@Worker2 tokW2, Token@Batcher tokB, Token@Model1 tokM1, Token@Model2 tokM2
-
+      ModelState@Model1 model1State,
+      ModelState@Model2 model2State
    ) { 
       // Choose which Worker will preprocess the data, and send them both the batchid since they'll need it later.
       int@Client workerID = clientState.chooseWorker(2@Client);

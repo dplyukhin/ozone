@@ -27,10 +27,11 @@ public class Batcher {
 
         debug("Connecting to other nodes...");
 
-        AsyncChannel_B<Object> chC = new AsyncChannelImpl<>(
-            threadPool,
-            AsyncSocketChannel.connect(new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER)
+        AsyncSocketChannel chC = AsyncSocketChannel.connect(
+            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
         );
+        SymChannel_B<Object> chC_sync = chC;
+        AsyncChannel_B<Object> chC_async = new AsyncChannelImpl<>(threadPool, chC);
         debug("Connected to client.");
 
         AsyncServerSocketChannel model1_listener = AsyncServerSocketChannel.at( 
@@ -47,13 +48,15 @@ public class Batcher {
         );
 
         try {
-            AsyncChannel_A<Object> chM1 = new AsyncChannelImpl<Object>( 
-                threadPool, model1_listener.getNext()
-            );
-            AsyncChannel_A<Object> chM2 = new AsyncChannelImpl<Object>( 
-                threadPool, model2_listener.getNext()
-            );
+            AsyncSocketChannel chM1 = model1_listener.getNext();
+            SymChannel_A<Object> chM1_sync = chM1;
+            AsyncChannel_A<Object> chM1_async = new AsyncChannelImpl<Object>(threadPool, chM1);
+
+            AsyncSocketChannel chM2 = model2_listener.getNext();
+            SymChannel_A<Object> chM2_sync = chM2;
+            AsyncChannel_A<Object> chM2_async = new AsyncChannelImpl<Object>(threadPool, chM2);
             debug("Models connected.");
+
             SymChannel_A<Object> chW1 = worker1_listener.getNext();
             SymChannel_A<Object> chW2 = worker2_listener.getNext();
             debug("Workers connected.");
@@ -64,11 +67,20 @@ public class Batcher {
 
             debug("Starting!");
 
-            ConcurrentServing_Batcher prot = new ConcurrentServing_Batcher(chC, chM1, chM2, chW1, chW2);
             BatcherState state = new BatcherState();
 
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
-                prot.onImage(state, new Token(i));
+            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+
+                if (Config.USE_OZONE) {
+                    new ConcurrentServing_Batcher(chC_async, chM1_async, chM2_async, chW1, chW2)
+                        .onImage(state, new Token(i));
+                }
+                else {
+                    new InOrderServing_Batcher(chC_sync, chM1_sync, chM2_sync, chW1, chW2)
+                        .onImage(state);
+                }
+
+            }
 
         } 
         catch (IOException e) {

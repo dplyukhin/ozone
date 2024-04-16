@@ -12,6 +12,6 @@ public class ModelState {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new Predictions(null);
+        return new Predictions(null, batch.getImgIDs());
     }
 }
