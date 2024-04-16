@@ -45,7 +45,11 @@ public class Client {
         }
         String filePath = args[0];
 
+        // The request interval is the amount of time to sleep between requests.
         int requestInterval = 1000 / Config.REQUESTS_PER_SECOND;
+        // Since we can only sleep for whole numbers of milliseconds, we have an "effective"
+        // request rate that is the reciprocal of the request interval.
+        int effectiveRequestRate = 1000 / requestInterval;
 
         Image img = null;
         try {
@@ -204,7 +208,7 @@ public class Client {
 
             String suffix = 
                 (Config.USE_OZONE ? "concurrent" : "inorder") +  
-                "-rate" + Config.REQUESTS_PER_SECOND + "-batch" + Config.BATCH_SIZE + ".csv";
+                "-rate" + effectiveRequestRate + "-batch" + Config.BATCH_SIZE + ".csv";
 
             String latencyPath = "data/modelserving/latency-" + suffix;
             String throughputPath = "data/modelserving/throughput-" + suffix;
