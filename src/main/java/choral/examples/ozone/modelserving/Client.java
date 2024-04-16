@@ -116,12 +116,18 @@ public class Client {
 
             ClientState state = new ClientState();
             long requestStart = System.currentTimeMillis();
-            long benchmarkStart = requestStart;
+            long benchmarkStart = 0;
             AtomicLong benchmarkEnd = new AtomicLong();
 
-            for (int i = 0; i < Config.NUM_REQUESTS; i++) {
+            for (int i = 0; i < Config.WARMUP_ITERATIONS + Config.NUM_REQUESTS; i++) {
 
-                startTimes.put(i, requestStart);
+                if (i == Config.WARMUP_ITERATIONS) {
+                    benchmarkStart = System.currentTimeMillis();
+                }
+
+                if (i >= Config.WARMUP_ITERATIONS) {
+                    startTimes.put(i - Config.WARMUP_ITERATIONS, requestStart);
+                }
 
                 if (Config.USE_OZONE) {
 
@@ -135,7 +141,9 @@ public class Client {
                         batch.thenAccept(predictions -> {
                             long end = System.currentTimeMillis();
                             for (int imgID : predictions.getImgIDs()) {
-                                endTimes.put(imgID, end);
+                                if (imgID >= Config.WARMUP_ITERATIONS) {
+                                    endTimes.put(imgID - Config.WARMUP_ITERATIONS, end);
+                                }
                             }
                             if (endTimes.size() == Config.NUM_REQUESTS) {
                                 benchmarkEnd.set(System.currentTimeMillis());
@@ -155,11 +163,13 @@ public class Client {
                     if (batch != null) {
                         long end = System.currentTimeMillis();
                         for (int imgID : batch.getImgIDs()) {
-                            endTimes.put(imgID, end);
+                            if (imgID >= Config.WARMUP_ITERATIONS) {
+                                endTimes.put(imgID - Config.WARMUP_ITERATIONS, end);
+                            }
                         }
                     }
 
-                    if (i == Config.NUM_REQUESTS - 1) {
+                    if (endTimes.size() == Config.NUM_REQUESTS) {
                         benchmarkEnd.set(System.currentTimeMillis());
                     }
 

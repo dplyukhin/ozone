@@ -15,7 +15,10 @@ public class Config {
     public static final int WORKER2_FOR_MODEL1 = 8676;
     public static final int WORKER2_FOR_MODEL2 = 8677;
 
+
+    public static final int WARMUP_ITERATIONS = 100;
     public static final int NUM_REQUESTS = 1000;
+
     public static final int BATCH_SIZE =
         Integer.parseInt(System.getProperty("batchSize", "10"));
     public static final int REQUESTS_PER_SECOND = 
