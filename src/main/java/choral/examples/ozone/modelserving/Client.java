@@ -1,11 +1,15 @@
 package choral.examples.ozone.modelserving;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import javax.imageio.ImageIO;
 
 import choral.Log;
 import choral.channels.AsyncChannel_A;
@@ -35,8 +39,12 @@ public class Client {
 
         Image img = null;
         try {
-            byte[] imgBytes = Files.readAllBytes(Paths.get(filePath));
-            img = new Image(imgBytes);
+            BufferedImage image = ImageIO.read(new File(filePath));
+            image = (BufferedImage) image.getScaledInstance(224, 224, java.awt.Image.SCALE_DEFAULT);
+            
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "PNG", outputStream);
+            img = new Image(outputStream.toByteArray());
         } 
         catch (IOException e) {
             debug("Couldn't find image " + filePath + ". Exiting.");
@@ -74,6 +82,7 @@ public class Client {
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
 
+            //for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
             prot.onImage(img, 0, state, new Token(0));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
