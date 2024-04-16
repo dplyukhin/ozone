@@ -4,8 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -85,6 +87,11 @@ public class Client {
 
             debug("Client starting!");
 
+            // For tracking the start times of each request that hasn't received a response yet.
+            ArrayList<Long> startTimes = new ArrayList<Long>();
+            // For tracking the response time of each request.
+            ArrayList<Long> responseTimes = new ArrayList<Long>();
+
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
 
@@ -94,11 +101,17 @@ public class Client {
                 CompletableFuture<Predictions> batch = // Might be null
                     prot.onImage(img, i, state, new Token(i));
 
-                if (batch != null) {
-                    System.out.println("Got a batch!");
-                }
-
                 long end = System.currentTimeMillis();
+
+                startTimes.add(start);
+
+                if (batch != null) {
+                    for (long startTime : startTimes) {
+                        long responseTime = end - startTime;
+                        responseTimes.add(responseTime);
+                    }
+                    startTimes.clear();
+                }
 
                 long sleepTime = requestInterval - (end - start);
                 if (sleepTime > 0) {
@@ -110,6 +123,8 @@ public class Client {
                     }
                 }
             }
+
+            responseTimes.forEach(responseTime -> System.out.println("Response time: " + responseTime + "ms"));
 
         } 
         catch (IOException e) {
