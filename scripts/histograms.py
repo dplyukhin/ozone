@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import glob
+import re
 
 def plot_histogram_from_csv(filename, inputs, dims, bins):
     print(f'Plotting histograms to {filename}...')
@@ -64,5 +66,36 @@ def plot_senders_histograms():
 
     plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=15)
 
+def plot_modelserving_throughput(batch_size):
+    ozone_files = glob.glob('data/modelserving/throughput-concurrent-rate*-batch*.csv')
+    choral_files = glob.glob('data/modelserving/throughput-inorder-rate*-batch*.csv')
+
+    ozone_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in ozone_files])
+    choral_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in choral_files])
+
+    ozone_throughputs = []
+    choral_throughputs = []
+
+    for rate in ozone_rates:
+        path = f'data/modelserving/throughput-concurrent-rate{rate}-batch{batch_size}.csv'
+        with open(path, 'r') as f:
+            throughput = int(f.read())
+            ozone_throughputs.append(throughput)
+
+    for rate in choral_rates:
+        path = f'data/modelserving/throughput-inorder-rate{rate}-batch{batch_size}.csv'
+        with open(path, 'r') as f:
+            throughput = int(f.read())
+            choral_throughputs.append(throughput)
+
+    plt.plot(ozone_rates, ozone_throughputs, 'o-', label='Ozone')
+    plt.plot(choral_rates, choral_throughputs, 'x-', label='Choral')
+    plt.xlabel('Requests per second')
+    plt.ylabel('Throughput (responses per second)')
+    plt.legend()
+    plt.show()
+
+
 plot_producers_histograms()
 plot_senders_histograms()
+plot_modelserving_throughput(10)
