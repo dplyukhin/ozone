@@ -39,11 +39,14 @@ public class Client {
 
         Image img = null;
         try {
-            BufferedImage image = ImageIO.read(new File(filePath));
-            image = (BufferedImage) image.getScaledInstance(224, 224, java.awt.Image.SCALE_DEFAULT);
+            BufferedImage original = ImageIO.read(new File(filePath));
+            java.awt.Image scaled = original.getScaledInstance(224, 224, java.awt.Image.SCALE_DEFAULT);
+
+            BufferedImage bufferedScaled = new BufferedImage(244, 244, BufferedImage.TYPE_INT_ARGB);
+            bufferedScaled.getGraphics().drawImage(scaled, 0, 0, null);
             
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "PNG", outputStream);
+            ImageIO.write(bufferedScaled, "PNG", outputStream);
             img = new Image(outputStream.toByteArray());
         } 
         catch (IOException e) {
@@ -82,8 +85,8 @@ public class Client {
             ModelServing_Client prot = new ModelServing_Client(chW1, chW2, chB);
             ClientState state = new ClientState();
 
-            //for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
-            prot.onImage(img, 0, state, new Token(0));
+            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
+                prot.onImage(img, i, state, new Token(i));
             //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
             //    prot.on
 

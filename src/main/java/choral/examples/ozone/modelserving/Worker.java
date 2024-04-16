@@ -88,15 +88,15 @@ public class Worker {
             WorkerState state = new WorkerState();
             if (workerID == 1) {
                 ModelServing_Worker1 prot = new ModelServing_Worker1(chC, chB, chM1, chM2);
-                prot.onImage(state, new Token(0));
-                //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
-                //    prot.on
+
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
+                    prot.onImage(state, new Token(i));
             }
             else if (workerID == 2) {
                 ModelServing_Worker2 prot = new ModelServing_Worker2(chC, chB, chM1, chM2);
-                prot.onImage(state, new Token(0));
-                //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
-                //    prot.on
+
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
+                    prot.onImage(state, new Token(i));
             }
 
         } 

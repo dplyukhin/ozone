@@ -66,9 +66,9 @@ public class Batcher {
 
             ModelServing_Batcher prot = new ModelServing_Batcher(chC, chM1, chM2, chW1, chW2);
             BatcherState state = new BatcherState();
-            prot.onImage(state, new Token(0));
-            //for (int i = 0; i < Config.NUM_ITERATIONS; i++)
-            //    prot.on
+
+            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++)
+                prot.onImage(state, new Token(i));
 
         } 
         catch (IOException e) {
