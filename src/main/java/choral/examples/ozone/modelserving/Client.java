@@ -1,6 +1,7 @@
 package choral.examples.ozone.modelserving;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -178,9 +179,22 @@ public class Client {
                 }
             }
 
-            for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
-                System.out.println("Image " + i + " latency: " + (endTimes.get(i) - startTimes.get(i)) + " ms");
+            String filename = 
+                "data/modelserving/modelserving-" + 
+                (Config.USE_OZONE ? "concurrent" : "inorder") +  
+                "-rate" + Config.IMAGES_PER_SECOND + "-batch" + Config.BATCH_SIZE + ".csv";
+            debug("Writing to " + filename + "...");
+
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename))) {
+                for (int i = 0; i < Config.IMAGES_PER_CLIENT; i++) {
+                    long latency = endTimes.get(i) - startTimes.get(i);
+                    writer.write(Long.toString(latency));
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            debug("Wrote to " + filename + ".");
             
 
         } 
