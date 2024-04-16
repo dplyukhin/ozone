@@ -28,13 +28,31 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 	public static AsyncSocketChannel connect( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
 		try {
 			SocketChannel channel = SocketChannel.open();
-			channel.connect( new InetSocketAddress( hostname, portNumber ) );
+
+			int attempts = 0;
+			while (!channel.isConnected() && attempts < 10) {
+				try {
+					channel.connect( new InetSocketAddress( hostname, portNumber ) );
+				}
+				catch (IOException e) {
+					attempts++;
+					if (attempts >= 10) {
+						System.out.println("Failed to connect to " + hostname + ":" + portNumber + ". Exiting.");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					try { Thread.sleep(1000); } catch (InterruptedException e2) { }
+				}
+			}
+
 			channel.configureBlocking( true );
 			return new AsyncSocketChannel( serializer, channel );
+
 		} catch( IOException e ) {
 			e.printStackTrace();
+			System.exit(1);
+			return null;
 		}
-		return null;
 	}
 
 
