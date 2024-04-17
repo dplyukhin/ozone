@@ -35,8 +35,22 @@ public class Worker2 {
         ConcurrentProducers_Worker2 prot = new ConcurrentProducers_Worker2();
         ch.select();
 
+        long benchmarkStartTime = System.currentTimeMillis();
+        long iterationStartTime = benchmarkStartTime;
+
         for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             prot.go(ch, state, String.valueOf(i), new Token(i));
+                        
+            // Sleep until the request interval has elapsed
+            iterationStartTime += Config.REQUEST_INTERVAL;
+            long sleepTime = iterationStartTime - System.currentTimeMillis();
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    Log.debug("Interrupted while waiting for request interval to elapse.");
+                }
+            }
         }
 
         try {
