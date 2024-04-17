@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -33,24 +34,42 @@ public class Worker2 {
 
         WorkerState state = new WorkerState("Worker2", 0, Config.NUM_ITERATIONS);
         ConcurrentProducers_Worker2 prot = new ConcurrentProducers_Worker2();
-        long startTime = System.currentTimeMillis();
+        ch.select();
+
+        long benchmarkStartTime = System.currentTimeMillis();
+        long iterationStartTime = benchmarkStartTime;
+
         for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
-            ch.select();
             prot.go(ch, state, String.valueOf(i), new Token(i));
+                        
+            // Sleep until the request interval has elapsed
+            iterationStartTime += Config.REQUEST_INTERVAL;
+            long sleepTime = iterationStartTime - System.currentTimeMillis();
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    Log.debug("Interrupted while waiting for request interval to elapse.");
+                }
+            }
         }
+
         try {
             state.iterationsLeft.await();
+            ch.select(Signal.START);
             Thread.sleep(1000);
         }
         catch (InterruptedException exn) {
             Log.debug("Interrupted while waiting for iterations to complete.");
         }
 
-        long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);
-
         Iterable<Float> latencies = state.getLatencies();
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/concurrentproducers/worker2-latencies.csv"))) {
+        String filename = "data/concurrentproducers/worker2-rps" + Config.REQUESTS_PER_SECOND + ".csv";
+        
+        try (
+            BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename),
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        ) {
             for (float value : latencies) {
                 writer.write(Float.toString(value));
                 writer.newLine();
