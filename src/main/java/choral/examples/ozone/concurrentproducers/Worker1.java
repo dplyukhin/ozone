@@ -62,7 +62,6 @@ public class Worker1 {
         catch (InterruptedException exn) {
             Log.debug("Interrupted while waiting for iterations to complete.");
         }
-        long endTime = System.currentTimeMillis();
 
         Iterable<Float> latencies = state.getLatencies();
         String filename = "data/concurrentproducers/worker1-rps" + Config.REQUESTS_PER_SECOND + ".csv";

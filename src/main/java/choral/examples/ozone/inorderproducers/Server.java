@@ -32,16 +32,15 @@ public class Server {
 
         ServerState state = new ServerState();
         InOrderProducers_Server prot = new InOrderProducers_Server();
+        ch_w1.select(Signal.START);
+        ch_w2.select(Signal.START);
+
         for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
-            ch_w1.select(Signal.START);
-            ch_w2.select(Signal.START);
             prot.go(ch_w1, ch_w2, state);
-            try {
-                Thread.sleep(Config.ITERATION_PERIOD_MILLIS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+
+        ch_w1.select();
+        ch_w2.select();
 
         worker1_listener.close();
         worker2_listener.close();
