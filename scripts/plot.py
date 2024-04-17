@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import glob
 import re
 
-def plot_histogram_from_csv(filename, inputs, dims, bins):
+def plot_histogram_from_csv(filename, inputs, bins):
     print(f'Plotting histograms to {filename}...')
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
+
+    maxima = [0, 0, 0, 0]
 
     for i, title in enumerate(inputs.keys()):
         file_path = inputs[title]
@@ -19,12 +21,19 @@ def plot_histogram_from_csv(filename, inputs, dims, bins):
 
         # Uncomment to print the min, max, and average values - along with the file_path
         print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
+        maxima[i] = data[0].quantile(0.999)
         
         # Plotting histogram
         axes[i].hist(data[0], bins=bins, color='blue', alpha=0.7)
+        axes[i].axvline(data[0].mean(), color='red', linestyle='dashed', linewidth=1)
         axes[i].set_title(title)
         axes[i].set_xlabel('Latency (ms)')
         axes[i].set_ylabel('Frequency')
+
+    # Set the same x and y limits for all subplots
+    for i in range(4):
+        axes[i].set_xlim(0, max(maxima))
+        axes[i].set_ylim(0, 800)
 
     plt.tight_layout()
     # plt.savefig(filename, format='png')
@@ -33,19 +42,13 @@ def plot_histogram_from_csv(filename, inputs, dims, bins):
 
 def plot_senders_histograms():
     inputs = {
-        'txt (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
-        'key (Ozone)': 'data/concurrentsend/key-latencies.csv', 
-        'txt (Choral)': 'data/inordersend/txt-latencies.csv', 
-        'key (Choral)': 'data/inordersend/key-latencies.csv'
-    }
-    dims = {
-        'left': 0,
-        'right': 18,
-        'bottom': 0,
-        'top': 800
+        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
+        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
+        'txt (Choral)': 'data/inordersend/key-latencies.csv', 
+        'key (Choral)': 'data/inordersend/txt-latencies.csv',
     }
 
-    plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=25)
+    plot_histogram_from_csv("figures/senders.png", inputs, bins=25)
 
 ####################################################################################################
 # Producers
