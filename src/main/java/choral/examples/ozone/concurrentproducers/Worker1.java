@@ -33,20 +33,21 @@ public class Worker1 {
 
         WorkerState state = new WorkerState("Worker1", 0, Config.NUM_ITERATIONS);
         ConcurrentProducers_Worker1 prot = new ConcurrentProducers_Worker1();
-        long startTime = System.currentTimeMillis();
+        ch.select();
+
         for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
-            ch.select();
             prot.go(ch, state, String.valueOf(i), new Token(i));
         }
+
         try {
             state.iterationsLeft.await();
+            ch.select(Signal.START);
             Thread.sleep(1000);
         }
         catch (InterruptedException exn) {
             Log.debug("Interrupted while waiting for iterations to complete.");
         }
         long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);
 
         Iterable<Float> latencies = state.getLatencies();
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/concurrentproducers/worker1-latencies.csv"))) {
