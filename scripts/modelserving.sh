@@ -7,9 +7,9 @@ batchSize=10
 
 for useOzone in false true; do
     if [ "$useOzone" = "false" ]; then
-        requestsPerSecondValues=(25 50 75 100 125 150 175)
+        requestsPerSecondValues=(225 275 350) #(25 50 75 100 125 150 175)
     else
-        requestsPerSecondValues=(25 50 75 100 125 150 175 225 275 350) # Skip rates that map to the same effective request rate 
+        requestsPerSecondValues=() #(25 50 75 100 125 150 175 225 275 350) # Skip rates that map to the same effective request rate 
     fi
 
     for requestsPerSecond in ${requestsPerSecondValues[@]}; do

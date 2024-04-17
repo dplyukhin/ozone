@@ -192,9 +192,7 @@ def plot_modelserving_histograms(batch_size):
     plot_histogram_from_csv("figures/modelserving.png", inputs, dims, bins=50)
 
 
-#plot_producers_histograms()
-#plot_producer_latency()
+plot_producer_latency()
 plot_senders_histograms()
-#plot_modelserving_throughput(10)
-#plot_modelserving_99pi(10)
-#plot_modelserving_histograms(10)
+plot_modelserving_throughput(10)
+plot_modelserving_99pi(10)
