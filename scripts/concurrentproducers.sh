@@ -3,7 +3,7 @@ trap "kill 0" EXIT
 
 # mvn compile
 
-for requestsPerSecond in 100 120; do
+for requestsPerSecond in 20 40 60 80 100 120 140 160; do
     systemArgs="-DrequestsPerSecond=$requestsPerSecond"
 
     echo "Running with requestsPerSecond=$requestsPerSecond."

@@ -32,9 +32,11 @@ public class Worker2 {
 
         long benchmarkStartTime = System.currentTimeMillis();
         long iterationStartTime = benchmarkStartTime;
+        long[] latencies = new long[Config.NUM_ITERATIONS];
 
         for (int i = 0; i < Config.NUM_ITERATIONS; i++) {
             prot.go(ch, state, String.valueOf(i));
+            latencies[i] = System.currentTimeMillis() - iterationStartTime;
                                     
             // Sleep until the request interval has elapsed
             iterationStartTime += Config.REQUEST_INTERVAL;
@@ -57,14 +59,13 @@ public class Worker2 {
             Log.debug("Interrupted while waiting for iterations to complete.");
         }
 
-        Iterable<Float> latencies = state.getLatencies();
         String filename = "data/inorderproducers/worker2-rps" + Config.REQUESTS_PER_SECOND + ".csv";
 
         try (
             BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         ) {
-            for (float value : latencies) {
+            for (long value : latencies) {
                 writer.write(Float.toString(value));
                 writer.newLine();
             }
