@@ -67,6 +67,56 @@ def plot_senders_histograms():
 
     plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=15)
 
+####################################################################################################
+# Producers
+####################################################################################################
+
+def find_producer_rates():
+    inorder_files = glob.glob('data/inorderproducers/worker1-rps*.csv')
+    concurrent_files = glob.glob('data/concurrentproducers/worker1-rps*.csv')
+
+    inorder_rates = sorted([int(re.search('rps(\d+).csv', file).group(1)) for file in inorder_files])
+    concurrent_rates = sorted([int(re.search('rps(\d+).csv', file).group(1)) for file in concurrent_files])
+
+    return inorder_rates, concurrent_rates
+
+def plot_producer_latency():
+    choral_rates, ozone_rates = find_producer_rates()
+
+    choral_median = []
+    choral_99pi = []
+    ozone_median = []
+    ozone_99pi = []
+
+    for rate in choral_rates:
+        path1 = f'data/inorderproducers/worker1-rps{rate}.csv'
+        path2 = f'data/inorderproducers/worker2-rps{rate}.csv'
+        data1 = pd.read_csv(path1, header=None).iloc[100:]
+        data2 = pd.read_csv(path2, header=None).iloc[100:]
+        data = pd.concat([data1, data2])
+        choral_median.append(data[0].median())
+        choral_99pi.append(data[0].quantile(0.99))
+
+    for rate in ozone_rates:
+        path1 = f'data/concurrentproducers/worker1-rps{rate}.csv'
+        path2 = f'data/concurrentproducers/worker2-rps{rate}.csv'
+        data1 = pd.read_csv(path1, header=None).iloc[100:]
+        data2 = pd.read_csv(path2, header=None).iloc[100:]
+        data = pd.concat([data1, data2])
+        ozone_median.append(data[0].median())
+        ozone_99pi.append(data[0].quantile(0.99))
+
+    plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)', color='red')
+    plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)', color='red')
+    plt.plot(choral_rates, choral_median, 'o-', label='Choral (median)', color='blue')
+    plt.plot(choral_rates, choral_99pi, 'x-', label='Choral (99pi)', color='blue')
+    plt.xlabel('Requests per second')
+    plt.ylabel('Latency (ms)')
+    plt.legend()
+    plt.tight_layout()
+    #plt.savefig("figures/modelserving-latency.png", format='png')
+    plt.show()
+
 
 ####################################################################################################
 # Model serving
@@ -160,7 +210,8 @@ def plot_modelserving_histograms(batch_size):
 
 
 #plot_producers_histograms()
+plot_producer_latency()
 #plot_senders_histograms()
-plot_modelserving_throughput(10)
-plot_modelserving_99pi(10)
+#plot_modelserving_throughput(10)
+#plot_modelserving_99pi(10)
 #plot_modelserving_histograms(10)
