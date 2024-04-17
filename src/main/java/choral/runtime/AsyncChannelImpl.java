@@ -60,13 +60,14 @@ public class AsyncChannelImpl< T > implements AsyncChannel_A< T >, AsyncChannel_
 			Log.debug("Starting listener...");
 			while (true) {
 				Object msg = channel.com();
-				Log.debug("Got " + msg);
 
 				if (msg instanceof DataMsg) {
 					DataMsg dataMsg = (DataMsg) msg;
 					// Case 1: The message is a regular com() message.
 					IntegrityKey key = dataMsg.key;
 					T payload = (T) dataMsg.payload;
+
+					Log.debug("Got data with key " + key);
 
 					// We use synchronization to maintain the `futures` invariant. 
 					CompletableFuture<T> handler = null;

@@ -28,13 +28,31 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 	public static AsyncSocketChannel connect( ChoralSerializer< Object, ByteBuffer > serializer, String hostname, int portNumber ) {
 		try {
 			SocketChannel channel = SocketChannel.open();
-			channel.connect( new InetSocketAddress( hostname, portNumber ) );
+
+			int attempts = 0;
+			while (!channel.isConnected() && attempts < 10) {
+				try {
+					channel.connect( new InetSocketAddress( hostname, portNumber ) );
+				}
+				catch (IOException e) {
+					attempts++;
+					if (attempts >= 10) {
+						System.out.println("Failed to connect to " + hostname + ":" + portNumber + ". Exiting.");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					try { Thread.sleep(1000); } catch (InterruptedException e2) { }
+				}
+			}
+
 			channel.configureBlocking( true );
 			return new AsyncSocketChannel( serializer, channel );
+
 		} catch( IOException e ) {
 			e.printStackTrace();
+			System.exit(1);
+			return null;
 		}
-		return null;
 	}
 
 
@@ -45,16 +63,27 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 
 	@Override
 	public < T extends Object > T com() {
-		// This method doesn't need synchronization, because only a single thread will read here.
+		// This method doesn't need synchronization because we assumed only a single thread will read here.
         try {
 			Log.debug("Waiting for transmission length...");
 			ByteBuffer buffer = ByteBuffer.allocate( 4 );
-			channel.read( buffer );
+
+			int bytesRead = 0;
+			while( bytesRead < 4 ) { 
+				bytesRead += channel.read( buffer );
+			}
+
 			buffer.flip();
 			int transmissionLength = buffer.getInt();
 			Log.debug("Receiving " + transmissionLength + " bytes...");
 			buffer = ByteBuffer.allocate( transmissionLength );
-			channel.read( buffer );
+
+			// Read from the channel, counting bytes as we go, until we have read the entire transmission.
+			bytesRead = 0;
+			while( bytesRead < transmissionLength ) {
+				bytesRead += channel.read( buffer );
+			}
+
 			buffer.flip();
 			Log.debug("Done reading.");
 			return (T) this.serializer.toObject( buffer );
@@ -67,7 +96,6 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 	public < T extends Object > Unit com( T m ) {
 		// This method uses synchronization to prevent concurrent writes from being interleaved.
         try {
-			Log.debug("Sending " + m);
 			ByteBuffer buf = this.serializer.fromObject( m );
 			// TODO: We make an extra copy here, because we need to prepend the length of the transmission.
 			// We could make this unnecessary by (a) prepending the length at the serializer itself, or
@@ -78,7 +106,7 @@ public class AsyncSocketChannel implements SymChannelImpl< Object >, SymChannel_
 			buf2.flip();
             synchronized (this) {
                 int n = channel.write( buf2 );
-				Log.debug("Sent " + n + " bytes");
+				Log.debug("Sent " + buf.limit() + " bytes");
             }
             return Unit.id;
 		} catch( IOException e ) {

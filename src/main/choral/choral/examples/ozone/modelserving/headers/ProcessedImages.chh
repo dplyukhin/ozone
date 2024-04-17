@@ -1,0 +1,5 @@
+package choral.examples.ozone.modelserving;
+
+public class ProcessedImages@A {
+    void addAll(ProcessedImages@A other) {}
+}

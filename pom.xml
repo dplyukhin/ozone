@@ -152,6 +152,23 @@
                                 <argument>SimpleTimeout</argument>
                             </arguments>
                         </configuration>
+                    </execution> 
+                    <execution>
+                        <id>choral-epp-model-serving</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>choral</executable>
+                            <arguments>
+                                <argument>epp</argument>
+                                <argument>--sources=${project.basedir}/src/main/choral</argument>
+                                <argument>--headers=${project.basedir}/src/main/choral</argument>
+                                <argument>--target=${project.build.directory}/generated-sources/choral</argument>
+                                <argument>ModelServing</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

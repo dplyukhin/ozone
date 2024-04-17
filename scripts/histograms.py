@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import glob
+import re
 
 def plot_histogram_from_csv(filename, inputs, dims, bins):
     print(f'Plotting histograms to {filename}...')
@@ -29,7 +31,8 @@ def plot_histogram_from_csv(filename, inputs, dims, bins):
         axes[i].set_ylim(bottom=dims['bottom'], top=dims['top'])
 
     plt.tight_layout()
-    plt.savefig(filename, format='png')
+    # plt.savefig(filename, format='png')
+    plt.show()
     print(f'Done.')
 
 def plot_producers_histograms():
@@ -64,5 +67,100 @@ def plot_senders_histograms():
 
     plot_histogram_from_csv("figures/senders.png", inputs, dims, bins=15)
 
-plot_producers_histograms()
-plot_senders_histograms()
+
+####################################################################################################
+# Model serving
+####################################################################################################
+
+def find_modelserving_rates(batch_size):
+    ozone_files = glob.glob('data/modelserving/throughput-concurrent-rate*-batch*.csv')
+    choral_files = glob.glob('data/modelserving/throughput-inorder-rate*-batch*.csv')
+
+    ozone_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in ozone_files])
+    choral_rates = sorted([int(re.search('rate(\d+)-batch', file).group(1)) for file in choral_files])
+
+    return ozone_rates, choral_rates
+
+def plot_modelserving_throughput(batch_size):
+    ozone_rates, choral_rates = find_modelserving_rates(batch_size)
+
+    ozone_throughputs = []
+    choral_throughputs = []
+
+    for rate in ozone_rates:
+        path = f'data/modelserving/throughput-concurrent-rate{rate}-batch{batch_size}.csv'
+        with open(path, 'r') as f:
+            throughput = int(f.read())
+            ozone_throughputs.append(throughput)
+
+    for rate in choral_rates:
+        path = f'data/modelserving/throughput-inorder-rate{rate}-batch{batch_size}.csv'
+        with open(path, 'r') as f:
+            throughput = int(f.read())
+            choral_throughputs.append(throughput)
+
+    plt.plot(ozone_rates, ozone_throughputs, 'o-', label='Ozone', color='red')
+    plt.plot(choral_rates, choral_throughputs, 'o-', label='Choral', color='blue')
+    plt.xlabel('Requests per second')
+    plt.ylabel('Throughput\n(responses/sec)')
+    plt.legend()
+    plt.tight_layout()
+    #plt.savefig("figures/modelserving-throughput.png", format='png')
+    plt.show()
+
+def calculate_latency_percentile(data, percentile):
+    data = data.iloc[100:]
+    data = data.astype(int)
+    return data[0].quantile(percentile / 100)
+
+def plot_modelserving_99pi(batch_size):
+    ozone_rates, choral_rates = find_modelserving_rates(batch_size)
+
+    ozone_median = []
+    ozone_99pi = []
+    choral_median = []
+    choral_99pi = []
+
+    for rate in ozone_rates:
+        path = f'data/modelserving/latency-concurrent-rate{rate}-batch{batch_size}.csv'
+        data = pd.read_csv(path, header=None)
+        ozone_median.append(calculate_latency_percentile(data, 50))
+        ozone_99pi.append(calculate_latency_percentile(data, 99))
+
+    for rate in choral_rates:
+        path = f'data/modelserving/latency-inorder-rate{rate}-batch{batch_size}.csv'
+        data = pd.read_csv(path, header=None)
+        choral_median.append(calculate_latency_percentile(data, 50))
+        choral_99pi.append(calculate_latency_percentile(data, 99))
+
+    plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)', color='red')
+    plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)', color='red')
+    plt.plot(choral_rates, choral_median, 'o-', label='Choral (median)', color='blue')
+    plt.plot(choral_rates, choral_99pi, 'x-', label='Choral (99pi)', color='blue')
+    plt.xlabel('Requests per second')
+    plt.ylabel('Latency (ms)')
+    plt.legend()
+    plt.tight_layout()
+    #plt.savefig("figures/modelserving-latency.png", format='png')
+    plt.show()
+
+def plot_modelserving_histograms(batch_size):
+    inputs = {
+        'Ozone': f'data/modelserving/latency-concurrent-rate175-batch{batch_size}.csv', 
+        'Choral': f'data/modelserving/latency-inorder-rate175-batch{batch_size}.csv'
+    }
+    dims = {
+        'left': 0,
+        'right': 1100,
+        'bottom': 0,
+        'top': 40
+    }
+
+    plot_histogram_from_csv("figures/modelserving.png", inputs, dims, bins=50)
+
+
+#plot_producers_histograms()
+#plot_senders_histograms()
+plot_modelserving_throughput(10)
+plot_modelserving_99pi(10)
+#plot_modelserving_histograms(10)
