@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -64,7 +65,12 @@ public class Worker1 {
         long endTime = System.currentTimeMillis();
 
         Iterable<Float> latencies = state.getLatencies();
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("data/concurrentproducers/worker1-latencies.csv"))) {
+        String filename = "data/concurrentproducers/worker1-rps" + Config.REQUESTS_PER_SECOND + ".csv";
+
+        try (
+            BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename),
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        ) {
             for (float value : latencies) {
                 writer.write(Float.toString(value));
                 writer.newLine();
