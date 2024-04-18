@@ -24,7 +24,8 @@ def plot_histogram_from_csv(filename, inputs, bins):
         maxima[i] = data[0].quantile(0.999)
         
         # Plotting histogram
-        axes[i].hist(data[0], bins=bins, color='blue', alpha=0.7)
+        color = 'red' if 'Ozone' in title else 'blue'
+        axes[i].hist(data[0], bins=bins, color=color, alpha=0.7)
         axes[i].axvline(data[0].mean(), color='red', linestyle='dashed', linewidth=1)
         axes[i].set_title(title)
         axes[i].set_xlabel('Latency (ms)')
@@ -42,10 +43,10 @@ def plot_histogram_from_csv(filename, inputs, bins):
 
 def plot_senders_histograms():
     inputs = {
-        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
-        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
         'txt (Choral)': 'data/inordersend/key-latencies.csv', 
         'key (Choral)': 'data/inordersend/txt-latencies.csv',
+        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
+        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
     }
 
     plot_histogram_from_csv("figures/senders.png", inputs, bins=25)
