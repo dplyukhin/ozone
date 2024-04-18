@@ -104,32 +104,32 @@
                         <launcher>
                             <id>client</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>client</arg></args>
+                            <args><arg>client</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                         <launcher>
                             <id>batcher</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>batcher</arg></args>
+                            <args><arg>batcher</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                         <launcher>
                             <id>worker1</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>worker1</arg></args>
+                            <args><arg>worker1</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                         <launcher>
                             <id>worker2</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>worker2</arg></args>
+                            <args><arg>worker2</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                         <launcher>
                             <id>model1</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>model1</arg></args>
+                            <args><arg>model1</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                         <launcher>
                             <id>model2</id>
                             <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
-                            <args><arg>model2</arg></args>
+                            <args><arg>model2</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
                         </launcher>
                     </launchers>
                 </configuration>

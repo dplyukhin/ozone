@@ -1,6 +1,6 @@
 trap "kill 0" EXIT
 
-batchSize=20
+batchSize=10
 
 for useOzone in false true; do
     requestsPerSecondValues=(25 50 75 100 125 150 175 225 275 350) # Skip rates that map to the same effective request rate

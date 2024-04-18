@@ -3,6 +3,7 @@ package choral.examples.ozone.modelservingakka
 import akka.actor.{ActorSystem, Props}
 import choral.examples.ozone.modelserving.Image
 import com.typesafe.config.ConfigFactory
+import choral.examples.ozone.modelserving.Config
 
 import java.awt.image.BufferedImage
 import java.io.{ByteArrayOutputStream, File, IOException}
@@ -29,10 +30,13 @@ object Main extends App {
   // Parse command line argument to determine which role to start
   // and use the corresponding configuration
   val roles = Set("client", "batcher", "worker1", "worker2", "model1", "model2")
-  if (args.isEmpty || !roles.contains(args(0))) {
-    println("Usage: sbt \"runMain Main client|batcher|worker1|worker2|model1|model2\"")
+  if (args.length != 3) {
+    println("Expected three arguments (role) (batchSize) (requestsPerSecond); got: " + args)
+    System.exit(1)
   }
   val role = args(0)
+  Config.BATCH_SIZE = args(1).toInt
+  Config.REQUESTS_PER_SECOND = args(2).toInt
   val port = if (role == "client") 2551 else 0
   val img = readImage("img.jpg")
 

@@ -177,7 +177,7 @@ public class Client {
 
                 // Compute the time when the next request will start, and
                 // sleep until that happens if necessary.
-                requestStart += Config.REQUEST_INTERVAL;
+                requestStart += Config.REQUEST_INTERVAL();
                 long sleepTime = requestStart - System.currentTimeMillis();
                 if (sleepTime > 0) {
                     try {
@@ -203,7 +203,7 @@ public class Client {
 
             String suffix = 
                 (Config.USE_OZONE ? "concurrent" : "inorder") +  
-                "-rate" + Config.EFFECTIVE_REQUEST_RATE + "-batch" + Config.BATCH_SIZE + ".csv";
+                "-rate" + Config.EFFECTIVE_REQUEST_RATE() + "-batch" + Config.BATCH_SIZE + ".csv";
 
             String latencyPath = "data/modelserving/latency-" + suffix;
             String throughputPath = "data/modelserving/throughput-" + suffix;
