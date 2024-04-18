@@ -200,22 +200,8 @@ def plot_modelserving_99pi(batch_size):
     #plt.savefig("figures/modelserving-latency.png", format='png')
     plt.show()
 
-def plot_modelserving_histograms(batch_size):
-    inputs = {
-        'Ozone': f'data/modelserving/latency-concurrent-rate175-batch{batch_size}.csv', 
-        'Choral': f'data/modelserving/latency-inorder-rate175-batch{batch_size}.csv'
-    }
-    dims = {
-        'left': 0,
-        'right': 1100,
-        'bottom': 0,
-        'top': 40
-    }
 
-    plot_histogram_from_csv("figures/modelserving.png", inputs, dims, bins=50)
-
-
-#plot_producer_latency()
-#plot_senders_histograms()
+plot_producer_latency()
+plot_senders_histograms()
 plot_modelserving_throughput(10)
 plot_modelserving_99pi(10)
