@@ -96,7 +96,6 @@
                     <execution>
                         <goals>
                             <goal>compile</goal>
-                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -333,4 +332,53 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>choral-nocompile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>choral-epp-hello-roles</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-send</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-producers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-inorder-producers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-buyers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-simple-timeout</id>
+                        <phase>none</phase>
+                    </execution> 
+                    <execution>
+                        <id>choral-epp-inorder-serving</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-serving</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
