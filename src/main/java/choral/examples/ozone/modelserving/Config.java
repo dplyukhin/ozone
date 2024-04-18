@@ -25,4 +25,10 @@ public class Config {
         Integer.parseInt(System.getProperty("requestsPerSecond", "120"));
     public static final boolean USE_OZONE = 
         Boolean.parseBoolean(System.getProperty("useOzone", "true"));
+
+    // The request interval is the amount of time to sleep between requests.
+    public static final int REQUEST_INTERVAL = 1000 / REQUESTS_PER_SECOND;
+    // Since we can only sleep for whole numbers of milliseconds, we have an "effective"
+    // request rate that is the reciprocal of the request interval.
+    public static final int EFFECTIVE_REQUEST_RATE = 1000 / REQUEST_INTERVAL;
 }
