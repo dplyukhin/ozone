@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, ActorSelection, RootActorPath,
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.util.Timeout
-import choral.examples.ozone.modelserving.{BatchIDs, BatcherState, ClientState, Config, Image, ModelState, Predictions, ProcessedImages, WorkerState}
+import choral.examples.ozone.modelserving.{ClientState, Config, Image, ModelState, Predictions, ProcessedImages}
+import choral.examples.ozone.modelservingakka.{BatchIDs, BatcherState, WorkerState}
 
 import scala.collection.mutable.Map
 import java.awt.image.BufferedImage
