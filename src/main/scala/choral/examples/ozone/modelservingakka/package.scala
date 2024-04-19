@@ -8,6 +8,7 @@ package object modelservingakka {
   case class DFut(imgID: Int, workerID: Int)
 
   trait Message
+  case class NewRequest() extends Message
   case class ClientReady(ref: ActorRef) extends Message
   case class PreprocessRequest(img: Image, imgID: Int) extends Message
   case class NewImage(dfut: DFut) extends Message

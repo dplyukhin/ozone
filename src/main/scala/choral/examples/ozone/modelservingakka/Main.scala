@@ -37,6 +37,7 @@ object Main extends App {
   val role = args(0)
   Config.BATCH_SIZE = args(1).toInt
   Config.REQUESTS_PER_SECOND = args(2).toInt
+  System.setProperty("java.awt.headless", "true")
   val port = if (role == "client") 2551 else 0
   val img = readImage("img.jpg")
 

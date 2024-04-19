@@ -15,12 +15,12 @@ object Behaviors {
        case ClientReady(ref) =>
          var requestStart = System.currentTimeMillis()
          for (_ <- 0 to (Config.NUM_REQUESTS + Config.WARMUP_ITERATIONS)) {
-           ref ! "request"
+           ref ! NewRequest()
            requestStart += Config.REQUEST_INTERVAL
            val sleepTime = requestStart - System.currentTimeMillis()
            if (sleepTime > 0) try Thread.sleep(sleepTime)
            catch {
-             case e: InterruptedException =>
+             case _: InterruptedException =>
            }
          }
      }
@@ -35,16 +35,13 @@ object Behaviors {
     private var model1: ActorSelection = _
     private var model2: ActorSelection = _
     private val state: ClientState = new ClientState()
-    private var requestStart: Long = 0
     private var benchmarkStart: Long = 0
     private var benchmarkEnd: Long = 0
     private var imgID: Int = 0
     private val startTimes: mutable.Map[Int, Long] = mutable.Map[Int, Long]()
     private val endTimes: mutable.Map[Int, Long] = mutable.Map[Int, Long]()
 
-    // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
-      log.info("Client started")
       cluster.subscribe(self, initialStateMode = InitialStateAsEvents, classOf[MemberEvent], classOf[MemberRemoved])
     }
     override def postStop(): Unit = cluster.unsubscribe(self)
@@ -53,12 +50,12 @@ object Behaviors {
       println("Starting. Effective reqs per second: " + Config.EFFECTIVE_REQUEST_RATE + ", batch size: " +
         Config.BATCH_SIZE)
       println("Receiving requests every " + Config.REQUEST_INTERVAL + "ms")
-      Thread.sleep(5000) // Wait for everyone else to sync up
+      Thread.sleep(5000) // Wait for the other services to connect to each other
       timer ! ClientReady(self)
     }
 
     def receive: Receive = {
-      case "request" =>
+      case NewRequest() =>
         val workerID = state.chooseWorker(2)
         workerID match {
           case 0 =>
@@ -85,12 +82,10 @@ object Behaviors {
           if (imgID >= Config.WARMUP_ITERATIONS) {
             endTimes(imgID - Config.WARMUP_ITERATIONS) = System.currentTimeMillis()
           }
-          //println(s"Got prediction $imgID: ")
         }
         if (endTimes.size == Config.NUM_REQUESTS) {
-          println("Done")
           benchmarkEnd = System.currentTimeMillis()
-          // Open
+
           val suffix: String = "akka-rate" + Config.EFFECTIVE_REQUEST_RATE + "-batch" + Config.BATCH_SIZE + ".csv"
           val latencyPath: String = "data/modelserving/latency-" + suffix
           val throughputPath: String = "data/modelserving/throughput-" + suffix
@@ -118,10 +113,10 @@ object Behaviors {
 
           context.system.terminate()
         }
+
       case MemberUp(member) =>
         if (member.hasRole("batcher")) {
           batcher = context.actorSelection(RootActorPath(member.address) / "user" / "batcher")
-          log.info(s"Client connected to batcher")
         }
         else if (member.hasRole("worker1")) {
           worker1 = context.actorSelection(RootActorPath(member.address) / "user" / "worker1")
@@ -140,7 +135,6 @@ object Behaviors {
         }
       case _: MemberRemoved =>
         context.system.terminate()
-
       case _: MemberEvent =>
     }
   }
@@ -162,7 +156,6 @@ object Behaviors {
 
     def receive: Receive = {
       case NewImage(DFut(imgID, workerID)) =>
-        //println(s"Batcher got image ID $imgID")
         state.newImage(imgID, workerID)
         val batchIDs = state.getBatchIfFull
         if (batchIDs != null) {
@@ -173,8 +166,8 @@ object Behaviors {
           }
         }
       case NewPredictions(predictions) =>
-        //println(s"Got predictions $predictions")
         client ! NewPredictions(predictions)
+
       case MemberUp(member) =>
         if (member.hasRole("client")) {
           client = context.actorSelection(RootActorPath(member.address) / "user" / "client")
@@ -185,10 +178,8 @@ object Behaviors {
         else if (member.hasRole("model2")) {
           model2 = context.actorSelection(RootActorPath(member.address) / "user" / "model2")
         }
-
       case _: MemberRemoved =>
         context.system.terminate()
-
       case _: MemberEvent =>
     }
   }
@@ -211,7 +202,6 @@ object Behaviors {
 
     def receive: Receive = {
       case PreprocessRequest(img, imgID) =>
-        //println(s"Worker got image $imgID")
         val processed = state.preprocess(img)
         state.store(imgID, processed)
 
@@ -223,7 +213,6 @@ object Behaviors {
         }
 
       case GetBatch(batchIDs, replyTo) =>
-        //println(s"Got asked to send batch $batchIDs")
         if (state.canDumpBatch(batchIDs)) {
           val batch = state.dumpBatch(batchIDs)
           replyTo ! BatchReply(batchIDs, batch)
@@ -244,7 +233,6 @@ object Behaviors {
         }
       case _: MemberRemoved =>
         context.system.terminate()
-
       case _: MemberEvent =>
     }
   }
@@ -256,7 +244,7 @@ object Behaviors {
     private var worker1: ActorSelection = _
     private var worker2: ActorSelection = _
     private val state: ModelState = new ModelState()
-    private var batchMap: mutable.Map[BatchIDs, ProcessedImages] = mutable.Map[BatchIDs, ProcessedImages]()
+    private val batchMap: mutable.Map[BatchIDs, ProcessedImages] = mutable.Map[BatchIDs, ProcessedImages]()
 
     // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
@@ -267,17 +255,14 @@ object Behaviors {
 
     def receive: Receive = {
       case ComputePredictions(batchIDs) =>
-        //println(s"Fetching batch $batchIDs")
         worker1 ! GetBatch(batchIDs, self)
         worker2 ! GetBatch(batchIDs, self)
 
       case BatchReply(batchIDs, images) =>
         if (!batchMap.contains(batchIDs)) {
-          //println(s"Got first batch")
           batchMap(batchIDs) = images
         }
         else {
-          //println(s"Computing $batchIDs")
           val batch = batchMap(batchIDs)
           batchMap -= batchIDs
           batch.addAll(images)
@@ -295,7 +280,6 @@ object Behaviors {
         else if (member.hasRole("worker2")) {
           worker2 = context.actorSelection(RootActorPath(member.address) / "user" / "worker2")
         }
-
       case _: MemberRemoved =>
         context.system.terminate()
       case _: MemberEvent =>
