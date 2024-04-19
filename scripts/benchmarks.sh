@@ -20,6 +20,13 @@ echo "Running sender microbenchmarks (Ozone version)..."
 bash scripts/concurrentsend.sh > /dev/null || true
 echo "Results written to /data/concurrentsend."
 
+echo "Running model serving benchmark (Choral and Ozone versions)..."
+bash scripts/modelserving.sh > /dev/null || true
+echo "Results written to /data/modelserving."
+echo "Running model serving benchmark (Akka version)..."
+bash scripts/akkamodelserving.sh > /dev/null || true
+echo "Results written to /data/modelserving."
+
 echo "Done. Now plotting results."
 
-python3 scripts/histograms.py
+python3 scripts/plot.py

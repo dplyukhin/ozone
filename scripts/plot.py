@@ -2,9 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import glob
 import re
+import sys
 
-def plot_histogram_from_csv(filename, inputs, bins):
-    print(f'Plotting histograms to {filename}...')
+
+####################################################################################################
+# Senders
+####################################################################################################
+
+def plot_histogram_from_csv(filename, inputs, bins, show):
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
 
@@ -19,10 +24,8 @@ def plot_histogram_from_csv(filename, inputs, bins):
         # Convert each datum to integer
         data = data.astype(int)
 
-        # Uncomment to print the min, max, and average values - along with the file_path
-        print(f'{title} - min: {data[0].min()}, max: {data[0].max()}, avg: {data[0].mean()}')
         maxima[i] = data[0].quantile(0.999)
-        
+
         # Plotting histogram
         color = 'red' if 'Ozone' in title else 'blue'
         axes[i].hist(data[0], bins=bins, color=color, alpha=0.7)
@@ -37,19 +40,23 @@ def plot_histogram_from_csv(filename, inputs, bins):
         axes[i].set_ylim(0, 800)
 
     plt.tight_layout()
-    # plt.savefig(filename, format='png')
-    plt.show()
-    print(f'Done.')
+    if show:
+        plt.show()
+    else:
+        plt.savefig(filename, format='png')
+        print(f'Plot saved to {filename}.')
 
-def plot_senders_histograms():
+
+def plot_senders_histograms(show):
     inputs = {
-        'txt (Choral)': 'data/inordersend/key-latencies.csv', 
+        'txt (Choral)': 'data/inordersend/key-latencies.csv',
         'key (Choral)': 'data/inordersend/txt-latencies.csv',
-        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv', 
-        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv', 
+        'txt (Ozone)': 'data/concurrentsend/key-latencies.csv',
+        'key (Ozone)': 'data/concurrentsend/txt-latencies.csv',
     }
 
-    plot_histogram_from_csv("figures/senders.png", inputs, bins=25)
+    plot_histogram_from_csv("figures/Figure 19b - Concurrent senders latency.png", inputs, bins=25, show=show)
+
 
 ####################################################################################################
 # Producers
@@ -64,7 +71,8 @@ def find_producer_rates():
 
     return inorder_rates, concurrent_rates
 
-def plot_producer_latency():
+
+def plot_producer_latency(show):
     choral_rates, ozone_rates = find_producer_rates()
 
     choral_median = []
@@ -98,8 +106,12 @@ def plot_producer_latency():
     plt.ylabel('Latency (ms)')
     plt.legend()
     plt.tight_layout()
-    #plt.savefig("figures/modelserving-latency.png", format='png')
-    plt.show()
+    if show:
+        plt.show()
+    else:
+        filename = "figures/Figure 19a - Concurrent producers latency.png"
+        plt.savefig(filename, format='png')
+        print(f'Plot saved to {filename}.')
 
 
 ####################################################################################################
@@ -117,7 +129,8 @@ def find_modelserving_rates(batch_size):
 
     return ozone_rates, choral_rates, akka_rates
 
-def plot_modelserving_throughput(batch_size):
+
+def plot_modelserving_throughput(batch_size, show):
     ozone_rates, choral_rates, akka_rates = find_modelserving_rates(batch_size)
 
     ozone_throughputs = []
@@ -142,6 +155,7 @@ def plot_modelserving_throughput(batch_size):
             throughput = int(f.read())
             akka_throughputs.append(throughput)
 
+    plt.figure()
     plt.plot(ozone_rates, ozone_throughputs, 'o-', label='Ozone', color='red')
     plt.plot(choral_rates, choral_throughputs, 'o-', label='Choral', color='blue')
     plt.plot(akka_rates, akka_throughputs, '--', label='Akka', color='orange')
@@ -149,15 +163,21 @@ def plot_modelserving_throughput(batch_size):
     plt.ylabel('Throughput\n(responses/sec)')
     plt.legend()
     plt.tight_layout()
-    #plt.savefig("figures/modelserving-throughput.png", format='png')
-    plt.show()
+    if show:
+        plt.show()
+    else:
+        filename = "figures/Figure 20a - Model serving throughput.png"
+        plt.savefig(filename, format='png')
+        print(f'Plot saved to {filename}.')
+
 
 def calculate_latency_percentile(data, percentile):
     data = data.iloc[100:]
     data = data.astype(int)
     return data[0].quantile(percentile / 100)
 
-def plot_modelserving_99pi(batch_size):
+
+def plot_modelserving_99pi(batch_size, show):
     ozone_rates, choral_rates, akka_rates = find_modelserving_rates(batch_size)
     # Cut off the choral rates above 200
     choral_rates = [rate for rate in choral_rates if rate <= 200]
@@ -187,6 +207,7 @@ def plot_modelserving_99pi(batch_size):
         akka_median.append(calculate_latency_percentile(data, 50))
         akka_99pi.append(calculate_latency_percentile(data, 99))
 
+    plt.figure()
     plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)', color='red')
     plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)', color='red')
     plt.plot(choral_rates, choral_median, 'o-', label='Choral (median)', color='blue')
@@ -197,11 +218,18 @@ def plot_modelserving_99pi(batch_size):
     plt.ylabel('Latency (ms)')
     plt.legend()
     plt.tight_layout()
-    #plt.savefig("figures/modelserving-latency.png", format='png')
-    plt.show()
+    if show:
+        plt.show()
+    else:
+        filename = "figures/Figure 20b - Model serving latency.png"
+        plt.savefig(filename, format='png')
+        print(f'Plot saved to {filename}.')
 
 
-plot_producer_latency()
-plot_senders_histograms()
-plot_modelserving_throughput(10)
-plot_modelserving_99pi(10)
+if __name__ == "__main__":
+    shouldShow = '--show' in sys.argv
+
+    plot_producer_latency(show=shouldShow)
+    plot_senders_histograms(show=shouldShow)
+    plot_modelserving_throughput(10, show=shouldShow)
+    plot_modelserving_99pi(10, show=shouldShow)
