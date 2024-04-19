@@ -1,37 +1,20 @@
 package choral.examples.ozone.modelservingakka
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSelection, RootActorPath, Timers}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSelection, RootActorPath}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
-import akka.util.Timeout
-import choral.examples.ozone.modelserving.{ClientState, Config, Image, ModelState, Predictions, ProcessedImages}
-import choral.examples.ozone.modelservingakka.{BatchIDs, BatcherState, WorkerState}
+import choral.examples.ozone.modelserving.{ClientState, Config, Image, ModelState, ProcessedImages}
 
-import scala.collection.mutable.Map
-import java.awt.image.BufferedImage
-import java.io.{BufferedWriter, ByteArrayOutputStream, File, FileWriter, IOException}
 import java.nio.file.{Files, Paths, StandardOpenOption}
-import javax.imageio.ImageIO
-import scala.concurrent.duration.DurationInt
+import scala.collection.mutable
 
 object Behaviors {
-  implicit val timeout: Timeout = Timeout(10.seconds)
-
-  case class DFut(imgID: Int, worerID: Int)
-
-  case class ClientReady(ref: ActorRef)
-  case class PreprocessRequest(img: Image, imgID: Int)
-  case class NewImage(dfut: DFut)
-  case class ComputePredictions(batchIDs: BatchIDs)
-  case class GetBatch(batchIDs: BatchIDs, replyTo: ActorRef)
-  case class BatchReply(batchIDs: BatchIDs, images: ProcessedImages)
-  case class NewPredictions(predictions: Predictions)
 
   class Timer extends Actor {
-     def receive = {
+     def receive: Receive = {
        case ClientReady(ref) =>
          var requestStart = System.currentTimeMillis()
-         for (i <- 0 to (Config.NUM_REQUESTS + Config.WARMUP_ITERATIONS)) {
+         for (_ <- 0 to (Config.NUM_REQUESTS + Config.WARMUP_ITERATIONS)) {
            ref ! "request"
            requestStart += Config.REQUEST_INTERVAL
            val sleepTime = requestStart - System.currentTimeMillis()
@@ -45,19 +28,19 @@ object Behaviors {
 
   class Client(img: Image, timer: ActorRef) extends Actor with ActorLogging {
 
-    val cluster = Cluster(context.system)
-    var batcher: ActorSelection = _
-    var worker1: ActorSelection = _
-    var worker2: ActorSelection = _
-    var model1: ActorSelection = _
-    var model2: ActorSelection = _
-    val state: ClientState = new ClientState()
-    var requestStart: Long = 0
-    var benchmarkStart: Long = 0
-    var benchmarkEnd: Long = 0
-    var imgID: Int = 0
-    var startTimes: Map[Int, Long] = Map[Int, Long]()
-    var endTimes: Map[Int, Long] = Map[Int, Long]()
+    private val cluster = Cluster(context.system)
+    private var batcher: ActorSelection = _
+    private var worker1: ActorSelection = _
+    private var worker2: ActorSelection = _
+    private var model1: ActorSelection = _
+    private var model2: ActorSelection = _
+    private val state: ClientState = new ClientState()
+    private var requestStart: Long = 0
+    private var benchmarkStart: Long = 0
+    private var benchmarkEnd: Long = 0
+    private var imgID: Int = 0
+    private val startTimes: mutable.Map[Int, Long] = mutable.Map[Int, Long]()
+    private val endTimes: mutable.Map[Int, Long] = mutable.Map[Int, Long]()
 
     // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
@@ -66,7 +49,7 @@ object Behaviors {
     }
     override def postStop(): Unit = cluster.unsubscribe(self)
 
-    def start(): Unit = {
+    private def start(): Unit = {
       println("Starting. Effective reqs per second: " + Config.EFFECTIVE_REQUEST_RATE + ", batch size: " +
         Config.BATCH_SIZE)
       println("Receiving requests every " + Config.REQUEST_INTERVAL + "ms")
@@ -74,7 +57,7 @@ object Behaviors {
       timer ! ClientReady(self)
     }
 
-    def receive = {
+    def receive: Receive = {
       case "request" =>
         val workerID = state.chooseWorker(2)
         workerID match {
@@ -113,7 +96,6 @@ object Behaviors {
           val throughputPath: String = "data/modelserving/throughput-" + suffix
 
           // Write throughput data, overwriting existing data if it's there
-          val throughputFile = new File(throughputPath)
           val throughputWriter = Files.newBufferedWriter(Paths.get(throughputPath),
             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
           val throughput = Config.NUM_REQUESTS * 1000 / (benchmarkEnd - benchmarkStart)
@@ -165,12 +147,11 @@ object Behaviors {
 
   class Batcher extends Actor with ActorLogging {
 
-    val cluster = Cluster(context.system)
-
-    var client: ActorSelection = _
-    var model1: ActorSelection = _
-    var model2: ActorSelection = _
-    val state: BatcherState = new BatcherState()
+    private val cluster = Cluster(context.system)
+    private var client: ActorSelection = _
+    private var model1: ActorSelection = _
+    private var model2: ActorSelection = _
+    private val state: BatcherState = new BatcherState()
 
     // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
@@ -179,7 +160,7 @@ object Behaviors {
     }
     override def postStop(): Unit = cluster.unsubscribe(self)
 
-    def receive = {
+    def receive: Receive = {
       case NewImage(DFut(imgID, workerID)) =>
         //println(s"Batcher got image ID $imgID")
         state.newImage(imgID, workerID)
@@ -214,13 +195,12 @@ object Behaviors {
 
   class Worker(workerID: Int) extends Actor with ActorLogging {
 
-    val cluster = Cluster(context.system)
-
-    var client: ActorSelection = _
-    var model1: ActorSelection = _
-    var model2: ActorSelection = _
-    val state: WorkerState = new WorkerState(workerID)
-    var waiters: Map[BatchIDs, ActorRef] = Map[BatchIDs, ActorRef]()
+    private val cluster = Cluster(context.system)
+    private var client: ActorSelection = _
+    private var model1: ActorSelection = _
+    private var model2: ActorSelection = _
+    private val state: WorkerState = new WorkerState(workerID)
+    private val waiters: mutable.Map[BatchIDs, ActorRef] = mutable.Map[BatchIDs, ActorRef]()
 
     // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
@@ -229,7 +209,7 @@ object Behaviors {
     }
     override def postStop(): Unit = cluster.unsubscribe(self)
 
-    def receive = {
+    def receive: Receive = {
       case PreprocessRequest(img, imgID) =>
         //println(s"Worker got image $imgID")
         val processed = state.preprocess(img)
@@ -271,13 +251,12 @@ object Behaviors {
 
   class Model extends Actor with ActorLogging {
 
-    val cluster = Cluster(context.system)
-
-    var batcher: ActorSelection = _
-    var worker1: ActorSelection = _
-    var worker2: ActorSelection = _
-    val state: ModelState = new ModelState()
-    var batchMap: Map[BatchIDs, ProcessedImages] = Map[BatchIDs, ProcessedImages]()
+    private val cluster = Cluster(context.system)
+    private var batcher: ActorSelection = _
+    private var worker1: ActorSelection = _
+    private var worker2: ActorSelection = _
+    private val state: ModelState = new ModelState()
+    private var batchMap: mutable.Map[BatchIDs, ProcessedImages] = mutable.Map[BatchIDs, ProcessedImages]()
 
     // subscribe to cluster changes, re-subscribe when restart
     override def preStart(): Unit = {
@@ -286,7 +265,7 @@ object Behaviors {
     }
     override def postStop(): Unit = cluster.unsubscribe(self)
 
-    def receive = {
+    def receive: Receive = {
       case ComputePredictions(batchIDs) =>
         //println(s"Fetching batch $batchIDs")
         worker1 ! GetBatch(batchIDs, self)
