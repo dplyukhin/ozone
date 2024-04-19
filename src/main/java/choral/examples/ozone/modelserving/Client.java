@@ -36,22 +36,7 @@ public class Client {
         Log.debug("CLIENT: " + msg);
     }
 
-    public static void main(String[] args) {
-
-        // Read the image filename from args
-        if (args.length < 1) {
-            debug("Image filename not provided. Exiting.");
-            return;
-        }
-        String filePath = args[0];
-
-        // The request interval is the amount of time to sleep between requests.
-        int requestInterval = 1000 / Config.REQUESTS_PER_SECOND;
-        // Since we can only sleep for whole numbers of milliseconds, we have an "effective"
-        // request rate that is the reciprocal of the request interval.
-        int effectiveRequestRate = 1000 / requestInterval;
-
-        Image img = null;
+    public static Image readImage(String filePath) {
         try {
             BufferedImage original = ImageIO.read(new File(filePath));
             java.awt.Image scaled = original.getScaledInstance(224, 224, java.awt.Image.SCALE_DEFAULT);
@@ -61,13 +46,23 @@ public class Client {
             
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(bufferedScaled, "PNG", outputStream);
-            img = new Image(outputStream.toByteArray());
+            return new Image(outputStream.toByteArray());
         } 
         catch (IOException e) {
             debug("Couldn't find image " + filePath + ". Exiting.");
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        // Read the image filename from args
+        if (args.length < 1) {
+            debug("Image filename not provided. Exiting.");
             return;
         }
-
+        String filePath = args[0];
+        Image img = readImage(filePath);
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
         debug("Connecting to other nodes...");
@@ -182,7 +177,7 @@ public class Client {
 
                 // Compute the time when the next request will start, and
                 // sleep until that happens if necessary.
-                requestStart += requestInterval;
+                requestStart += Config.REQUEST_INTERVAL();
                 long sleepTime = requestStart - System.currentTimeMillis();
                 if (sleepTime > 0) {
                     try {
@@ -208,7 +203,7 @@ public class Client {
 
             String suffix = 
                 (Config.USE_OZONE ? "concurrent" : "inorder") +  
-                "-rate" + effectiveRequestRate + "-batch" + Config.BATCH_SIZE + ".csv";
+                "-rate" + Config.EFFECTIVE_REQUEST_RATE() + "-batch" + Config.BATCH_SIZE + ".csv";
 
             String latencyPath = "data/modelserving/latency-" + suffix;
             String throughputPath = "data/modelserving/throughput-" + suffix;

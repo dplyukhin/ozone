@@ -6,11 +6,63 @@
     <artifactId>futures</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+        <id>akka-repository</id>
+        <name>Akka library repository</name>
+        <url>https://repo.akka.io/maven</url>
+        </repository>
+    </repositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <scala.binary.version>2.13</scala.binary.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-bom_${scala.binary.version}</artifactId>
+            <version>2.9.2</version>
+            <type>pom</type>
+            <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.12</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster-typed_${scala.binary.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster_${scala.binary.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.binary.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_${scala.binary.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.choral-lang</groupId>
             <artifactId>choral</artifactId>
@@ -36,6 +88,52 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>4.8.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <launchers>
+                        <launcher>
+                            <id>client</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>client</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                        <launcher>
+                            <id>batcher</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>batcher</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                        <launcher>
+                            <id>worker1</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>worker1</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                        <launcher>
+                            <id>worker2</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>worker2</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                        <launcher>
+                            <id>model1</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>model1</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                        <launcher>
+                            <id>model2</id>
+                            <mainClass>choral.examples.ozone.modelservingakka.Main</mainClass>
+                            <args><arg>model2</arg><arg>${batchSize}</arg><arg>${requestsPerSecond}</arg></args>
+                        </launcher>
+                    </launchers>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -234,4 +332,53 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>choral-nocompile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>choral-epp-hello-roles</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-send</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-producers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-inorder-producers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-buyers</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-simple-timeout</id>
+                        <phase>none</phase>
+                    </execution> 
+                    <execution>
+                        <id>choral-epp-inorder-serving</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>choral-epp-concurrent-serving</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
