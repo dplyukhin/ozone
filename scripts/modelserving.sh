@@ -1,5 +1,5 @@
 #!/bin/bash
-trap "kill 0" EXIT
+#trap "kill 0" EXIT
 
 # mvn compile
 

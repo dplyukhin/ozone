@@ -1,4 +1,4 @@
-trap "kill 0" EXIT
+#trap "kill 0" EXIT
 
 batchSize=10
 

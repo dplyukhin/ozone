@@ -1,10 +1,12 @@
 #!/bin/bash
 
+trap "kill 0" EXIT
+
 echo "Building Ozone..."
 mvn clean > /dev/null
 mvn compile > /dev/null
 
-echo "Done. Now running 4 microbenchmarks."
+echo "Done. Now running benchmarks."
 
 echo "Running producer microbenchmarks (Choral version)..."
 bash scripts/inorderproducers.sh > /dev/null || true
