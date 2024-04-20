@@ -8,24 +8,14 @@ programming language.
 In the project root directory, run `scripts/benchmarks.sh`. The script will compile the Ozone library,
 run benchmarks, and plot figures. Data is written to `data/` and figures are written to `figures/`.
 
-** Overview
-
-- `/src/main/java/choral/channels/`: The `AsyncChannel` interface, used by Choral choreographies.
-- `/src/main/java/choral/runtime/`: An implementation of `AsyncChannel`, used by driver code written in Java.
-- `/src/main/java/choral/examples/ozone/`: Driver code for the Choral/Ozone choreographies used in the paper.
-- `/src/main/choral/choral/examples/ozone/`: Choral/Ozone choreographies used in the paper.
-  - `concurrentproducers/`: Microbenchmark code used to generate Figure 18 (a).
-  - `concurrentsend/`: Microbenchmark code used to generate Figure 18 (b).
-
 ** Building
 
-It should always be possible to build the project with the most recent version
-of Choral. To build the project:
+The project requires maven, JDK 17, python 3, pandas, and matplotlib.
 
 1. Make sure you have the Choral libraries installed (=org.choral-lang:choral=
-   and =org.choral-lang:runtime=).
-
-   Clone the [[https://github.com/choral-lang/choral][Choral repository]] and build and install the libraries:
+   and =org.choral-lang:runtime=). To do this, clone the 
+   [[https://github.com/choral-lang/choral][Choral repository]] and build and 
+   install the libraries:
 
    #+BEGIN_EXAMPLE
      mvn install
@@ -34,44 +24,25 @@ of Choral. To build the project:
 2. Make sure you have the =choral= compiler script on your =PATH= and that
    you've set =CHORAL_PATH=.
 
-   The script is just a wrapper that looks for the Choral standalone JAR under
+   The script is a wrapper that looks for the Choral standalone JAR under
    =CHORAL_HOME= and invokes it. The version of the JAR should match the version
    of the runtime you've installed.
 
    When building Choral from source, You can find the JAR under Choral's
    =dist/target=, which you can use as your =CHORAL_PATH=.
 
-3. Build the project:
+3. To build this project, run the following command in the root directory:
 
    #+BEGIN_EXAMPLE
      mvn compile
    #+END_EXAMPLE
+    
+** Overview
 
-   We try and track the latest Java compiler version available. In case yours is
-   older, either update your Java compiler or modify =pom.xml= to match the one
-   you have installed.
-
-** Running
-
-Benchmarks are executed by running one of the following scripts in the 
-`scripts/` directory:
-
-    bash scripts/concurrentproducers.sh    # Concurrent producers (Ozone)
-    bash scripts/inorderproducers.sh       # Concurrent producers (Choral)
-    bash scripts/concurrentsend.sh         # Concurrent send (Ozone)
-    bash scripts/inordersend.sh            # Concurrent send (Choral)
-
-Plot the results with the following Python 3 script:
-
-    pip3 install pandas matplotlib         # Install dependencies if necessary
-    python3 scripts/histograms.py          # Generate figures
-
-To simulate the effects of network latency, install `iproute2` and run the following
-command:
-
-    sudo tc qdisc add dev lo root netem delay 2ms 2ms
-
-...where `lo` is the name of your local network interface. To disable 
-network emulation, run the following:
-
-    sudo tc qdisc delete dev lo root
+- `/src/main/java/choral/channels/`: The `AsyncChannel` interface, used by Choral choreographies.
+- `/src/main/java/choral/runtime/`: An implementation of `AsyncChannel`, used by driver code written in Java.
+- `/src/main/java/choral/examples/ozone/`: Driver code for the Choral/Ozone choreographies used in the paper.
+- `/src/main/choral/choral/examples/ozone/`: Choral/Ozone choreographies used in the paper.
+  - `concurrentproducers/`: Microbenchmark code used to generate Figure 19 (a).
+  - `concurrentsend/`: Microbenchmark code used to generate Figure 19 (b).
+  - `modelserving/`: Model serving code used to generate Figure 20.
