@@ -125,10 +125,10 @@ public class AsyncChannelImpl< T > implements AsyncChannel_A< T >, AsyncChannel_
  
 	@Override
  	public < M extends T > Unit com( M m, int line_a, Token tok_a) {
-		CompletableFuture.runAsync(() -> {
+		executor.submit(() -> {
 			IntegrityKey key = new IntegrityKey(line_a, tok_a);
 			channel.com( new DataMsg( key, m ) );
-		}, executor);
+		});
 		return Unit.id;
  	}
     
