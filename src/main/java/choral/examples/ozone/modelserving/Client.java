@@ -68,13 +68,13 @@ public class Client {
         debug("Connecting to other nodes...");
 
         AsyncServerSocketChannel worker1_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_WORKER1
+            new JavaSerializer(), Config.CLIENT_HOST, Config.CLIENT_FOR_WORKER1
         );
         AsyncServerSocketChannel worker2_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_WORKER2
+            new JavaSerializer(), Config.CLIENT_HOST, Config.CLIENT_FOR_WORKER2
         );
         AsyncServerSocketChannel batcher_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
+            new JavaSerializer(), Config.CLIENT_HOST, Config.CLIENT_FOR_BATCHER
         );
 
         try {

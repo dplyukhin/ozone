@@ -64,22 +64,22 @@ public class Model {
         if (Config.USE_OZONE) {
             chB = new AsyncChannelImpl<>(threadPool, 
                 AsyncSocketChannel.connect(
-                    new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL
+                    new JavaSerializer(), Config.BATCHER_HOST, BATCHER_FOR_MODEL
                 )
             );
         }
         else {
             chB = AsyncSocketChannel.connect(
-                new JavaSerializer(), Config.HOST, BATCHER_FOR_MODEL
+                new JavaSerializer(), Config.BATCHER_HOST, BATCHER_FOR_MODEL
             );
         }
         debug("Connected to batcher.");
 
         SymChannel_B<Object> chW1 = AsyncSocketChannel.connect(
-            new JavaSerializer(), Config.HOST, WORKER1_FOR_MODEL
+            new JavaSerializer(), Config.WORKER1_HOST, WORKER1_FOR_MODEL
         );
         SymChannel_B<Object> chW2 = AsyncSocketChannel.connect(
-            new JavaSerializer(), Config.HOST, WORKER2_FOR_MODEL
+            new JavaSerializer(), Config.WORKER2_HOST, WORKER2_FOR_MODEL
         );
         debug("Connected to workers.");
 

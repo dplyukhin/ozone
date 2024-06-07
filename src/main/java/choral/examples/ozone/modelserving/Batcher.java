@@ -31,28 +31,28 @@ public class Batcher {
         if (Config.USE_OZONE) {
             chC = new AsyncChannelImpl<>(threadPool, 
                 AsyncSocketChannel.connect(
-                    new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
+                    new JavaSerializer(), Config.CLIENT_HOST, Config.CLIENT_FOR_BATCHER
                 )
             );
         }
         else {
             chC = AsyncSocketChannel.connect(
-                new JavaSerializer(), Config.HOST, Config.CLIENT_FOR_BATCHER
+                new JavaSerializer(), Config.CLIENT_HOST, Config.CLIENT_FOR_BATCHER
             );
         }
         debug("Connected to client.");
 
         AsyncServerSocketChannel model1_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.BATCHER_FOR_MODEL1
+            new JavaSerializer(), Config.BATCHER_HOST, Config.BATCHER_FOR_MODEL1
         );
         AsyncServerSocketChannel model2_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.BATCHER_FOR_MODEL2
+            new JavaSerializer(), Config.BATCHER_HOST, Config.BATCHER_FOR_MODEL2
         );
         AsyncServerSocketChannel worker1_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.BATCHER_FOR_WORKER1
+            new JavaSerializer(), Config.BATCHER_HOST, Config.BATCHER_FOR_WORKER1
         );
         AsyncServerSocketChannel worker2_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, Config.BATCHER_FOR_WORKER2
+            new JavaSerializer(), Config.BATCHER_HOST, Config.BATCHER_FOR_WORKER2
         );
 
         try {

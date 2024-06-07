@@ -44,36 +44,39 @@ public class Worker {
         int BATCHER_FOR_WORKER = -1;
         int WORKER_FOR_MODEL1 = -1;
         int WORKER_FOR_MODEL2 = -1;
+        String WORKER_HOST = "";
         if (workerID == 1) {
             CLIENT_FOR_WORKER = Config.CLIENT_FOR_WORKER1;
             BATCHER_FOR_WORKER = Config.BATCHER_FOR_WORKER1;
             WORKER_FOR_MODEL1 = Config.WORKER1_FOR_MODEL1;
             WORKER_FOR_MODEL2 = Config.WORKER1_FOR_MODEL2;
+            WORKER_HOST = Config.WORKER1_HOST;
         }
         else if (workerID == 2) {
             CLIENT_FOR_WORKER = Config.CLIENT_FOR_WORKER2;
             BATCHER_FOR_WORKER = Config.BATCHER_FOR_WORKER2;
             WORKER_FOR_MODEL1 = Config.WORKER2_FOR_MODEL1;
             WORKER_FOR_MODEL2 = Config.WORKER2_FOR_MODEL2;
+            WORKER_HOST = Config.WORKER2_HOST;
         }
 
         debug("Connecting to other nodes...");
 
         SymChannel_B<Object> chC = AsyncSocketChannel.connect(
-            new JavaSerializer(), Config.HOST, CLIENT_FOR_WORKER
+            new JavaSerializer(), Config.CLIENT_HOST, CLIENT_FOR_WORKER
         );
         debug("Connected to client.");
 
         SymChannel_B<Object> chB = AsyncSocketChannel.connect(
-            new JavaSerializer(), Config.HOST, BATCHER_FOR_WORKER
+            new JavaSerializer(), Config.BATCHER_HOST, BATCHER_FOR_WORKER
         );
         debug("Connected to batcher.");
 
         AsyncServerSocketChannel model1_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, WORKER_FOR_MODEL1
+            new JavaSerializer(), WORKER_HOST, WORKER_FOR_MODEL1
         );
         AsyncServerSocketChannel model2_listener = AsyncServerSocketChannel.at( 
-            new JavaSerializer(), Config.HOST, WORKER_FOR_MODEL2
+            new JavaSerializer(), WORKER_HOST, WORKER_FOR_MODEL2
         );
 
         try {

@@ -1,7 +1,18 @@
 package choral.examples.ozone.modelserving;
 
 public class Config {
-    public static final String HOST = "localhost";
+    public static String CLIENT_HOST = 
+        System.getProperty("clientHost", "localhost");
+    public static String BATCHER_HOST =
+        System.getProperty("batcherHost", "localhost");
+    public static String WORKER1_HOST =
+        System.getProperty("worker1Host", "localhost");
+    public static String WORKER2_HOST =
+        System.getProperty("worker2Host", "localhost");
+    public static String MODEL1_HOST =
+        System.getProperty("model1Host", "localhost");
+    public static String MODEL2_HOST =
+        System.getProperty("model2Host", "localhost");
 
     public static final int CLIENT_FOR_WORKER1 = 8667;
     public static final int CLIENT_FOR_WORKER2 = 8668;
