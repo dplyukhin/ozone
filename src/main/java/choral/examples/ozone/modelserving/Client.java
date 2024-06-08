@@ -141,6 +141,7 @@ public class Client {
                         batch.thenAccept(predictions -> {
                             long end = System.currentTimeMillis();
                             for (int imgID : predictions.getImgIDs()) {
+				    //System.out.println("Got imgID: " + imgID + " of " + Config.NUM_REQUESTS);
                                 if (imgID >= Config.WARMUP_ITERATIONS) {
                                     endTimes.put(imgID - Config.WARMUP_ITERATIONS, end);
                                 }
@@ -192,7 +193,7 @@ public class Client {
             if (Config.USE_OZONE) {
                 debug("Sleeping while waiting for futures to complete...");
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(20000);
                 }
                 catch (InterruptedException e) {
                     debug("Sleep interrupted: " + e.getMessage());

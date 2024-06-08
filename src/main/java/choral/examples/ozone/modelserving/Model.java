@@ -56,7 +56,7 @@ public class Model {
             WORKER2_FOR_MODEL = Config.WORKER2_FOR_MODEL2;
         }
 
-        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
         debug("Connecting to other nodes...");
 
@@ -123,6 +123,7 @@ public class Model {
             }
         }
 
+	try { Thread.sleep(20000); } catch (InterruptedException e) { debug("Sleep interrupted: " + e.getMessage()); }
         threadPool.shutdownNow();
         debug("Done.");
     }

@@ -107,7 +107,7 @@ public class Batcher {
             if (Config.USE_OZONE) {
                 debug("Sleeping while waiting for futures to complete...");
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(20000);
                 }
                 catch (InterruptedException e) {
                     debug("Sleep interrupted: " + e.getMessage());
