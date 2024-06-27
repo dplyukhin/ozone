@@ -8,7 +8,7 @@ public class ModelState {
         try {
             // Simulate the time it takes to process a batch.
             // On Apple M3, I measured a 15 ms startup time and roughly 3 ms per image.
-            Thread.sleep(15 + 3 * Config.BATCH_SIZE);
+            Thread.sleep(15 + 5 * Config.BATCH_SIZE);
 	    //System.out.println("Predicting...");
         } catch (InterruptedException e) {
             e.printStackTrace();
