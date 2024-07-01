@@ -7,9 +7,6 @@
 #SBATCH --cpus-per-task=4                # Number of cores per node
 #SBATCH --output=output-%A-%a.txt              # Name of batch job output file
 #SBATCH --array=0-19%1                          # Percent specifies one batch at a time
-##SBATCH --error=errors-%A-%a.txt              # Name of batch job error file
-##SBATCH --mail-user=daniilp2@illinois.edu  # Send email notifications
-##SBATCH --mail-type=BEGIN,END           # Type of email notifications to send
 #
 ###############################################################################
 

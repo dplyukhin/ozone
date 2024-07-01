@@ -1,7 +1,7 @@
 package choral.examples.ozone.inorderproducers;
 
 public class Config {
-    public static final String HOST = "localhost";
+    public static String SERVER_HOST = System.getProperty("serverHost", "localhost");
     public static final int WORKER1_PORT = 8668;
     public static final int WORKER2_PORT = 8669;
     public static final int NUM_ITERATIONS = 600;

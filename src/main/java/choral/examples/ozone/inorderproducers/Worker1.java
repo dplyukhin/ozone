@@ -22,7 +22,7 @@ public class Worker1 {
         SymChannel_A<Object> ch = 
             AsyncSocketChannel.connect(
                 new JavaSerializer(),
-                Config.HOST, Config.WORKER1_PORT
+                Config.SERVER_HOST, Config.WORKER1_PORT
             );
 
         Log.debug("Connection succeeded.");
