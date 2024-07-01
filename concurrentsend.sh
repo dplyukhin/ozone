@@ -3,7 +3,7 @@ useOzone=$1
 systemArgs=${@:2}
 workers=("server" "client" "worker1" "worker2")
 me=$(scontrol show aliases)
-nodes=("node0" "node1" "node2" "node4")
+nodes=("node0" "node1" "node2" "node3")
 len=${#nodes[@]}
 leader=${nodes[0]}
 

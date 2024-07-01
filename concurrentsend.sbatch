@@ -6,7 +6,7 @@
 #SBATCH --nodes=4                        # Number of nodes
 #SBATCH --cpus-per-task=4                # Number of cores per node
 #SBATCH --output=output-%A-%a.txt              # Name of batch job output file
-#SBATCH --array=2%1                          # Percent specifies one batch at a time
+#SBATCH --array=0-1%1                          # Percent specifies one batch at a time
 #
 ###############################################################################
 
