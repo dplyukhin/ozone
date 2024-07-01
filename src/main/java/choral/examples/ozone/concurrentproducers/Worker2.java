@@ -26,7 +26,7 @@ public class Worker2 {
             threadPool,
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Config.HOST, Config.WORKER2_PORT
+                Config.SERVER_HOST, Config.WORKER2_PORT
             )
         );
 
@@ -57,7 +57,7 @@ public class Worker2 {
         try {
             state.iterationsLeft.await();
             ch.select(Signal.START);
-            Thread.sleep(1000);
+            Thread.sleep(20000);
         }
         catch (InterruptedException exn) {
             Log.debug("Interrupted while waiting for iterations to complete.");

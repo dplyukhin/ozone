@@ -22,15 +22,15 @@ public class Server {
 
 		AsyncServerSocketChannel client_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), Config.HOST, Config.CLIENT_PORT
+                new JavaSerializer(), Config.SERVER_HOST, Config.CLIENT_PORT
             );
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), Config.HOST, Config.WORKER1_PORT
+                new JavaSerializer(), Config.SERVER_HOST, Config.WORKER1_PORT
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
-                new JavaSerializer(), Config.HOST, Config.WORKER2_PORT
+                new JavaSerializer(), Config.SERVER_HOST, Config.WORKER2_PORT
             );
 
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);

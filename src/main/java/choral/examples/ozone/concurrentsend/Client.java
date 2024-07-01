@@ -20,7 +20,7 @@ public class Client {
             threadPool,
             AsyncSocketChannel.connect( 
                 new JavaSerializer(),
-                Config.HOST, Config.CLIENT_PORT
+                Config.SERVER_HOST, Config.CLIENT_PORT
             )
         );
 
@@ -33,7 +33,7 @@ public class Client {
 
         state.await();
         try {
-            Thread.sleep(1000); // Give client time to send final message
+            Thread.sleep(20000); // Give client time to send final message
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
