@@ -15,7 +15,7 @@ public class Worker1 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        ScheduledExecutorService threadPool = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
         AsyncChannel_A<Object> ch = new AsyncChannelImpl<Object>(
             threadPool,
             AsyncSocketChannel.connect( 
