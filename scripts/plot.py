@@ -159,6 +159,7 @@ def plot_modelserving_throughput(batch_size, show):
     plt.plot(ozone_rates, ozone_throughputs, 'o-', label='Ozone', color='red')
     plt.plot(choral_rates, choral_throughputs, 'o-', label='Choral', color='blue')
     plt.plot(akka_rates, akka_throughputs, '--', label='Akka', color='orange')
+    plt.axhline(y=308, color='green', linestyle='dotted', label='Ideal')
     plt.xlabel('Requests per second')
     plt.ylabel('Throughput\n(responses/sec)')
     plt.legend()
