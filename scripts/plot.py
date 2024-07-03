@@ -9,6 +9,33 @@ import sys
 # Senders
 ####################################################################################################
 
+def plot_cdf_from_csv(filename, inputs, show):
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
+    axes = axes.flatten()
+
+    for i, title in enumerate(inputs.keys()):
+        file_path = inputs[title]
+        # Reading data from CSV file
+        data = pd.read_csv(file_path, header=None)
+        # Ignore the first 100 entries; warming up the JVM
+        data = data.iloc[100:]
+        # Sort
+        sorted_data = data[0].sort_values()
+        # Compute the CDF values
+        cdf = sorted_data.rank(method='first') / len(sorted_data)
+
+        axes[i].plot(sorted_data, cdf, marker='.', linestyle='none')
+        axes[i].set_xlabel('Data')
+        axes[i].set_ylabel('CDF')
+        axes[i].set_xlim(0, 15)
+
+    plt.tight_layout()
+    if show:
+        plt.show()
+    else:
+        plt.savefig(filename, format='png')
+        print(f'Plot saved to {filename}.')
+
 def plot_histogram_from_csv(filename, inputs, bins, show):
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
     axes = axes.flatten()
@@ -22,7 +49,7 @@ def plot_histogram_from_csv(filename, inputs, bins, show):
         # Ignore the first 100 entries; warming up the JVM
         data = data.iloc[100:]
         # Convert each datum to integer
-        data = data.astype(int)
+        #data = data.astype(int)
 
         maxima[i] = data[0].quantile(0.999)
 
@@ -37,7 +64,7 @@ def plot_histogram_from_csv(filename, inputs, bins, show):
     # Set the same x and y limits for all subplots
     for i in range(4):
         axes[i].set_xlim(0, max(maxima))
-        axes[i].set_ylim(0, 800)
+        axes[i].set_ylim(0, 1000)
 
     plt.tight_layout()
     if show:
