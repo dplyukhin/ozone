@@ -14,7 +14,7 @@ public class Client {
         SymChannel_B<Object> ch = 
             AsyncSocketChannel.connect(
                 new JavaSerializer(),
-                Config.HOST, Config.CLIENT_PORT
+                Config.SERVER_HOST, Config.CLIENT_PORT
             );
         Log.debug("Connection succeeded.");
 

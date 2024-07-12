@@ -9,8 +9,35 @@ import sys
 # Senders
 ####################################################################################################
 
-def plot_histogram_from_csv(filename, inputs, bins, show):
+def plot_cdf_from_csv(filename, inputs, show):
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
+    axes = axes.flatten()
+
+    for i, title in enumerate(inputs.keys()):
+        file_path = inputs[title]
+        # Reading data from CSV file
+        data = pd.read_csv(file_path, header=None)
+        # Ignore the first 100 entries; warming up the JVM
+        data = data.iloc[100:]
+        # Sort
+        sorted_data = data[0].sort_values()
+        # Compute the CDF values
+        cdf = sorted_data.rank(method='first') / len(sorted_data)
+
+        axes[i].plot(sorted_data, cdf, marker='.', linestyle='none')
+        axes[i].set_xlabel('Data')
+        axes[i].set_ylabel('CDF')
+        axes[i].set_xlim(0, 15)
+
+    plt.tight_layout()
+    if show:
+        plt.show()
+    else:
+        plt.savefig(filename)
+        print(f'Plot saved to {filename}.')
+
+def plot_histogram_from_csv(filename, inputs, bins, show):
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(4, 4))
     axes = axes.flatten()
 
     maxima = [0, 0, 0, 0]
@@ -22,7 +49,7 @@ def plot_histogram_from_csv(filename, inputs, bins, show):
         # Ignore the first 100 entries; warming up the JVM
         data = data.iloc[100:]
         # Convert each datum to integer
-        data = data.astype(int)
+        #data = data.astype(int)
 
         maxima[i] = data[0].quantile(0.999)
 
@@ -37,13 +64,13 @@ def plot_histogram_from_csv(filename, inputs, bins, show):
     # Set the same x and y limits for all subplots
     for i in range(4):
         axes[i].set_xlim(0, max(maxima))
-        axes[i].set_ylim(0, 800)
+        axes[i].set_ylim(0, 1000)
 
     plt.tight_layout()
     if show:
         plt.show()
     else:
-        plt.savefig(filename, format='png')
+        plt.savefig(filename)
         print(f'Plot saved to {filename}.')
 
 
@@ -55,7 +82,7 @@ def plot_senders_histograms(show):
         'key (Ozone)': 'data/concurrentsend/txt-latencies.csv',
     }
 
-    plot_histogram_from_csv("figures/Figure 19b - Concurrent senders latency.png", inputs, bins=25, show=show)
+    plot_histogram_from_csv("figures/Figure 19b - Concurrent senders latency.pdf", inputs, bins=25, show=show)
 
 
 ####################################################################################################
@@ -98,6 +125,7 @@ def plot_producer_latency(show):
         ozone_median.append(data[0].median())
         ozone_99pi.append(data[0].quantile(0.99))
 
+    plt.figure(figsize=(4,3))
     plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)', color='red')
     plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)', color='red')
     plt.plot(choral_rates, choral_median, 'o-', label='Choral (median)', color='blue')
@@ -109,8 +137,8 @@ def plot_producer_latency(show):
     if show:
         plt.show()
     else:
-        filename = "figures/Figure 19a - Concurrent producers latency.png"
-        plt.savefig(filename, format='png')
+        filename = "figures/Figure 19a - Concurrent producers latency.pdf"
+        plt.savefig(filename)
         print(f'Plot saved to {filename}.')
 
 
@@ -155,10 +183,11 @@ def plot_modelserving_throughput(batch_size, show):
             throughput = int(f.read())
             akka_throughputs.append(throughput)
 
-    plt.figure()
+    plt.figure(figsize=(4,3))
     plt.plot(ozone_rates, ozone_throughputs, 'o-', label='Ozone', color='red')
     plt.plot(choral_rates, choral_throughputs, 'o-', label='Choral', color='blue')
     plt.plot(akka_rates, akka_throughputs, '--', label='Akka', color='orange')
+    plt.axhline(y=308, color='green', linestyle='dotted', label='max')
     plt.xlabel('Requests per second')
     plt.ylabel('Throughput\n(responses/sec)')
     plt.legend()
@@ -166,8 +195,8 @@ def plot_modelserving_throughput(batch_size, show):
     if show:
         plt.show()
     else:
-        filename = "figures/Figure 20a - Model serving throughput.png"
-        plt.savefig(filename, format='png')
+        filename = "figures/Figure 20a - Model serving throughput.pdf"
+        plt.savefig(filename)
         print(f'Plot saved to {filename}.')
 
 
@@ -180,7 +209,7 @@ def calculate_latency_percentile(data, percentile):
 def plot_modelserving_99pi(batch_size, show):
     ozone_rates, choral_rates, akka_rates = find_modelserving_rates(batch_size)
     # Cut off the choral rates above 200
-    choral_rates = [rate for rate in choral_rates if rate <= 200]
+    #choral_rates = [rate for rate in choral_rates if rate <= 200]
 
     ozone_median = []
     ozone_99pi = []
@@ -207,7 +236,7 @@ def plot_modelserving_99pi(batch_size, show):
         akka_median.append(calculate_latency_percentile(data, 50))
         akka_99pi.append(calculate_latency_percentile(data, 99))
 
-    plt.figure()
+    plt.figure(figsize=(4,3))
     plt.plot(ozone_rates, ozone_median, 'o-', label='Ozone (median)', color='red')
     plt.plot(ozone_rates, ozone_99pi, 'x-', label='Ozone (99pi)', color='red')
     plt.plot(choral_rates, choral_median, 'o-', label='Choral (median)', color='blue')
@@ -221,8 +250,8 @@ def plot_modelserving_99pi(batch_size, show):
     if show:
         plt.show()
     else:
-        filename = "figures/Figure 20b - Model serving latency.png"
-        plt.savefig(filename, format='png')
+        filename = "figures/Figure 20b - Model serving latency.pdf"
+        plt.savefig(filename)
         print(f'Plot saved to {filename}.')
 
 

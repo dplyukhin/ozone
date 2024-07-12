@@ -14,7 +14,7 @@ object Behaviors {
      def receive: Receive = {
        case ClientReady(ref) =>
          var requestStart = System.currentTimeMillis()
-         for (_ <- 0 to (Config.NUM_REQUESTS + Config.WARMUP_ITERATIONS)) {
+         for (_ <- 0 to (Config.NUM_REQUESTS + Config.WARMUP_ITERATIONS + 10)) {
            ref ! NewRequest()
            requestStart += Config.REQUEST_INTERVAL
            val sleepTime = requestStart - System.currentTimeMillis()
@@ -83,6 +83,7 @@ object Behaviors {
             endTimes(imgID - Config.WARMUP_ITERATIONS) = System.currentTimeMillis()
           }
         }
+        //println(s"End times size: ${endTimes.size}")
         if (endTimes.size == Config.NUM_REQUESTS) {
           benchmarkEnd = System.currentTimeMillis()
 
@@ -159,6 +160,7 @@ object Behaviors {
         state.newImage(imgID, workerID)
         val batchIDs = state.getBatchIfFull
         if (batchIDs != null) {
+          //println(s"Batcher got image $imgID, sending batch.")
           val modelID = state.chooseModel(2)
           modelID match {
             case 0 => model1 ! ComputePredictions(batchIDs)
@@ -207,6 +209,7 @@ object Behaviors {
 
         for ((batchIDs, replyTo) <- waiters) {
           if (state.canDumpBatch(batchIDs)) {
+            //println(s"Worker$workerID got $imgID, now it can finally dump.")
             val batch = state.dumpBatch(batchIDs)
             replyTo ! BatchReply(batchIDs, batch)
           }
@@ -215,9 +218,11 @@ object Behaviors {
       case GetBatch(batchIDs, replyTo) =>
         if (state.canDumpBatch(batchIDs)) {
           val batch = state.dumpBatch(batchIDs)
+          //println(s"Worker$workerID asked for batch ${batchIDs.getBatchIDs()}, dumping.")
           replyTo ! BatchReply(batchIDs, batch)
         }
         else {
+          //println(s"Worker$workerID asked for batch ${batchIDs.getBatchIDs()}, can't dump yet.")
           waiters(batchIDs) = replyTo
         }
 

@@ -18,12 +18,12 @@ public class Server {
 		AsyncServerSocketChannel worker1_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Config.HOST, Config.WORKER1_PORT
+                Config.SERVER_HOST, Config.WORKER1_PORT
             );
 		AsyncServerSocketChannel worker2_listener =
             AsyncServerSocketChannel.at( 
                 new JavaSerializer(), 
-                Config.HOST, Config.WORKER2_PORT
+                Config.SERVER_HOST, Config.WORKER2_PORT
             );
 
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);

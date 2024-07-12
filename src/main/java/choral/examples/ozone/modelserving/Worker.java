@@ -121,6 +121,7 @@ public class Worker {
             debug("Aborting: " + e.getMessage());
         }
         finally {
+	    try { Thread.sleep(20000); } catch (InterruptedException e) { debug("Sleep interrupted: " + e.getMessage()); }
             model1_listener.close();
             model2_listener.close();
             debug("Done.");

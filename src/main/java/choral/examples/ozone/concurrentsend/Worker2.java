@@ -15,11 +15,11 @@ public class Worker2 {
     public static void main(String[] args) {
         Log.debug("Connecting to server...");
 
-        ScheduledExecutorService threadPool = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
         AsyncChannel_A<Object> ch = new AsyncChannelImpl<Object>(
             threadPool,
             AsyncSocketChannel.connect( 
-                new JavaSerializer(), Config.HOST, Config.WORKER2_PORT
+                new JavaSerializer(), Config.SERVER_HOST, Config.WORKER2_PORT
             )
         );
 
@@ -32,7 +32,7 @@ public class Worker2 {
 
         state.await();
         try {
-            Thread.sleep(1000); // Give worker time to send final message
+            Thread.sleep(20000); // Give worker time to send final message
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
